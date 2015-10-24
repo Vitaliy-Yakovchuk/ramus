@@ -1,0 +1,30 @@
+group 'com.vitalex.ramus'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    sourceCompatibility = 1.6
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java', 'src/main/resources']
+            }
+        }
+    }
+}

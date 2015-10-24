@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+"
+      codebase="{0}/download/"
+      href="ramus-local.jnlp">
+
+    <icon href="about.png" kind="splash"/>
+
+    <security>
+        <all-permissions/>
+    </security>
+
+    <information>
+        <title>Ramus Local Application</title>
+        <vendor>Ramus Soft Group</vendor>
+        <description>Ramus Local Application</description>
+        <homepage href="http://ramussoft.co.cc/"/>
+        <description kind="short">Програмне забезпечення для редагування класифікаторів,
+            моделювання бізнес-процесів, тощо.
+        </description>
+        <offline-allowed/>
+    </information>
+    <resources>
+        <jar href="ramus-client.jar"/>
+        <jar href="../../ramus-web/download/ramus-web-client.jar"/>
+        <j2se version="1.6+"
+              href="http://java.sun.com/products/autodl/j2se"/>
+    </resources>
+    <application-desc main-class="com.ramussoft.client.WebStartLocalClient"/>
+</jnlp>

@@ -1,0 +1,18 @@
+group 'com.vitalex.ramus'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':data-framework-common')
+    compile project(':core-simple-attributes')
+    compile project(':gui-framework-common')
+    compile 'tablelayout:TableLayout:20050920'
+    compile files('libs/my-spell-core.jar')
+    compile files('libs/my-spell-swing.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

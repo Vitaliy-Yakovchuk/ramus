@@ -1,0 +1,17 @@
+Ramus uses additional libraries:
+
+jericho-html.jar - Jericho HTML Parser (http://jerichohtml.sourceforge.net/) released under GNU Lesser General Public License (LGPL) (http://www.gnu.org/licenses/lgpl.html)
+dockingFramesCommon.jar, dockingFramesCore.jar - Docking Frames (http://dock.javaforge.com/) released under GNU Lesser General Public License (LGPL) Version 2.1 (http://www.gnu.org/licenses/lgpl-2.1.html)
+swingx-0.9.7.jar - swingx-ws (https://swingx-ws.dev.java.net/) released under GNU Lesser General Public License (LGPL) (http://www.gnu.org/copyleft/lesser.html)
+my-spell-core.jar, my-spell-swing.jar JMySpell (http://javahispano.net/projects/jmyspell) released under GNU Lesser General Public License (LGPL) (http://www.gnu.org/copyleft/lesser.html)
+TableLayout-bin-jdk1.5-2007-04-21.jar - TableLayout (https://tablelayout.dev.java.net/) see TableLayout.license or https://tablelayout.dev.java.net/files/documents/3495/59349/License.txt for details
+h2.jar - H2 Database Engine (http://www.h2database.com/) you can obtain H2 Database Engine license here: http://www.h2database.com/html/license.html
+cajo.jar - The cajo project (https://cajo.dev.java.net/) released under GNU Lesser General Public License (LGPL) Version 3 (http://www.gnu.org/licenses/lgpl.html)
+BrowserLauncher2-1_3.jar - BrowserLauncher2 (http://browserlaunch2.sourceforge.net/) released under GNU Lesser General Public License (LGPL) (http://www.gnu.org/licenses/lgpl.html)
+jsyntaxpane.jar - jsyntaxpane (http://code.google.com/p/jsyntaxpane/)  released under Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+You can obtain sources of the mentioned project on the web sites.
+
+Icons library:
+
+Mark James
+http://www.famfamfam.com/lab/icons/silk/ 

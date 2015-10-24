@@ -1,0 +1,15 @@
+group 'com.vitalex.ramus'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':data-framework-common')
+    compile project(':report-core')
+    compile project(':idef0-core')
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

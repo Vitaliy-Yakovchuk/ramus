@@ -1,0 +1,2 @@
+ALTER TABLE ramus_attribute_element_lists ADD COLUMN removed_branch_id bigint DEFAULT 2147483647;
+ALTER TABLE ramus_attribute_element_lists DROP CONSTRAINT ramus_attribute_element_lists_pkey;

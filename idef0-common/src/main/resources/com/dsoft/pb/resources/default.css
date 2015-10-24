@@ -1,0 +1,158 @@
+#TopBar a:visited,div#TopBar a:link {
+	color: white;
+	text-decoration: none;
+}
+
+div#TopBar a:hover,div#TopBar a:active {
+	background-color: white;
+	color: #35556B;
+}
+
+div#TopBar a:visited,#TopBar a:link {
+	text-decoration: none;
+}
+
+div#TopBar {
+	font-family: sans-serif;
+	background: #FFFFFF url("ramus.png");
+	background-repeat:no-repeat;
+	margin: 10px 10px 0 3px;
+	padding:  0;
+	height: 65px;
+	width: 100%;
+	color: white;
+	font-weight: bold;
+}
+
+#TopBar_title a {
+	font-size: 12px;
+	margin: 3px;
+	padding: 0;
+}
+
+div#TopBar_title {
+	float: left;
+	text-align: center;
+	font-size: 250%;
+}
+
+div#TopBar_bottom {
+	float: none;
+	text-align: left;
+	font-size: 80%;
+	margin: -16px 0em 0px 25px;
+}
+
+div.LeftBar {
+	font-family: sans-serif;
+	float: left;
+}
+
+div.LeftBox {
+	margin: 10px 1em 10px 10px;
+	width: 17em;
+	border-style: double;
+}
+
+div.Pad {
+	font-size: 80%;
+	padding: 1em;
+}
+
+div.Pad h3 {
+	text-align: center;
+	margin: 0;
+}
+
+a {
+	text-decoration: none;
+	color: #0000EE;
+}
+
+a:link,.w,.w a:link {
+	color: #0000cc
+}
+
+a:visited {
+	color: #551a8b
+}
+
+a:active {
+	color: #ff0000
+}
+
+td#Kode a {
+	font-size: 80%;
+	font-family: tymes-new-roman;
+}
+
+h3.Ramus {
+	font-family: sans-serif;
+	color: #FE6F00;
+	margin-bottom: 3px;
+}
+
+h2.Ramus {
+	font-family: sans-serif;
+	color: #FE6F00;
+	margin-bottom: 3px;
+}
+
+div.Text {
+	margin: 10px 0px 10px 0px;
+	text-align: justify;
+}
+
+div.Diagram {
+	margin: 10px 0em 0px 0px;
+	text-align: justify;
+}
+
+table.RowsTable {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: none;
+}
+
+td.RowCell {
+	border: solid black 1.0pt;
+	padding: 0cm 5.4pt 0cm 5.4pt;
+}
+
+td.RowTitleCell {
+	border: solid black 1.0pt;
+	text-align: center;
+	font-weight: bold;
+	padding: 0cm 5.4pt 0cm 5.4pt;
+	font-size: 80%;
+}
+
+td.Body {
+	
+}
+
+td.CellNormal {
+	margin-top: 0cm;
+	margin-right: 0cm;
+	margin-bottom: 10.0pt;
+	margin-left: 0cm;
+}
+
+td.Title {
+	font-size: 90%;
+	font-weight: bold;
+}
+
+select.Text,input.Text {
+	width: 600px;
+}
+
+body,td,a,div,.p {
+	font-family: arial, sans-serif
+}
+
+.faimage {
+  max-width: 700px;
+  width: expression(this.width > 700 ? "700px" : true);  
+}

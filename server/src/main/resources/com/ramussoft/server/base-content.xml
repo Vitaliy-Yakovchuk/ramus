@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+    <!--
+
+        <bean id="propertyConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+        <value>/com/ramussoft/server/content.properties </value> </property>
+        </bean>
+    -->
+
+    <bean id="engineFactory" class="com.ramussoft.server.EngineFactory"/>
+
+    <bean id="iEngine" class="com.ramussoft.server.ServerIEngineImpl"
+          factory-bean="engineFactory" factory-method="getEngine">
+    </bean>
+
+    <bean id="accessRules" class="com.ramussoft.common.AccessRules"
+          factory-bean="engineFactory" factory-method="getAccessRules"></bean>
+
+    <bean name="/IEngineService"
+          class="org.springframework.remoting.caucho.BurlapServiceExporter">
+        <property name="service" ref="iEngine"/>
+        <property name="serviceInterface" value="com.ramussoft.common.IEngine"/>
+    </bean>
+
+    <bean name="/AccessRulesService"
+          class="org.springframework.remoting.caucho.BurlapServiceExporter">
+        <property name="service" ref="accessRules"/>
+        <property name="serviceInterface" value="com.ramussoft.common.AccessRules"/>
+    </bean>
+
+    <!--
+        <bean id="iEngine-rmi"
+        class="org.springframework.remoting.rmi.RmiServiceExporter"> <property
+        name="service" ref="iEngine" /> <property name="serviceInterface"
+        value="com.ramussoft.common.IEngine" /> <property name="serviceName"
+        value="iEngine" /> <property name="registryPort"
+        value="${registryPort}" /> </bean> <bean id="accessRules-rmi"
+        class="org.springframework.remoting.rmi.RmiServiceExporter"> <property
+        name="service" ref="accessRules" /> <property name="serviceInterface"
+        value="com.ramussoft.common.AccessRules" /> <property
+        name="serviceName" value="accessRules" /> <property
+        name="registryPort" value="${registryPort}" /> </bean>
+    -->
+
+</beans>

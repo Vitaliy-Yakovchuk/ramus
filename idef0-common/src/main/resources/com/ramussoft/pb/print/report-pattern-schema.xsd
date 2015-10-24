@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="report">
+
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="qualifiers" maxOccurs="1" minOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="qualifier" maxOccurs="unbounded">
+
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:group ref="reportSubelemnts" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="base" type="xs:integer"/>
+            <xs:attribute name="name" type="xs:string"/>
+        </xs:complexType>
+
+    </xs:element>
+
+    <xs:group name="reportSubelemnts">
+        <xs:sequence>
+
+            <xs:element name="reportRef" maxOccurs="1" minOccurs="0">
+                <xs:complexType>
+                    <xs:attribute name="refId" type="xs:integer"/>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="label" maxOccurs="1" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:group ref="labelSubelemnts" maxOccurs="unbounded" minOccurs="0"/>
+                    </xs:sequence>
+                    <xs:attribute name="style" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="table" maxOccurs="1" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+
+                        <xs:element name="query" minOccurs="1" maxOccurs="1">
+
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="element" maxOccurs="unbounded" type="queryElementType"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+
+                        <xs:element name="head" maxOccurs="1" minOccurs="1">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="label" maxOccurs="1" minOccurs="1">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:group ref="labelSubelemnts" maxOccurs="unbounded" minOccurs="0"/>
+                                            </xs:sequence>
+                                            <xs:attribute name="style" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="style" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="body" maxOccurs="1" minOccurs="1">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="label" maxOccurs="1" minOccurs="1">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:group ref="labelSubelemnts" maxOccurs="unbounded" minOccurs="0"/>
+                                            </xs:sequence>
+                                            <xs:attribute name="style" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="style" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="style" type="xs:string"/>
+                    <xs:attribute name="colCount" type="xs:integer"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="labelSubelemnts">
+        <xs:sequence>
+
+            <xs:element name="text" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="style" type="xs:string"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="query" minOccurs="0" maxOccurs="unbounded">
+
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="separator" type="xs:string" maxOccurs="1" minOccurs="0" default="; "/>
+                        <xs:element name="element" maxOccurs="unbounded" type="queryElementType"/>
+                    </xs:sequence>
+                    <xs:attribute name="style" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="queryElementType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="type">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="qualifier"/>
+                            <xs:enumeration value="matrix"/>
+                            <xs:enumeration value="idef0"/>
+                            <xs:enumeration value="attribute"/>
+                            <xs:enumeration value="name"/>
+                            <xs:enumeration value="childs"/>
+                            <xs:enumeration value="parent"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+
+                <xs:attribute name="filter" default="all">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="all"/>
+                            <xs:enumeration value="with_childs"/>
+                            <xs:enumeration value="with_no_childs"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

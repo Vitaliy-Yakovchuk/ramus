@@ -1,0 +1,1 @@
+ALTER TABLE {0}qualifiers_attributes ADD COLUMN attribute_position BIGINT;
