@@ -17,7 +17,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-task myRun(type: JavaExec) {
+task runLocal(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     main = "com.ramussoft.local.Main"
     args[]
