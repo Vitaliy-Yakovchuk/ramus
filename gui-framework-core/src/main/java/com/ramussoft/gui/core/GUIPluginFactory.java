@@ -939,6 +939,8 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
 
         area.add(dockable);
         dockable.setVisible(true);
+        dockable.intern().getController()
+                .setFocusedDockable(dockable.intern(), false);
     }
 
     protected void tabRemoved(TabbedEvent event) {
