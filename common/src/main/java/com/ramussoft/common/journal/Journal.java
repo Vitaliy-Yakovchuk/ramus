@@ -36,6 +36,12 @@ import com.ramussoft.common.journal.event.JournalListener;
 
 public class Journal implements Journaled {
 
+    public static final RedoCallback TRUE_REDO_CALLBACK = new RedoCallback() {
+        @Override
+        public boolean execute(Command command) {
+            return true;
+        }
+    };
     protected BinaryAccessFile accessFile;
 
     private static Hashtable<Class<? extends Command>, Integer> commandsTypes;
@@ -164,12 +170,17 @@ public class Journal implements Journaled {
     }
 
     public Command redo() {
+        return redo(TRUE_REDO_CALLBACK);
+    }
+
+    public Command redo(RedoCallback callback) {
         Command command = null;
         long index = getPointer();
         try {
             command = readNext();
             IEngine engine = command.getEngine().deligate;
-            command.redo(engine);
+            if(callback.execute(command))
+                command.redo(engine);
 
             JournalEvent event = new JournalEvent(this, command, index);
             afterRedo(event);
@@ -468,5 +479,9 @@ public class Journal implements Journaled {
     @Override
     public long getBranch() {
         return branch;
+    }
+
+    public interface RedoCallback {
+        boolean execute(Command command);
     }
 }

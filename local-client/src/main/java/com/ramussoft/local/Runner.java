@@ -706,11 +706,23 @@ public class Runner implements Commands {
         if (journals.length == 0)
             return false;
         boolean exist = false;
+        Journal.RedoCallback redoCallback = new Journal.RedoCallback() {
+
+            boolean hadStartUserTransaction;
+
+            @Override
+            public boolean execute(Command command) {
+                if (command instanceof StartUserTransactionCommand) {
+                    hadStartUserTransaction = true;
+                }
+                return hadStartUserTransaction;
+            }
+        };
         for (Journal journal : journals) {
             try {
                 Command command = null;
                 while (journal.canRedo()) {
-                    command = journal.redo();
+                    command = journal.redo(redoCallback);
                 }
                 if ((journal.getPointer() == 0l)
                         || (command instanceof StopUndoPointCommand)) {
