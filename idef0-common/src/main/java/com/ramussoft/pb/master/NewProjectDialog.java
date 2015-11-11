@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -221,11 +223,18 @@ public class NewProjectDialog extends JDialog {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(MessageFormat.format(Factory.getString("Master"),
                 new Object[]{ResourceLoader.getString("project options")}));
-
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                mainPanel.cancel();
+            }
+        });
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
     public void showModal(final Engine engine, final AccessRules accessRules,
                           final GUIFramework framework) {
+        ((Journaled) engine).setNoUndoPoint();
         final Properties name_author = new DefaultProperties(new Property[]{
                 new DefaultProperty(AUTOR, Property.TEXT_FIELD),
                 new DefaultProperty(PROJECT_NAME, Property.TEXT_FIELD),
@@ -253,9 +262,10 @@ public class NewProjectDialog extends JDialog {
                 used_at, def, clasificators});
         mainPanel = new MainPanel(new PanelCreator(masterModel)) {
             @Override
-            protected boolean cancel() {
+            public boolean cancel() {
                 if (super.cancel()) {
                     NewProjectDialog.this.setVisible(false);
+                    finish();
                     return true;
                 }
                 return false;

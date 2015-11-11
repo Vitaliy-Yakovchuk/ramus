@@ -55,7 +55,7 @@ public class MainDialog extends JDialog {
                 used_at, def});
         mainPanel = new MainPanel(new DefaultPanelCreator(masterModel)) {
             @Override
-            protected boolean cancel() {
+            public boolean cancel() {
                 if (super.cancel()) {
                     MainDialog.this.setVisible(false);
                     return true;

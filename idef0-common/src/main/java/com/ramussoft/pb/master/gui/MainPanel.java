@@ -138,7 +138,7 @@ public class MainPanel extends JPanel {
             next.setEnabled(true);
     }
 
-    protected boolean cancel() {
+    public boolean cancel() {
         return JOptionPane.showConfirmDialog(this, Factory
                 .getString("ReallyCancel"), UIManager
                 .getString("OptionPane.titleText"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
@@ -262,7 +262,7 @@ public class MainPanel extends JPanel {
                 new DefaultMasterModel(new Properties[]{p1, p1, p1, p1, p2,
                         p1, p1, p1}))) {
             @Override
-            protected boolean cancel() {
+            public boolean cancel() {
                 if (super.cancel()) {
                     System.exit(0);
                     return true;
