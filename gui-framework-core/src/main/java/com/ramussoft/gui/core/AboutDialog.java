@@ -245,15 +245,13 @@ public class AboutDialog extends JDialog {
                         Metadata.REGISTERED_FOR);
 
         }
-        sb.append("<html><body><font face=\"Sans Serif\">" + applicationName
-                + " <br><br>Version: ");
+        sb.append("<html><body><font face=\"Sans Serif\">")
+                .append(applicationName).append(" <br><br>Version: ");
         sb.append(Metadata.getApplicationVersion());
-        if (Metadata.CORPORATE)
-            sb.append(" (виключно для використання ТОВ \"МЕТІНВЕСТ ХОЛДИНГ\")");
         sb.append("<br><br>");
 
-        sb.append("Copyright &copy; 2005 - 2013 Oleksiy Chizhevskiy, Vitaliy Yakovchuk. All rights reserved.<br><br>"
-                + "e-mail: <a href=\"mailto:support@ramussoftware.com\">support@ramussoftware.com</a><br><br>"
+        sb.append("Copyright &copy; 2005 - 2017 Oleksiy Chizhevskiy, Vitaliy Yakovchuk. <br><br>"
+                + "License <a href=\"https://www.gnu.org/licenses/gpl-3.0.en.html\">GNU GENERAL PUBLIC LICENSE Version 3</a><br><br>"
                 + "Visit <a href=\"http://ramussoftware.com/\">http://ramussoftware.com/</a><br><br>"
                 + "</font></body></html>");
         return sb.toString();
