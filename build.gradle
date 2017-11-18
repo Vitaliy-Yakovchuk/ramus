@@ -14,15 +14,25 @@ allprojects {
     }
     compileJava {
         options.encoding = "UTF-8"
-
-    }
-
-
-    sourceSets {
-        main {
-            java {
-                srcDirs = ['src/main/java', 'src/main/resources']
-            }
-        }
     }
 }
+
+task copyJars(type: Copy, dependsOn: subprojects.jar) {
+    from(subprojects.jar)
+    into project.file('dest/full/lib/ramus')
+}
+
+task moveStartup{
+    doLast{
+        mkdir('dest/full/bin')
+        file('dest/full/lib/ramus/startup-1.0-SNAPSHOT.jar')
+        .renameTo('dest/full/bin/startup.jar')
+    }
+}
+
+task copyDeps(type: Copy) {
+    from(subprojects.configurations.runtime)
+    into project.file('dest/full/lib/thirdparty')
+}
+
+task copyFiles(dependsOn: [copyJars, copyDeps, moveStartup])
