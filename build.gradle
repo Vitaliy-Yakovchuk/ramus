@@ -42,7 +42,15 @@ task moveStartup{
     doLast{
         mkdir('dest/full/bin')
         file('dest/full/lib/ramus/startup-1.0-SNAPSHOT.jar')
-        .renameTo('dest/full/bin/startup.jar')
+        .renameTo('dest/full/bin/ramus-startup.jar')
+        //delete not needed files
+        file('dest/full/lib/ramus/chart-common-1.0-SNAPSHOT.jar').delete()
+        file('dest/full/lib/ramus/chart-core-1.0-SNAPSHOT.jar').delete()
+        file('dest/full/lib/ramus/chart-gui-1.0-SNAPSHOT.jar').delete()
+        file('dest/full/lib/ramus/client-1.0-SNAPSHOT.jar').delete()
+        file('dest/full/lib/ramus/local-client-1.0-SNAPSHOT.jar').delete()
+        file('dest/full/lib/ramus/net-common-1.0-SNAPSHOT.jar').delete()
+        file('dest/full/lib/ramus/server-1.0-SNAPSHOT.jar').delete()
     }
 }
 

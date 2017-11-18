@@ -1,0 +1,573 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-pitch:variable;
+	mso-font-signature:-1610611985 1107304683 0 0 159 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:-1610611985 1073750139 0 0 159 0;}
+@font-face
+	{font-family:"Arial Narrow";
+	mso-font-alt:"Helvetica Narrow";
+	mso-font-charset:204;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:647 0 0 0 159 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+h1
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:"Arial","sans-serif";
+	mso-bidi-font-family:Arial;
+	mso-font-kerning:16.0pt;
+	mso-fareast-language:RU;}
+h2
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:"Arial","sans-serif";
+	mso-bidi-font-family:Arial;
+	mso-fareast-language:RU;
+	font-style:italic;}
+h3
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:"Arial","sans-serif";
+	mso-bidi-font-family:Arial;
+	mso-fareast-language:RU;}
+h4
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-language:RU;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:18.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:Arial;
+	text-transform:uppercase;
+	mso-fareast-language:RU;
+	font-weight:bold;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;
+	font-weight:bold;}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:12.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc4, li.MsoToc4, div.MsoToc4
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:24.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc5, li.MsoToc5, div.MsoToc5
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc6, li.MsoToc6, div.MsoToc6
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:48.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc7, li.MsoToc7, div.MsoToc7
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:60.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc8, li.MsoToc8, div.MsoToc8
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:72.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc9, li.MsoToc9, div.MsoToc9
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:84.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{mso-style-unhide:no;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 233.85pt right 467.75pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{mso-style-unhide:no;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 233.85pt right 467.75pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	mso-style-unhide:no;
+	color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-unhide:no;
+	color:purple;
+	mso-themecolor:followedhyperlink;
+	text-decoration:underline;
+	text-underline:single;}
+ /* Page Definitions */
+ @page
+	{mso-footnote-separator:url("instruction.files/header.htm") fs;
+	mso-footnote-continuation-separator:url("instruction.files/header.htm") fcs;
+	mso-endnote-separator:url("instruction.files/header.htm") es;
+	mso-endnote-continuation-separator:url("instruction.files/header.htm") ecs;}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:2.0cm 42.5pt 2.0cm 3.0cm;
+	mso-header-margin:35.4pt;
+	mso-footer-margin:35.4pt;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	padding:24.0pt 24.0pt 24.0pt 24.0pt;
+	mso-header:url("instruction.files/header.htm") h1;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:1;
+	mso-list-template-ids:1;}
+@list l0:level1
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:21.6pt;
+	mso-level-number-position:left;
+	margin-left:21.6pt;
+	text-indent:-21.6pt;}
+@list l0:level2
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:28.8pt;
+	mso-level-number-position:left;
+	margin-left:28.8pt;
+	text-indent:-28.8pt;}
+@list l0:level3
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	margin-left:36.0pt;
+	text-indent:-36.0pt;}
+@list l0:level4
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:43.2pt;
+	mso-level-number-position:left;
+	margin-left:43.2pt;
+	text-indent:-43.2pt;}
+@list l0:level5
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:50.4pt;
+	mso-level-number-position:left;
+	margin-left:50.4pt;
+	text-indent:-50.4pt;}
+@list l0:level6
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:57.6pt;
+	mso-level-number-position:left;
+	margin-left:57.6pt;
+	text-indent:-57.6pt;}
+@list l0:level7
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:64.8pt;
+	mso-level-number-position:left;
+	margin-left:64.8pt;
+	text-indent:-64.8pt;}
+@list l0:level8
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	margin-left:72.0pt;
+	text-indent:-72.0pt;}
+@list l0:level9
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:79.2pt;
+	mso-level-number-position:left;
+	margin-left:79.2pt;
+	text-indent:-79.2pt;}
+@list l1
+	{mso-list-id:4;
+	mso-list-type:simple;
+	mso-list-template-ids:4;
+	mso-list-name:WW8Num4;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:63.0pt;
+	mso-level-number-position:left;
+	margin-left:63.0pt;
+	text-indent:-18.0pt;
+	mso-ascii-font-family:Symbol;
+	mso-hansi-font-family:Symbol;}
+@list l2
+	{mso-list-id:149912341;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1114254112 68747265 68747267 68747269 68747265 68747267 68747269 68747265 68747267 68747269;}
+@list l2:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:63.0pt;
+	mso-level-number-position:left;
+	margin-left:63.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l3
+	{mso-list-id:406652663;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1206914796 68747279 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l3:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l4
+	{mso-list-id:755786387;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-278856404 68747279 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l4:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l5
+	{mso-list-id:770901513;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-406430408 68747279 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l5:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l5:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l5:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:108.0pt;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l6
+	{mso-list-id:805708948;
+	mso-list-type:hybrid;
+	mso-list-template-ids:135018588 69337089 69337091 69337093 69337089 69337091 69337093 69337089 69337091 69337093;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	margin-left:72.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:838160050;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1855789970 68747265 68747267 68747269 68747265 68747267 68747269 68747265 68747267 68747269;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:63.0pt;
+	mso-level-number-position:left;
+	margin-left:63.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:1299996507;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-640010224 68747279 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l8:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:63.0pt;
+	text-indent:-18.0pt;}
+@list l9
+	{mso-list-id:1765372224;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1299527328 102931806 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l9:level1
+	{mso-level-text:"%1\)";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:45.0pt;
+	text-indent:-18.0pt;}
+@list l10
+	{mso-list-id:1791587116;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1068012696 69337089 69337091 69337093 69337089 69337091 69337093 69337089 69337091 69337093;}
+@list l10:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	margin-left:72.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+</style></head>
+<body>
+<h3>
+6.2.6. Работа с вкладкой «Поток»</h3>
+
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>На вкладке «Поток» можно
+указать название стрелки, подпись текущего сегмента. Сегмент стрелки это часть
+стрелки между двумя перекрёстками стрелки, между перекрёстком и краем
+диаграммы, между перекрёстком и функциональным блоком, между функциональным
+блоком и другим функциональным блоком на одной диаграмме. Стрелка с одним
+названием может иметь много сегментов с разными подписями. Если подпись сегмента
+не задана, то на диаграмме отражается название стрелки.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Кроме того, что <b
+style='mso-bidi-font-weight:normal'>очень важно</b>, что к стрелкам можно
+присоединять элементы классификаторов проекта. Для полноценной модели
+рекомендуется не использовать без острой необходимости поля названия и подписи,
+а прикреплять к стрелкам конкретные элементы классификаторов. Для этого на
+вкладке «Поток» присутствует соответствующее поле и ряд кнопок:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Кнопка «<b style='mso-bidi-font-weight:
+normal'>Добавить</b>» – позволяет открыть окно для выбора элементов
+классификаторов, или самих классификаторов, которые следует прикрепить к
+текущей стрелке. В левой части данного окна присутствует перечень
+классификаторов, а в правой части отражается содержимое классификаторов. Чтобы
+прикрепить ряд элементов классификаторов к стрелке, следует, в данном окне,
+отметить галочками необходимые элементы и нажать кнопку «Ок». Чтобы добавить
+сам классификатор, необходимо выбрать его в левой части окна, но при этом не
+выбирать его элементов.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>В данном окне, также, можно
+добавлять новые элементы классификаторов, а также настраивать внешний вид
+таблицы с содержимым классификаторов подобно тому, как описано в пункте </span><!--[if supportFields]><span
+lang=RU style='mso-ansi-language:RU'><span style='mso-element:field-begin'></span><span
+style='mso-spacerun:yes'> </span>REF _Ref225336933 \h <span style='mso-element:
+field-separator'></span></span><![endif]--><span lang=RU style='mso-ansi-language:
+RU'>4.2.2. Работа со списком элементов классификатора<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000090000000303000000000000C000000000000046000054000000433A5C77696E646F77735C70726F66696C65735C7A64645C4D7920446F63756D656E74735C72616D75735C6275696C645C646F635C72755C3F3F3F3F3F3F3F3F3F3F203F3F3F3F3F3F3F3F3F3F3F3F2E646F6300FFFFADDE0000000000000000000000000000000000000000AC000000A6000000030043003A005C00770069006E0064006F00770073005C00700072006F00660069006C00650073005C007A00640064005C004D007900200044006F00630075006D0065006E00740073005C00720061006D00750073005C006200750069006C0064005C0064006F0063005C00720075005C0018043D0441044204400443043A04460438044F0420003F043E043B044C0437043E0432043004420435043B044F042E0064006F0063000E0000005F005200650066003200320035003300330036003900330033000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span lang=RU style='mso-ansi-language:
+RU'><span style='mso-element:field-end'></span></span><![endif]--><span
+lang=RU style='mso-ansi-language:RU'>. Параметры внешнего вида таблиц
+распространяются исключительно на данное окно.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Кнопка «<b style='mso-bidi-font-weight:
+normal'>Удалить</b>» – позволяет удалить (отсоединить от стрелки) выделенный
+элемент.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Кнопка «<b style='mso-bidi-font-weight:
+normal'>Очистить</b>» – позволяет удалить (отсоединить от стрелки) все
+элементы.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Стрелки без названия и без
+подписи, но с прикреплёнными элементами, на диаграммах будут иметь названия,
+состоящие из названий прикреплённых элементов классификаторов разделённых
+знаком «;».<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'><span lang=RU style='mso-ansi-language:RU'>В случае изменения названия стрелки, активизируются пункты выбора правила замены старого названия. При выборе любого из правил, в случае если сектор не имел названия, то все соединённые с данным сектором секторы также будут иметь указанное название, не зависимо от выбранного правила. Правила замены названия действуют только для присоединённых секторов которые уже содержат название, либо имеют присоединённые элементы классификаторов.</span></p>
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Правило <b style='mso-bidi-font-weight: normal'>Безопасное</b> отмечено по умолчанию и означает, что название секторов будет обновлено только в разветвлениях стрелки идущих в сторону направленности стрелки, при условии что старое название совпадало со старым названием сектора, для которого выполняется переименование.</span></p>
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Правило <b style='mso-bidi-font-weight: normal'>По разветвлению</b> означает, что название секторов будет обновлено везде в разветвлениях стрелки идущих в сторону направленности стрелки.</span></p>
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Правило <b style='mso-bidi-font-weight: normal'>Везде по стрелке</b> означает, что название секторов будет обновлено везде где есть соприкосновение секторов.</span></p>
+
+
+</body></html>

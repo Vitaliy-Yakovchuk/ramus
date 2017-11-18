@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_1_0.dtd">
+<index version="1.0">
+<indexitem target="index.html" text="Оглавление"/>
+<indexitem target="1.html" text="Аннотация"/>
+<indexitem target="2.html" text="Глоссарий"/>
+<indexitem target="3.html" text="1. Начало работы"/>
+<indexitem target="4.html" text="2. Работа с главным меню"/>
+<indexitem target="4.1.html" text="2.1 Пункты меню «Файл»."/>
+<indexitem target="4.2.html" text="2.2. Пункты меню «Правка»"/>
+<indexitem target="4.3.html" text="2.3. Пункты меню «Диаграмма»"/>
+<indexitem target="4.4.html" text="2.4. Пункты меню «Окна»"/>
+<indexitem target="4.5.html" text="2.5. Пункты меню «Сервис»"/>
+<indexitem target="4.6.html" text="2.6. Пункты меню «Помощь»"/>
+<indexitem target="5.html" text="3. Работа с оконным интерфейсом программы"/>
+<indexitem target="6.html" text="4. Работа в рабочем пространстве «Классификаторы»"/>
+<indexitem target="6.1.html" text="4.1. Работа с окном «Классификаторы»"/>
+<indexitem target="6.1.1.html" text="4.1.1. Работа с кнопками окна «Классификаторы»"/>
+<indexitem target="6.1.2.html" text="4.1.2. Работа со списком классификаторов"/>
+<indexitem target="6.2.html" text="4.2. Работа с окном отдельного классификатора"/>
+<indexitem target="6.2.1.html" text="4.2.1. Работа с кнопками окна отдельного классификатора"/>
+<indexitem target="6.2.2.html" text="4.2.2. Работа со списком элементов классификатора"/>
+<indexitem target="6.3.html" text="4.3. Работа с окном «Набор атрибутов»"/>
+<indexitem target="6.4.html" text="4.4. Работа с окнами «Редактор атрибутов элемента» и «Редактор атрибута»"/>
+<indexitem target="6.4.1.html" text="4.4.1. Работа с окном «Редактор атрибута»"/>
+<indexitem target="6.4.2.html" text="4.4.2. Работа с окном «Редактор атрибутов элемента»"/>
+<indexitem target="7.html" text="5. Работа в рабочем пространстве «Матричные проекции»"/>
+<indexitem target="7.1.html" text="5.1. Работа с окном «Матричные проекции»"/>
+<indexitem target="7.2.html" text="5.2. Работа с матричной проекцией в стандартном представлении"/>
+<indexitem target="7.3.html" text="5.3. Работа с матричной проекцией в табличном представлении"/>
+<indexitem target="8.html" text="6. Работа в рабочем пространстве «Диаграммы»"/>
+<indexitem target="8.1.html" text="6.1. Работа с окном «Модели»"/>
+<indexitem target="8.2.html" text="6.2. Работа в графическом редакторе"/>
+<indexitem target="8.2.1.html" text="6.2.1. Изменение свойств диаграммы"/>
+<indexitem target="8.2.2.html" text="6.2.2. Добавление объектов на диаграммы"/>
+<indexitem target="8.2.3.html" text="6.2.3. Создание дочерней диаграммы"/>
+<indexitem target="8.2.4.html" text="6.2.4. Работа с контекстным меню функционального блока"/>
+<indexitem target="8.2.5.html" text="6.2.5. Работа с контекстным меню стрелки"/>
+<indexitem target="8.2.6.html" text="6.2.6. Работа с вкладкой «Поток»"/>
+<indexitem target="9.html" text="7. Работа в рабочем пространстве «Редактор отчётов»"/>
+<indexitem target="9.1.html" text="7.1. Работа с окном «Отчёты»"/>
+<indexitem target="9.2.html" text="7.2. Работа с окном редактора отчётов"/>
+<indexitem target="9.3.html" text="7.3. Работа с окном «Атрибуты отчёта»"/>
+<indexitem target="9.3.1.html" text="7.3.1. Атрибуты отчета"/>
+<indexitem target="9.3.2.html" text="7.3.2. Атрибуты элемента «Надпись»"/>
+<indexitem target="9.3.3.html" text="7.3.3. Атрибуты элемента «Таблица»"/>
+<indexitem target="9.3.4.html" text="7.3.4. Атрибуты элемента «Столбец таблицы»"/>
+<indexitem target="10.html" text="8. Работа в рабочем пространстве «Навигатор по модели»"/>
+<indexitem target="11.html" text="Список использованной литературы"/>
+<indexitem target="12.html" text="Приложение 1. Правила составления формул в классификаторах"/>

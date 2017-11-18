@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+<toc version="1.0">
+  <tocitem text="Table Of Contents" target="index">
+<tocitem target="0" text="Annotation" />
+<tocitem target="1" text="Beginning of work" />
+<tocitem target="2" text="Working with main menu" >
+<tocitem target="2.1" text="File menu" />
+<tocitem target="2.2" text="Edit menu" />
+<tocitem target="2.3" text="Diagram menu" />
+<tocitem target="2.4" text="Windows menu" />
+<tocitem target="2.5" text="Tools menu" />
+<tocitem target="2.6" text="Help menu" />
+</tocitem>
+<tocitem target="3" text="Graphical user interface" />
+<tocitem target="4" text="Workspaces" >
+<tocitem target="4.1" text="Qualifiers workspace" >
+<tocitem target="4.1.1" text="Qualifiers window" >
+<tocitem target="4.1.1.1" text="Qualifiers window commands" />
+<tocitem target="4.1.1.2" text="Working with a list of qualifiers" />
+</tocitem>
+<tocitem target="4.1.2" text="Elements editor" >
+<tocitem target="4.1.2.1" text="Elements editor commands" />
+<tocitem target="4.1.2.2" text="Working with a list of elements" />
+</tocitem>
+<tocitem target="4.1.3" text="Attributes window" />
+<tocitem target="4.1.4" text="Element attributes editor and Attribute editor windows" >
+<tocitem target="4.1.4.1" text="Attribute editor window" />
+<tocitem target="4.1.4.2" text="Element attributes editor window" />
+</tocitem>
+</tocitem>
+<tocitem target="4.2" text="Projections workspace" >
+<tocitem target="4.2.1" text="Projections window" />
+<tocitem target="4.2.2" text="Standard projection editor" />
+<tocitem target="4.2.3" text="Table projection editor" />
+</tocitem>
+<tocitem target="4.3" text="Diagrams workspace" >
+<tocitem target="4.3.1" text="Models window" />
+<tocitem target="4.3.2" text="Graphical editor" >
+<tocitem target="4.3.2.1" text="Diagram and model preferences" />
+<tocitem target="4.3.2.2" text="Adding objects on diagrams" />
+<tocitem target="4.3.2.3" text="Creating a decomposition diagrams" />
+<tocitem target="4.3.2.4" text="Activity box contarget menu" />
+<tocitem target="4.3.2.5" text="Arrow contarget menu" />
+<tocitem target="4.3.2.6" text="Stream tab" />
+</tocitem>
+</tocitem>
+<tocitem target="4.4" text="Report editor workspace" >
+<tocitem target="4.4.1" text="Reports window" />
+<tocitem target="4.4.2" text="Report editor window" />
+<tocitem target="4.4.3" text="Report attributes window" >
+<tocitem target="4.4.3.1" text="Report attributes" />
+<tocitem target="4.4.3.2" text="Label attributes" />
+<tocitem target="4.4.3.3" text="Table attributes" />
+</tocitem>
+</tocitem>
+<tocitem target="4.5" text="Model navigator workspace" />
+<tocitem text="References" target="r"/>
+
+  </tocitem>
+</toc>

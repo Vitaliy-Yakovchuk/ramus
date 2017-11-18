@@ -52,7 +52,7 @@ crashlytics-build.properties
 ### Gradle ###
 .gradle
 build/
-dist/full
+dest/full
 
 # Ignore Gradle GUI config
 gradle-app.setting

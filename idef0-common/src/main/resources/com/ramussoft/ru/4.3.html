@@ -1,0 +1,693 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-format:other;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:roman;
+	mso-font-pitch:variable;
+	mso-font-signature:-1610611985 1107304683 0 0 159 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:-1610611985 1073750139 0 0 159 0;}
+@font-face
+	{font-family:"Arial Narrow";
+	mso-font-alt:"Helvetica Narrow";
+	mso-font-charset:204;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:647 0 0 0 159 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+h1
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:"Arial","sans-serif";
+	mso-bidi-font-family:Arial;
+	mso-font-kerning:16.0pt;
+	mso-fareast-language:RU;}
+h2
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:"Arial","sans-serif";
+	mso-bidi-font-family:Arial;
+	mso-fareast-language:RU;
+	font-style:italic;}
+h3
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:"Arial","sans-serif";
+	mso-bidi-font-family:Arial;
+	mso-fareast-language:RU;}
+h4
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-language:RU;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:18.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Arial","sans-serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:Arial;
+	text-transform:uppercase;
+	mso-fareast-language:RU;
+	font-weight:bold;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;
+	font-weight:bold;}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{mso-style-update:auto;
+	mso-style-priority:39;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:12.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc4, li.MsoToc4, div.MsoToc4
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:24.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc5, li.MsoToc5, div.MsoToc5
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc6, li.MsoToc6, div.MsoToc6
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:48.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc7, li.MsoToc7, div.MsoToc7
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:60.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc8, li.MsoToc8, div.MsoToc8
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:72.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoToc9, li.MsoToc9, div.MsoToc9
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-unhide:no;
+	mso-style-next:Обычный;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:84.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{mso-style-unhide:no;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 233.85pt right 467.75pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{mso-style-unhide:no;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:center 233.85pt right 467.75pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{mso-style-unhide:no;
+	mso-style-qformat:yes;
+	mso-style-next:Обычный;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-language:RU;
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	mso-style-unhide:no;
+	color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-unhide:no;
+	color:purple;
+	mso-themecolor:followedhyperlink;
+	text-decoration:underline;
+	text-underline:single;}
+ /* Page Definitions */
+ @page
+	{mso-footnote-separator:url("instruction.files/header.htm") fs;
+	mso-footnote-continuation-separator:url("instruction.files/header.htm") fcs;
+	mso-endnote-separator:url("instruction.files/header.htm") es;
+	mso-endnote-continuation-separator:url("instruction.files/header.htm") ecs;}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:2.0cm 42.5pt 2.0cm 3.0cm;
+	mso-header-margin:35.4pt;
+	mso-footer-margin:35.4pt;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	padding:24.0pt 24.0pt 24.0pt 24.0pt;
+	mso-header:url("instruction.files/header.htm") h1;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:1;
+	mso-list-template-ids:1;}
+@list l0:level1
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:21.6pt;
+	mso-level-number-position:left;
+	margin-left:21.6pt;
+	text-indent:-21.6pt;}
+@list l0:level2
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:28.8pt;
+	mso-level-number-position:left;
+	margin-left:28.8pt;
+	text-indent:-28.8pt;}
+@list l0:level3
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	margin-left:36.0pt;
+	text-indent:-36.0pt;}
+@list l0:level4
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:43.2pt;
+	mso-level-number-position:left;
+	margin-left:43.2pt;
+	text-indent:-43.2pt;}
+@list l0:level5
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:50.4pt;
+	mso-level-number-position:left;
+	margin-left:50.4pt;
+	text-indent:-50.4pt;}
+@list l0:level6
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:57.6pt;
+	mso-level-number-position:left;
+	margin-left:57.6pt;
+	text-indent:-57.6pt;}
+@list l0:level7
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:64.8pt;
+	mso-level-number-position:left;
+	margin-left:64.8pt;
+	text-indent:-64.8pt;}
+@list l0:level8
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	margin-left:72.0pt;
+	text-indent:-72.0pt;}
+@list l0:level9
+	{mso-level-number-format:none;
+	mso-level-text:"";
+	mso-level-tab-stop:79.2pt;
+	mso-level-number-position:left;
+	margin-left:79.2pt;
+	text-indent:-79.2pt;}
+@list l1
+	{mso-list-id:4;
+	mso-list-type:simple;
+	mso-list-template-ids:4;
+	mso-list-name:WW8Num4;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:63.0pt;
+	mso-level-number-position:left;
+	margin-left:63.0pt;
+	text-indent:-18.0pt;
+	mso-ascii-font-family:Symbol;
+	mso-hansi-font-family:Symbol;}
+@list l2
+	{mso-list-id:149912341;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1114254112 68747265 68747267 68747269 68747265 68747267 68747269 68747265 68747267 68747269;}
+@list l2:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:63.0pt;
+	mso-level-number-position:left;
+	margin-left:63.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l3
+	{mso-list-id:406652663;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1206914796 68747279 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l3:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l4
+	{mso-list-id:755786387;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-278856404 68747279 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l4:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l5
+	{mso-list-id:770901513;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-406430408 68747279 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l5:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l5:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l5:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:108.0pt;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l6
+	{mso-list-id:805708948;
+	mso-list-type:hybrid;
+	mso-list-template-ids:135018588 69337089 69337091 69337093 69337089 69337091 69337093 69337089 69337091 69337093;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	margin-left:72.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:838160050;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1855789970 68747265 68747267 68747269 68747265 68747267 68747269 68747265 68747267 68747269;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:63.0pt;
+	mso-level-number-position:left;
+	margin-left:63.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:1299996507;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-640010224 68747279 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l8:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:63.0pt;
+	text-indent:-18.0pt;}
+@list l9
+	{mso-list-id:1765372224;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1299527328 102931806 68747289 68747291 68747279 68747289 68747291 68747279 68747289 68747291;}
+@list l9:level1
+	{mso-level-text:"%1\)";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	margin-left:45.0pt;
+	text-indent:-18.0pt;}
+@list l10
+	{mso-list-id:1791587116;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1068012696 69337089 69337091 69337093 69337089 69337091 69337093 69337089 69337091 69337093;}
+@list l10:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	margin-left:72.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+</style></head>
+<body>
+<h2>
+2.3. Пункты меню «Диаграмма»</h2>
+
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Меню «Диаграмма» содержит
+следующие пункты:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Параметры страницы» </span></b><span lang=RU style='mso-ansi-language:
+RU'>- при вызове данного пункта меню, откроется окно, в котором можно задать
+параметры предварительного просмотра и печати диаграмм: формат печати,
+ориентация листов, ширина полей. Данное окно так же можно вызвать посредством
+нажатия кнопки на соответствующей панели инструментов.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Предварительный просмотр»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - при вызове данного пункта открывается окно с эскизами и изображениями
+диаграмм. В данном окне также присутствуют следующие элементы управления:
+кнопка вызова окна параметров страницы (см. предыдущий пункт); кнопка вызова
+окна печати (см. следующий пункт); поле для выбора масштаба изображения
+диаграмм; поле для выбора количества столбцов для размещения изображений
+диаграмм. Данное окно также можно вызвать посредством нажатия кнопки на
+соответствующей панели инструментов.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Печать»</span></b><span lang=RU style='mso-ansi-language:RU'> - при вызове
+данного пункта меню откроется окно, в котором можно задать параметры печати
+диаграмм модели. Окно содержит: поле, в котором можно выбрать принтер, на
+который будет подана печать диаграмм; список диаграмм доступных для печати
+(напротив названия каждой диаграммы можно снять или поставить отметку печати
+данной диаграммы); кнопки, с помощью которых можно снять отметки или же
+поставить отметки печати всех диаграмм; счетчик, в котором можно указать
+количество экземпляров каждой из печатаемых диаграмм; Кнопка вызова окна
+параметров страницы (см. соответствующий пункт выше). Данное окно так же можно
+вызвать посредством нажатия кнопки на соответствующей панели инструментов. Окно
+печати так же можно вызвать комбинацией клавиш Ctrl+P.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Режим стрелки»</span></b><span lang=RU style='mso-ansi-language:RU'> -
+Основной режим при работе с диаграммами. Данный режим позволяет манипулировать
+объектами диаграмм: перетягивать, менять размеры, отсоединять стрелки от краёв
+диаграммы или функционального блока и присоединять эти стрелки к функциональным
+блокам и левому краю диаграммы. В данный режим можно войти, нажав клавишу «Z»
+на клавиатуре, или же экранную кнопку на соответствующей панели инструментов.
+Альтернативный вариант выхода в данный режим из любого другого режима – клик
+правой кнопки мыши в любом пустом месте диаграммы. <o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Режим добавления функциональных блоков» </span></b><span lang=RU
+style='mso-ansi-language:RU'>- данный режим позволяет добавлять на диаграммы
+новые функциональные блоки путём клика левой кнопки мыши на диаграмме. В данный
+режим можно войти, нажав клавишу «X» на клавиатуре или же экранную кнопку на
+соответствующей панели инструментов.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Режим работы со стрелками»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный режим позволяет добавлять стрелки на диаграммы. В данный режим
+можно войти, нажав клавишу «C» на клавиатуре или же экранную кнопку на
+соответствующей панели инструментов.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Режим размещения тильд»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный режим позволяет размещать на диаграмме тильды связующие название
+стрелки и саму стрелку на диаграмме, для этого достаточно в данном режиме
+кликнуть левой кнопкой мыши на стрелку в месте, где должна начинаться тильда.
+Тильды не являются обязательным атрибутом IDEF0-диаграмм, но упрощают чтение
+диаграмм. В данный режим можно войти, нажав клавишу «V» на клавиатуре, или<span
+style='mso-spacerun:yes'>  </span>экранную кнопку на соответствующей панели
+инструментов.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Режим добавления внешних ссылок»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный режим позволяет размещать на диаграмме сущность диаграмм DFD
+«ссылка». Данный пункт доступен только для редактирования диаграмм DFD.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Режим добавления хранилищ данных»</span></b><span lang=RU
+style='mso-ansi-language:RU'> - данный режим позволяет размещать на диаграмме
+сущность диаграмм DFD «хранилище данных». Данный пункт доступен только для
+редактирования диаграмм DFD.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'><span style='mso-spacerun:yes'> </span>«Режим добавления текста» </span></b><span
+lang=RU style='mso-ansi-language:RU'>- данный режим позволяет добавить
+произвольный текст в любом месте диаграммы. Режим используется для добавления
+комментариев непосредственно на диаграмму. В данный режим можно войти, нажав
+клавишу «B» на клавиатуре, или<span style='mso-spacerun:yes'>  </span>экранную
+кнопку на соответствующей панели инструментов.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Сетка»</span></b><span lang=RU style='mso-ansi-language:RU'> - данный
+пункт позволяет включать и отключать видимость сетки, по узлам которой
+выравниваются функциональные блоки диаграммы и текстовые рамки (названия
+стрелок, комментарии). В данный режим можно войти, нажав клавишу «N» на
+клавиатуре или же экранную кнопку на соответствующей панели инструментов.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Перейти к родительской диаграмме»</span></b><span lang=RU
+style='mso-ansi-language:RU'> - данный пункт позволяет переместиться из текущей
+диаграммы в родительскую (см. принцип декомпозиции в IDEF0-диаграммах [1]).
+Данный пункт дублирует кнопка на соответствующей панели инструментов.
+Альтернативный вариант перемещения на родительскую диаграмму – зажав на
+клавиатуре кнопку Ctrl, кликнуть на пустом месте диаграммы (данный вариант
+значительно ускоряет скорость перемещения вверх по иерархии диаграмм).<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Перейти к дочерней диаграмме»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный пункт позволяет перейти из текущей диаграммы, в одну из дочерних.
+Для этого, на диаграмме должен быть выделен необходимый функциональный блок.
+Данный пункт дублирует кнопка на соответствующей панели инструментов.
+Альтернативный вариант перемещения на дочернюю диаграмму – зажав на клавиатуре
+кнопку Ctrl, кликнуть на необходимый функциональный блок левой кнопкой мыши
+(данный вариант значительно ускоряет скорость перемещения вниз по иерархии
+диаграмм).<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Центровать все стрелки»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный пункт позволяет отцентровать размещение всех стрелок,
+относительно функциональных блоков на текущей диаграмме. Функцию также можно
+выполнить с помощью комбинации горячих клавиш Alt+C. Данный способ позволяет
+быстро упорядочить вид диаграмм.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Вставить модели из файла»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный пункт позволяет вставить модель с другого файла. После выбора
+данного пункта меню, откроется окно открытие файла. После выбора файла,
+появится окно «Вставить из файла», в данном окне необходимо указать модели,
+которые необходимо вставить в текущий файл. Если в данном окне отметить поле
+«Импортировать все классификаторы» к текущему файлу будут прикреплены все
+классификаторы, используемые в файле, который мы прикрепляем.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Свойства модели»</span></b><span lang=RU style='mso-ansi-language:RU'> -
+данный пункт позволяет открыть окно для настройки свойств модели, диаграмма,
+которой открыта. Окно настройки моделей, позволяет: указать список атрибутов
+для функциональных блоков, порядок их отображения, указать атрибут, который
+используется в качества названия функциональных блоков; указать название
+проекта, для которого создается модель, автора проекта, место использования,
+дать описание проекту, указать статус контекстной диаграммы, а также указать
+читателей диаграмм модели.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Окно для настроек свойств
+модели можно, также открыть с помощью контекстного меню, заголовка активной
+диаграммы.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Свойства диаграммы»</span></b><span lang=RU style='mso-ansi-language:RU'>
+- данный пункт позволяет открыть окно настроек активной диаграммы. В данном
+окне можно указать автора диаграммы, дату создания, дату ревизии и статус
+диаграммы.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><span lang=RU style='mso-ansi-language:RU'>Окно для настроек свойств
+активной диаграммы можно, также открыть с помощью контекстного меню, заголовка
+активной диаграммы.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Экспортировать как рисунки»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный пункт позволяет сохранить диаграммы модели как рисунки, при этом
+можно задать размеры и формат файлов рисунков.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Экспортировать в IDL»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный пункт позволяет открыть окно сохранения модели в файл IDL. В
+данном окне нужно указать какую именно модель нужно экспортировать в файл IDL.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify;text-indent:27.0pt;line-height:
+150%'><b style='mso-bidi-font-weight:normal'><span lang=RU style='mso-ansi-language:
+RU'>«Импортировать из IDL»</span></b><span lang=RU style='mso-ansi-language:
+RU'> - данный пункт позволяет импортировать модель из файла IDL.<o:p></o:p></span></p>
+
+</body></html>

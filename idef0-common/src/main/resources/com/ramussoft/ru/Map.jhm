@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+<map version="1.0">
+<mapID target="img.toplevelfolder" url="icons/help.png" />
+<mapID target="img.levelfolder" url="icons/folder.png" />
+<mapID target="img.levelleaf" url="icons/leaf.png" />
+<mapID target="index.html" url="index.html" />
+<mapID target="1.html" url="1.html" />
+<mapID target="2.html" url="2.html" />
+<mapID target="3.html" url="3.html" />
+<mapID target="4.html" url="4.html" />
+<mapID target="4.1.html" url="4.1.html" />
+<mapID target="4.2.html" url="4.2.html" />
+<mapID target="4.3.html" url="4.3.html" />
+<mapID target="4.4.html" url="4.4.html" />
+<mapID target="4.5.html" url="4.5.html" />
+<mapID target="4.6.html" url="4.6.html" />
+<mapID target="5.html" url="5.html" />
+<mapID target="6.html" url="6.html" />
+<mapID target="6.1.html" url="6.1.html" />
+<mapID target="6.1.1.html" url="6.1.1.html" />
+<mapID target="6.1.2.html" url="6.1.2.html" />
+<mapID target="6.2.html" url="6.2.html" />
+<mapID target="6.2.1.html" url="6.2.1.html" />
+<mapID target="6.2.2.html" url="6.2.2.html" />
+<mapID target="6.3.html" url="6.3.html" />
+<mapID target="6.4.html" url="6.4.html" />
+<mapID target="6.4.1.html" url="6.4.1.html" />
+<mapID target="6.4.2.html" url="6.4.2.html" />
+<mapID target="7.html" url="7.html" />
+<mapID target="7.1.html" url="7.1.html" />
+<mapID target="7.2.html" url="7.2.html" />
+<mapID target="7.3.html" url="7.3.html" />
+<mapID target="8.html" url="8.html" />
+<mapID target="8.1.html" url="8.1.html" />
+<mapID target="8.2.html" url="8.2.html" />
+<mapID target="8.2.1.html" url="8.2.1.html" />
+<mapID target="8.2.2.html" url="8.2.2.html" />
+<mapID target="8.2.3.html" url="8.2.3.html" />
+<mapID target="8.2.4.html" url="8.2.4.html" />
+<mapID target="8.2.5.html" url="8.2.5.html" />
+<mapID target="8.2.6.html" url="8.2.6.html" />
+<mapID target="9.html" url="9.html" />
+<mapID target="9.1.html" url="9.1.html" />
+<mapID target="9.2.html" url="9.2.html" />
+<mapID target="9.3.html" url="9.3.html" />
+<mapID target="9.3.1.html" url="9.3.1.html" />
+<mapID target="9.3.2.html" url="9.3.2.html" />
+<mapID target="9.3.3.html" url="9.3.3.html" />
+<mapID target="9.3.4.html" url="9.3.4.html" />
+<mapID target="10.html" url="10.html" />
+<mapID target="11.html" url="11.html" />
+<mapID target="12.html" url="12.html" />
+</map>

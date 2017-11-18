@@ -73,8 +73,8 @@ Var javawPath
 
 # Installer languages
 !insertmacro MUI_LANGUAGE English
-!insertmacro MUI_LANGUAGE Russian
-!insertmacro MUI_LANGUAGE Ukrainian
+;!insertmacro MUI_LANGUAGE Russian
+;!insertmacro MUI_LANGUAGE Ukrainian
 
 ; License Language
 LicenseLangString MUILicense ${LANG_ENGLISH} "../LICENSE"
@@ -201,7 +201,7 @@ RmDir /r $INSTDIR
     SetOverwrite on
     File /r doc\*
 
-    SetOutPath "$INSTDIR\doc"
+    SetOutPath "$INSTDIR\lib"
     SetOverwrite on
     File /r full\lib\*
 
@@ -226,15 +226,14 @@ RmDir /r $INSTDIR
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Ramus Web Navigator.lnk" "$javawPath" '-cp "$INSTDIR\bin\ramus-startup.jar" com.ramussoft.Startup --close-startup com.ramussoft.navigator.ProjectNavigator' "$INSTDIR\bin\navigator.ico" "0"
 
 
-
-IntCmp $LANGUAGE ${LANG_UKRAINIAN} 0 nukr nukr
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Инструкция пользователя.lnk" '"$INSTDIR\doc\ru\Инструкция пользователя.pdf"'
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Технология JSSP.lnk" '"$INSTDIR\doc\ru\Технология JSSP.pdf"'
-nukr:
-IntCmp $LANGUAGE ${LANG_RUSSIAN} 0 nrus nrus
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Инструкция пользователя.lnk" '"$INSTDIR\doc\ru\Инструкция пользователя.pdf"'
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Технология JSSP.lnk" '"$INSTDIR\doc\ru\Технология JSSP.pdf"'
-nrus:
+;IntCmp $LANGUAGE ${LANG_UKRAINIAN} 0 nukr nukr
+;    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\РРЅСЃС‚СЂСѓРєС†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ.lnk" '"$INSTDIR\doc\ru\РРЅСЃС‚СЂСѓРєС†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ.pdf"'
+;    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\РўРµС…РЅРѕР»РѕРіРёСЏ JSSP.lnk" '"$INSTDIR\doc\ru\РўРµС…РЅРѕР»РѕРіРёСЏ JSSP.pdf"'
+;nukr:
+;IntCmp $LANGUAGE ${LANG_RUSSIAN} 0 nrus nrus
+;    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\РРЅСЃС‚СЂСѓРєС†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ.lnk" '"$INSTDIR\doc\ru\РРЅСЃС‚СЂСѓРєС†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ.pdf"'
+;    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\РўРµС…РЅРѕР»РѕРіРёСЏ JSSP.lnk" '"$INSTDIR\doc\ru\РўРµС…РЅРѕР»РѕРіРёСЏ JSSP.pdf"'
+;nrus:
 
 
     WriteRegStr HKLM "Software\Classes\Ramusfile0" "" '"Ramus File"'

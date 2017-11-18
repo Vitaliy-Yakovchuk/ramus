@@ -1,0 +1,429 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head><body>
+<H4 CLASS="western">4.4.3.3. Table attributes</H4>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Column count</B> is
+an attribute to set a column count in the table. If this attribute is
+empty, then the table contains one column.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Query</B> is an
+attribute to set a query for getting data from a project. A query
+sets a way of data getting from a project. The query is a set of
+keywords, divided by dot “.”. First keyword in the query is
+always a name of base qualifier for the report (see chapter 4.4.3.1.
+Report attributes). You should perceive every keyword in a query as a
+qualifier of some type (qualifier of activities, qualifier of streams
+or any other qualifier created by an user). Depending on this
+qualifier type, you can use different next keywords. Every keyword
+also results a qualifier of some type.</P>
+<P STYLE="margin-top: 0.08in; page-break-after: avoid"><FONT SIZE=3><I>Table
+1: Keyword, that can be used after activity boxes</I></FONT></P>
+<TABLE WIDTH=665 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 STYLE="page-break-after: avoid">
+	<COL WIDTH=213*>
+	<COL WIDTH=300*>
+	<COL WIDTH=126*>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY><B>Keyword</B></P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY><B>Definition</B></P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY><B>Qualifier type</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY>Inputs</P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY>Keyword returns a set of inputs.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY>Streams</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY>InputsControls</P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY>Keyword returns a set of inputs and controls.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY>Streams</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY>InputsMechanisms</P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY>Keyword returns a set of inputs and mechanisms.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY>Streams</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY>InputsControlsMechanisms</P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY>Keyword returns a set of inputs and and controls
+			mechanisms.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY>Streams</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY>Outputs</P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY>Keyword returns a set of outputs.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY>Streams</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY>Controls</P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY>Keyword returns a set of controls.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY>Streams</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY>Mechanisms</P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY>Keyword returns a set of mechanisms.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY>Streams</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=JUSTIFY>Owners</P>
+		</TD>
+		<TD WIDTH=50%>
+			<P ALIGN=JUSTIFY>Keyword returns a set of owners.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=JUSTIFY>Qualifier of owner</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-top: 0.08in; page-break-after: avoid"><BR><BR>
+</P>
+<P STYLE="margin-top: 0.08in; page-break-before: always"><FONT SIZE=3><I>Table
+2: Keywords, that can be used after streams</I></FONT></P>
+<TABLE WIDTH=665 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 STYLE="page-break-after: avoid">
+	<COL WIDTH=213*>
+	<COL WIDTH=300*>
+	<COL WIDTH=126*>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY><B>Keyword</B></P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY><B>Definition</B></P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY><B>Qualifier type</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Inputs</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which the stream is an input. Every activity 
+			shouldn't have a decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">InputsControls</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which the stream is an input or a control.
+			Every activity  shouldn't have a decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY>InputsMechanisms</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which the stream is an input or a mechanism.
+			Every activity  shouldn't have a decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY>InputsControlsMechanisms</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which the stream is an input or a control or a
+			mechanism. Every activity  shouldn't have a decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY>Outputs</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which the stream is an output. Every activity 
+			shouldn't have a decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY>Controls</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which the stream is a control. Every activity 
+			shouldn't have a decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY>Mechanisms</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which the stream is a mechanism. Every activity
+			 shouldn't have a decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY>Qualifiers</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			elements, which are linked to the stream.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY>Qualifier created by an user.</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=213>
+			<P ALIGN=JUSTIFY>“Name of a qualifier”</P>
+		</TD>
+		<TD WIDTH=300>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			elements, which are linked to the stream, and which are belong to
+			a qualifier with the set name.</P>
+		</TD>
+		<TD WIDTH=126>
+			<P ALIGN=JUSTIFY>A qualifier created by an user, with the same
+			name.</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-top: 0.08in; page-break-after: avoid"><BR><BR>
+</P>
+<P STYLE="margin-top: 0.08in; page-break-before: always"><FONT SIZE=3><I>Table
+3: Keywords, that can be used after a user qualifier</I></FONT></P>
+<TABLE WIDTH=665 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 STYLE="page-break-after: avoid">
+	<COL WIDTH=213*>
+	<COL WIDTH=300*>
+	<COL WIDTH=126*>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY><B>Keyword</B></P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY><B>Definition</B></P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY><B>Qualifier type</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>Inputs</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which stream is an input, and the element is
+			linked the stream. Every activity  shouldn't have a decomposition
+			diagram.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>InputsControls</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which stream is an input or a control , and the
+			element is linked the stream. Every activity  shouldn't have a
+			decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>InputsMechanisms</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which stream is an input or mechanism, and the
+			element is linked the stream. Every activity  shouldn't have a
+			decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>InputsControlsMechanisms</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which stream is an input or a control or a
+			mechanism, and the element is linked the stream. Every activity 
+			shouldn't have a decomposition diagram.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>Outputs</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which stream is an output, and the element is
+			linked the stream. Every activity  shouldn't have a decomposition
+			diagram.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>Controls</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which stream is a control, and the element is
+			linked the stream. Every activity  shouldn't have a decomposition
+			diagram.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>Mechanisms</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for which stream is a mechanism, and the element is
+			linked the stream. Every activity  shouldn't have a decomposition
+			diagram.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>Owners</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of activities, for with the element is an owner.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY>Activities</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>“Projection name”</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a set
+			of elements linked with projection to the element.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY>Qualifier, that is linked to a current qualifier
+			with a projection.</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=182>
+			<P ALIGN=JUSTIFY>Attribute name of “Qualifier element”
+			attribute.</P>
+		</TD>
+		<TD WIDTH=341>
+			<P ALIGN=JUSTIFY STYLE="font-weight: normal">Keyword returns a a
+			set of elements linked with qualifier element attribute to the
+			element.</P>
+		</TD>
+		<TD WIDTH=116>
+			<P ALIGN=JUSTIFY><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Border</B> is an
+attribute to set border weight. If this attribute is empty, the table
+will not have a border.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Print for</B>. With
+this attribute you can filter tables. If this attribute is empty,
+then the table will be present for all elements.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Table's elements “Title
+element” and “Body element” have attributes just like a Label
+element (see chapter <a href="4.4.3.2.html">4.4.3.2. Label attributes</a>).</P>
+</body></html>

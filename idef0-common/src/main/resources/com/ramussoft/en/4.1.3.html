@@ -1,0 +1,85 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head><body>
+<H3 CLASS="western">4.1.3 Attributes window</H3>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Every attribute should
+be created, before it can be added to any qualifier. Attributes
+window serves to edit these attributes. The window contains all
+attributes, which are used in a project. By default, a new project
+already contains one attribute with name “Name”, which will
+automatically be added to an every new qualifier (see above).</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">The window commands do
+similar things to the commands of Elements and Qualifiers windows.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Create attribute</B>
+is a command to create a new attribute.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Order by name</B> is
+a command to sort all attributes by their names.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Delete attribute</B>
+is a command to remove selected attribute.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Attribute preferences</B>
+is a command to edit selected attribute.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in"><B>Create attribute</B>
+is a command to open a dialog, where you can set a name and select a
+type of a new attribute. There are present some additional
+preferences, in the dialog for some types.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Attribute types:</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“String”</B>
+is a type for attributes with a simple text. The string type can be
+used to set a name of a documents for example.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Number”</B>
+is a type for attributes with decimal numbers. A precision of number
+values is about 16 symbols and range is about from ten in -308 to ten
+in 324.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Integer”</B>
+is a type for attributes with integer numbers. The range of available
+integer values is from <SPAN>-9223372036854775808 to
+9223372036854775807</SPAN>. 
+</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Date”</B>
+is a type for attributes with dates.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Currency”</B>
+is a type equivalent to a “Number”, but values of currency
+attribute are formated as currency.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Qualifier
+element”</B>. Values of this attribute can contain values of an
+other qualifier. For example, attribute “Responsible for filling”
+in a qualifier “Documents” can contain values from attribute
+“Appointment” of a qualifier  “Workers”.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Variant
+list”</B>.  Values of this attribute can contain text values.
+Already present values can be selected from a list. Variants of
+values can be set-up in preferences of the attribute with such a
+type.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Attached
+file”</B>. Values of this attribute can contain attached files. For
+example, it can be a document example, etc.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Describe”</B>.
+Sometimes, it is important to have a long formatted description of
+some object (for example a description of IDEF0 Activity Box).
+Attributes with type “Describe” can contain a long formatted
+text. <B>Warning!</B> All changes, that were made in a value with
+type describe will not be inserted in a history of user's actions and
+you will not be able to undo an action with a report.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Type <B>“Table”</B>.
+Values of this type can contain table with cells of any type. Columns
+of such tables are formed from any attributes of a project.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">As it was mentioned
+above, for some attribute types some additional preferences are
+available.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">For a “Qualifier
+element” type, you should set a qualifier and an attribute of this
+qualifier, which will be used as value.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">For a “Variant list”
+type, you can set a list of text variants. For a variant list
+available buttons to add, remove, move up and move down variants. New
+values will be automatically added to the variant list, while setting
+a value of an attribute with “Variant list”.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">For a “Table” type,
+you should set at least one attribute, which will be used as a column
+of a new table.</P>
+<P ALIGN=JUSTIFY STYLE="text-indent: 0.38in">Some of already created
+attributes can be set-up later. To set-up already created attribute
+double click on the attribute, or select the attribute you want to
+change and press “Attribute preferences” button on the top of the
+Attributes window.</P>
+</body></html>

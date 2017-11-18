@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" 
+         "http://java.sun.com/products/javahelp/index_1_0.dtd">
+
+<index version="1.0">
+    <indexitem target="0" text="Annotation" />
+<indexitem target="1" text="Beginning of work" />
+<indexitem target="2" text="Working with main menu" />
+<indexitem target="2.1" text="File menu" />
+<indexitem target="2.2" text="Edit menu" />
+<indexitem target="2.3" text="Diagram menu" />
+<indexitem target="2.4" text="Windows menu" />
+<indexitem target="2.5" text="Tools menu" />
+<indexitem target="2.6" text="Help menu" />
+<indexitem target="3" text="Graphical user interface" />
+<indexitem target="4" text="Workspaces" />
+<indexitem target="4.1" text="Qualifiers workspace" />
+<indexitem target="4.1.1" text="Qualifiers window" />
+<indexitem target="4.1.1.1" text="Qualifiers window commands" />
+<indexitem target="4.1.1.2" text="Working with a list of qualifiers" />
+<indexitem target="4.1.2" text="Elements editor" />
+<indexitem target="4.1.2.1" text="Elements editor commands" />
+<indexitem target="4.1.2.2" text="Working with a list of elements" />
+<indexitem target="4.1.3 " text="Attributes window" />
+<indexitem target="4.1.4" text="Element attributes editor and Attribute editor windows" />
+<indexitem target="4.1.4.1" text="Attribute editor window" />
+<indexitem target="4.1.4.2" text="Element attributes editor window" />
+<indexitem target="4.2" text="Projections workspace" />
+<indexitem target="4.2.1" text="Projections window" />
+<indexitem target="4.2.2" text="Standard projection editor" />
+<indexitem target="4.2.3" text="Table projection editor" />
+<indexitem target="4.3" text="Diagrams workspace" />
+<indexitem target="4.3.1" text="Models window" />
+<indexitem target="4.3.2" text="Graphical editor" />
+<indexitem target="4.3.2.1" text="Diagram and model preferences" />
+<indexitem target="4.3.2.2" text="Adding objects on diagrams" />
+<indexitem target="4.3.2.3" text="Creating a decomposition diagrams" />
+<indexitem target="4.3.2.4" text="Activity box contarget menu" />
+<indexitem target="4.3.2.5" text="Arrow contarget menu" />
+<indexitem target="4.3.2.6" text="Stream tab" />
+<indexitem target="4.4" text="Report editor workspace" />
+<indexitem target="4.4.1" text="Reports window" />
+<indexitem target="4.4.2" text="Report editor window" />
+<indexitem target="4.4.3" text="Report attributes window" />
+<indexitem target="4.4.3.1" text="Report attributes" />
+<indexitem target="4.4.3.2" text="Label attributes" />
+<indexitem target="4.4.3.3" text="Table attributes" />
+<indexitem target="4.5" text="Model navigator workspace" />
+<indexitem text="References" target="r"/>
+</index>
+

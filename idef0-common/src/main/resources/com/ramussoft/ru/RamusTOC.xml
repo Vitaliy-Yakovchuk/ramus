@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+<toc version="1.0">
+<tocitem image="img.toplevelfolder" text="Оглавление" target="index.html">
+<tocitem image="img.levelleaf" text="Аннотация" target="1.html"/>
+<tocitem image="img.levelleaf" text="Глоссарий" target="2.html"/>
+<tocitem image="img.levelleaf" text="1. Начало работы" target="3.html"/>
+<tocitem image="img.levelfolder" text="2. Работа с главным меню" target="4.html">
+<tocitem image="img.levelleaf" text="2.1 Пункты меню «Файл»." target="4.1.html"/>
+<tocitem image="img.levelleaf" text="2.2. Пункты меню «Правка»" target="4.2.html"/>
+<tocitem image="img.levelleaf" text="2.3. Пункты меню «Диаграмма»" target="4.3.html"/>
+<tocitem image="img.levelleaf" text="2.4. Пункты меню «Окна»" target="4.4.html"/>
+<tocitem image="img.levelleaf" text="2.5. Пункты меню «Сервис»" target="4.5.html"/>
+<tocitem image="img.levelleaf" text="2.6. Пункты меню «Помощь»" target="4.6.html"/>
+</tocitem>
+<tocitem image="img.levelleaf" text="3. Работа с оконным интерфейсом программы" target="5.html"/>
+<tocitem image="img.levelfolder" text="4. Работа в рабочем пространстве «Классификаторы»" target="6.html">
+<tocitem image="img.levelfolder" text="4.1. Работа с окном «Классификаторы»" target="6.1.html">
+<tocitem image="img.levelleaf" text="4.1.1. Работа с кнопками окна «Классификаторы»" target="6.1.1.html"/>
+<tocitem image="img.levelleaf" text="4.1.2. Работа со списком классификаторов" target="6.1.2.html"/>
+</tocitem>
+<tocitem image="img.levelfolder" text="4.2. Работа с окном отдельного классификатора" target="6.2.html">
+<tocitem image="img.levelleaf" text="4.2.1. Работа с кнопками окна отдельного классификатора" target="6.2.1.html"/>
+<tocitem image="img.levelleaf" text="4.2.2. Работа со списком элементов классификатора" target="6.2.2.html"/>
+</tocitem>
+<tocitem image="img.levelleaf" text="4.3. Работа с окном «Набор атрибутов»" target="6.3.html"/>
+<tocitem image="img.levelfolder" text="4.4. Работа с окнами «Редактор атрибутов элемента» и «Редактор атрибута»" target="6.4.html">
+<tocitem image="img.levelleaf" text="4.4.1. Работа с окном «Редактор атрибута»" target="6.4.1.html"/>
+<tocitem image="img.levelleaf" text="4.4.2. Работа с окном «Редактор атрибутов элемента»" target="6.4.2.html"/>
+</tocitem>
+</tocitem>
+<tocitem image="img.levelfolder" text="5. Работа в рабочем пространстве «Матричные проекции»" target="7.html">
+<tocitem image="img.levelleaf" text="5.1. Работа с окном «Матричные проекции»" target="7.1.html"/>
+<tocitem image="img.levelleaf" text="5.2. Работа с матричной проекцией в стандартном представлении" target="7.2.html"/>
+<tocitem image="img.levelleaf" text="5.3. Работа с матричной проекцией в табличном представлении" target="7.3.html"/>
+</tocitem>
+<tocitem image="img.levelfolder" text="6. Работа в рабочем пространстве «Диаграммы»" target="8.html">
+<tocitem image="img.levelleaf" text="6.1. Работа с окном «Модели»" target="8.1.html"/>
+<tocitem image="img.levelfolder" text="6.2. Работа в графическом редакторе" target="8.2.html">
+<tocitem image="img.levelleaf" text="6.2.1. Изменение свойств диаграммы" target="8.2.1.html"/>
+<tocitem image="img.levelleaf" text="6.2.2. Добавление объектов на диаграммы" target="8.2.2.html"/>
+<tocitem image="img.levelleaf" text="6.2.3. Создание дочерней диаграммы" target="8.2.3.html"/>
+<tocitem image="img.levelleaf" text="6.2.4. Работа с контекстным меню функционального блока" target="8.2.4.html"/>
+<tocitem image="img.levelleaf" text="6.2.5. Работа с контекстным меню стрелки" target="8.2.5.html"/>
+<tocitem image="img.levelleaf" text="6.2.6. Работа с вкладкой «Поток»" target="8.2.6.html"/>
+</tocitem>
+</tocitem>
+<tocitem image="img.levelfolder" text="7. Работа в рабочем пространстве «Редактор отчётов»" target="9.html">
+<tocitem image="img.levelleaf" text="7.1. Работа с окном «Отчёты»" target="9.1.html"/>
+<tocitem image="img.levelleaf" text="7.2. Работа с окном редактора отчётов" target="9.2.html"/>
+<tocitem image="img.levelfolder" text="7.3. Работа с окном «Атрибуты отчёта»" target="9.3.html">
+<tocitem image="img.levelleaf" text="7.3.1. Атрибуты отчета" target="9.3.1.html"/>
+<tocitem image="img.levelleaf" text="7.3.2. Атрибуты элемента «Надпись»" target="9.3.2.html"/>
+<tocitem image="img.levelleaf" text="7.3.3. Атрибуты элемента «Таблица»" target="9.3.3.html"/>
+<tocitem image="img.levelleaf" text="7.3.4. Атрибуты элемента «Столбец таблицы»" target="9.3.4.html"/>
+</tocitem>
+</tocitem>
+<tocitem image="img.levelleaf" text="8. Работа в рабочем пространстве «Навигатор по модели»" target="10.html"/>
+<tocitem image="img.levelleaf" text="Список использованной литературы" target="11.html"/>
+<tocitem image="img.levelleaf" text="Приложение 1. Правила составления формул в классификаторах" target="12.html"/>
+</tocitem>
+</toc>
