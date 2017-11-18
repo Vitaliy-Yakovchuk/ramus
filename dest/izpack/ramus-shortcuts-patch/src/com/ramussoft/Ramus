@@ -1,0 +1,22 @@
+[Desktop Entry]
+Categories=
+Comment=Software for providing projects, where Business Process Analysis or (and) Classification Systems are needed.
+Comment[uk]=Software for providing projects, where Business Process Analysis or (and) Classification Systems are needed.
+Encoding=UTF-8
+Exec="{0}/bin/ramus" 
+GenericName=
+GenericName[uk]=
+Icon={0}/icon.png
+MimeType=application/x-ramus-extension-rsf;
+Name=Ramus
+Name[uk]=Ramus
+Path="{0}/bin"
+ServiceTypes=
+SwallowExec=
+SwallowTitle=
+Terminal=false
+TerminalOptions=
+Type=Application
+URL=
+X-KDE-SubstituteUID=false
+X-KDE-Username=root

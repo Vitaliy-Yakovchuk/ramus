@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<installation version="1.0">
+
+    <!-- 
+        The info section.
+        The meaning of the tags should be natural ...
+    -->
+    <info>
+        <appname>Ramus</appname>
+        <appversion>1.2.8</appversion>
+		<appsubpath>ramus-1.2.8</appsubpath>
+		<authors>
+			<author name="Ramus soft group" email="Vitaliy.Yakovchuk@gmail.com"/>
+		</authors>
+		<url>http://ramussoftware.com/</url>
+    </info>
+    
+    <!-- 
+        The gui preferences indication.
+        Sets the installer window to 640x480. It will not be able to change the size.
+    -->
+    <guiprefs width="640" height="480" resizable="no"/>
+    
+    <!-- 
+        The locale section.
+        Asks here to include the English and French langpacks.
+    -->
+    <locale>
+		<!--langpack iso3="ukr"/-->
+		<langpack iso3="eng"/>
+		<langpack iso3="rus"/>		
+	</locale>
+	<resources>
+		<res src="default_shortcut_specification.xml"
+		 id="shortcutSpec.xml"/>
+		<res src="unix_shortcut_specification.xml"
+			 id="Unix_shortcutSpec.xml"/>
+        <res id="HTMLLicencePanel.licence" src="license.html"/>
+	</resources>
+
+	<!-- 
+        The resources section.
+        The ids must be these ones if you want to use the LicencePanel and/or the InfoPanel.
+    -->
+
+	<!-- 
+        The panels section.
+        We indicate here which panels we want to use. The order will be respected.
+    -->
+	<panels>
+		<panel classname="HelloPanel"/>
+	        <panel classname="HTMLLicencePanel"/>
+		<panel classname="TargetPanel"/>
+<!--<panel classname="PacksPanel"/>-->
+		<panel classname="ShortcutPanel"/>
+		<panel classname="InstallPanel"/>
+		<panel classname="FinishPanel"/>
+	</panels>
+
+	<!-- 
+        The packs section.
+        We specify here our packs.
+    -->
+	<packs>
+		<pack name="Core" required="yes">
+			<description>Базовый пакет</description>
+			<file src="../release/bin" targetdir="$INSTALL_PATH"/>
+			<file src="../release/lib/ramus-common.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-core.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-core-simple-attributes.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-database-storage.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-data-framework-common.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-gui-framework-common.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-gui-framework-core.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-gui-qualifier.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-gui-resources.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-idef0-common.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-idef0-core.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-idef0-report-core.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-idef0-resources.jar" targetdir="$INSTALL_PATH/lib"/>
+
+			<file src="../release/lib/ramus-report-common.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-report-core.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-report-resources.jar" targetdir="$INSTALL_PATH/lib"/>
+
+			<file src="../release/lib/ramus-local-client.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-startup.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-help.jar" targetdir="$INSTALL_PATH/lib"/>
+			
+			<file src="../release/lib/jh/LICENSE.html" targetdir="$INSTALL_PATH/lib/jh"/>
+			<file src="../release/lib/jh/jh.jar" targetdir="$INSTALL_PATH/lib/jh"/>
+			
+			<file src="../release/lib/swingx/swingx-1.6.jar" targetdir="$INSTALL_PATH/lib/swingx"/>
+			<file src="../release/lib/swingx/LICENSE.txt" targetdir="$INSTALL_PATH/lib/swingx"/>
+			
+			<file src="../release/lib/tablelayout/TableLayout-bin-jdk1.5-2007-04-21.jar" targetdir="$INSTALL_PATH/lib/tablelayout"/>
+			<file src="../release/lib/tablelayout/LICENSE.txt" targetdir="$INSTALL_PATH/lib/tablelayout"/>
+						
+			<file src="../release/lib/browserlauncher/BrowserLauncher2-1_3.jar" targetdir="$INSTALL_PATH/lib/browserlauncher"/>
+			<file src="../release/lib/browserlauncher/LICENSE.txt" targetdir="$INSTALL_PATH/lib/browserlauncher"/>
+			
+			<file src="../release/lib/dockingframes/dockingFramesCommon.jar" targetdir="$INSTALL_PATH/lib/dockingframes"/>
+			<file src="../release/lib/dockingframes/dockingFramesCore.jar" targetdir="$INSTALL_PATH/lib/dockingframes"/>
+			<file src="../release/lib/dockingframes/LICENSE.txt" targetdir="$INSTALL_PATH/lib/dockingframes"/>
+			
+			<file src="../release/lib/h2/h2.jar" targetdir="$INSTALL_PATH/lib/h2"/>
+			<file src="../release/lib/h2/NOTICE.txt" targetdir="$INSTALL_PATH/lib/h2"/>
+			
+			<file src="../release/lib/jericho-html/jericho-html.jar" targetdir="$INSTALL_PATH/lib/jericho-html"/>
+			<file src="../release/lib/jericho-html/LICENSE.txt" targetdir="$INSTALL_PATH/lib/jericho-html"/>
+			
+			<file src="../release/lib/my-spell/my-spell-core.jar" targetdir="$INSTALL_PATH/lib/my-spell"/>
+			<file src="../release/lib/my-spell/my-spell-swing.jar" targetdir="$INSTALL_PATH/lib/my-spell"/>
+			<file src="../release/lib/my-spell/LICENSE.txt" targetdir="$INSTALL_PATH/lib/my-spell"/>
+			
+			<file src="../release/lib/js/js.jar" targetdir="$INSTALL_PATH/lib/js"/>
+			<file src="../release/lib/js/LICENSE.txt" targetdir="$INSTALL_PATH/lib/js"/>
+			
+			<file src="../release/lib/jsyntaxpane/jsyntaxpane.jar" targetdir="$INSTALL_PATH/lib/jsyntaxpane"/>
+			<file src="../release/lib/jsyntaxpane/LICENSE" targetdir="$INSTALL_PATH/lib/jsyntaxpane"/>
+			<file src="../release/lib/jsyntaxpane/NOTICE" targetdir="$INSTALL_PATH/lib/jsyntaxpane"/>
+			
+			<file src="../release/lib/batik/batik-awt-util.jar" targetdir="$INSTALL_PATH/lib/batik"/>
+			<file src="../release/lib/batik/batik-dom.jar" targetdir="$INSTALL_PATH/lib/batik"/>
+			<file src="../release/lib/batik/batik-ext.jar" targetdir="$INSTALL_PATH/lib/batik"/>
+			<file src="../release/lib/batik/batik-svggen.jar" targetdir="$INSTALL_PATH/lib/batik"/>
+			<file src="../release/lib/batik/batik-util.jar" targetdir="$INSTALL_PATH/lib/batik"/>
+			<file src="../release/lib/batik/batik-xml.jar" targetdir="$INSTALL_PATH/lib/batik"/>
+			<file src="../release/lib/batik/LICENSE" targetdir="$INSTALL_PATH/lib/batik"/>
+			<file src="../release/lib/batik/NOTICE" targetdir="$INSTALL_PATH/lib/batik"/>
+			
+			
+			<file src="../release/lib/vectorgraphics/freehep-export-2.1.1.jar" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/freehep-graphics2d-2.1.1.jar" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/freehep-graphicsio-2.1.1.jar" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/freehep-graphicsio-emf-2.1.1.jar" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/freehep-io-2.0.2.jar" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/freehep-util-2.0.2.jar" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/freehep-xml-2.1.1.jar" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/LGPL.txt" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/LICENSE.txt" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			<file src="../release/lib/vectorgraphics/README.txt" targetdir="$INSTALL_PATH/lib/vectorgraphics"/>
+			
+			
+			<file src="../release/lib/ramus-script-framework.jar" targetdir="$INSTALL_PATH/lib"/>
+			<file src="../release/lib/ramus-project-navigator.jar" targetdir="$INSTALL_PATH/lib"/>
+			
+
+			<file src="./icon.png" targetdir="$INSTALL_PATH"/>
+			<file src="./icon.ico" targetdir="$INSTALL_PATH"/>
+			<file src="./navigator.png" targetdir="$INSTALL_PATH"/>
+			<file src="./navigator.ico" targetdir="$INSTALL_PATH"/>
+			<file src="./trashcan_empty.png" targetdir="$INSTALL_PATH"/>
+			<file src="./patch-shortcats.sh" targetdir="$INSTALL_PATH"/>
+			<file src="./ramus-shortcuts-unix-patch.jar" targetdir="$INSTALL_PATH"/>
+			
+			
+			
+			<file src="../linux-sh/ramus" targetdir="$INSTALL_PATH/bin"/>
+			<file src="../linux-sh/ramus-web-navigator" targetdir="$INSTALL_PATH/bin"/>
+			<file src="../linux-sh/uninstaller" targetdir="$INSTALL_PATH/Uninstaller"/>
+			
+			<executable targetfile="$INSTALL_PATH/bin/ramus" stage="never">
+			  <os family="unix"/>
+			</executable>
+			<executable targetfile="$INSTALL_PATH/bin/ramus-web-navigator" stage="never">
+			  <os family="unix"/>
+			</executable>
+			<executable targetfile="$INSTALL_PATH/Uninstaller/uninstaller" stage="never">
+			  <os family="unix"/>
+			</executable>
+			<executable targetfile="$INSTALL_PATH/patch-shortcats.sh" stage="postinstall">
+			  <os family="unix"/>
+			</executable>
+			
+		</pack>
+    </packs>
+	<native type="izpack" name="ShellLink.dll"/>
+	<native type="izpack" name="ShellLink_x64.dll"/>
+</installation>

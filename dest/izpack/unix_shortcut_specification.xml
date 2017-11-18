@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<!-- 
+	Notes: 
+	Since there is no dtd (yet), here is a short explanation
+	of the last change.
+	- Each Shortcut has now a optional attribute
+
+	createForAll="yes|no"
+	
+	new at 2006-09-06:
+	TryExec="aTryExecCommand" will passes raw thru
+	Categories="Where to put in [K]-Menu"
+	 
+	As root you can create Shortcuts for all users or even only for yourself.
+	This can be the case i.e. for the uninstaller.
+	If you whant to do so, set createForAll to true otherwise to false, which is the default.
+	
+	! If not explicite set or present the default is false.	
+	
+	New Attibute for Root Installation on Linux:	
+		 
+	Categories="Development;IDE" 
+	   
+	TryExec="java -jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
+	   
+    Here are some Sample Categories and their apps
+		 examine *.desktop files in /usr/share/applications ...
+     Categories="Application;Network;WebDevelopment"    Nvu
+	 Categories="Qt;Development;GUIDesigner"    QtDesigner3
+	 Categories="Application;System;"   VwareServer-console  
+	 Categories="Network;WebBrowser"    Opera
+	 Categories="Development;Debugger"    DDD debugger
+     Categories="Development;IDE"    Eclipse IDE
+	 Categories="SystemSetup;X-SuSE-Core-System" Yast2
+	 Categories="System;Archiving" Sesam archiving
+    
+-->
+
+<shortcuts>
+<programGroup defaultName="Ramus" location="applications"/>
+
+	<shortcut
+	  type="Application"
+	  name="Ramus"
+	  programGroup="yes"
+          desktop="no"
+          applications="no"
+          startMenu="yes"
+          startup="no"
+          target="&quot;$INSTALL_PATH/bin/ramus&quot;"
+	  commandLine=""
+	  
+	  iconFile="$INSTALL_PATH\icon.png"
+	  iconIndex="0"
+	  initialState="normal"
+	  workingDirectory="&quot;$INSTALL_PATH/bin&quot;"
+	  encoding="UTF-8"
+	  terminal="false"
+	    
+	  description="Software for providing projects, where Business Process Analysis or (and) Classification Systems are needed."
+	>
+
+		<createForPack name="Core" />
+	</shortcut>
+
+ <shortcut
+     name="Ramus Web Navigator"
+     type="Application"
+	  programGroup="yes"
+          desktop="no"
+          applications="no"
+          startMenu="yes"
+          startup="no"
+          target="&quot;$INSTALL_PATH/bin/ramus-web-navigator&quot;"
+	  commandLine=""
+	  
+	  iconFile="$INSTALL_PATH\navigator.png"
+	  iconIndex="0"
+	  initialState="normal"
+	  workingDirectory="$INSTALL_PATH/bin"
+	  encoding="UTF-8"
+	  terminal="false"
+	  description="Ramus Web Navigator"
+	  >
+          
+     <createForPack name="Core" />
+   </shortcut>
+
+	<shortcut
+     name="Ramus Uninstaller"
+     type="Application"
+	  programGroup="yes"
+          desktop="no"
+          applications="no"
+          startMenu="yes"
+          startup="no"
+          target="&quot;$INSTALL_PATH/Uninstaller/uninstaller&quot;"
+	  commandLine=""
+	  
+	  iconFile="$INSTALL_PATH\trashcan_empty.png"
+	  iconIndex="0"
+	  initialState="normal"
+	  workingDirectory="$INSTALL_PATH/Uninstaller"
+	  encoding="UTF-8"
+	  terminal="false"
+	  description="Ramus Uninstaller"
+	  >
+          
+     <createForPack name="Core" />
+   </shortcut>
+   
+   
+</shortcuts>

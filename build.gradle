@@ -1,6 +1,22 @@
 group 'com.vitalex.ramus'
 version '1.0-SNAPSHOT'
 
+apply plugin: 'com.bmuschko.izpack'
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-izpack-plugin:2.1'
+    }
+}
+
+dependencies {
+    izpack 'org.codehaus.izpack:izpack-standalone-compiler:4.3.4'
+}
+
+
 allprojects {
     apply plugin: 'java'
     sourceCompatibility = 1.6
@@ -36,3 +52,11 @@ task copyDeps(type: Copy) {
 }
 
 task copyFiles(dependsOn: [copyJars, copyDeps, moveStartup])
+
+izpack {
+   // baseDir = file("$buildDir/assemble/izpack")
+    installFile = file('dest/izpack/ramus.xml')
+    outputFile = file("$buildDir/dest/full/ramus-2.0-installer.jar")
+    compression = 'deflate'
+    compressionLevel = 9
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<shortcuts>
+
+  <skipIfNotSupported />
+
+  <programGroup defaultName="Ramus" location="applications"/>
+
+   <shortcut
+     name="Ramus"
+     programGroup="yes"
+     desktop="no"
+     applications="no"
+     startMenu="no"
+     startup="no"
+     target="$INSTALL_PATH\bin\ramus-startup.jar"
+	 iconFile="$INSTALL_PATH\icon.ico"
+     commandLine=""
+     description="Software for providing projects, where Business Process Analysis or (and) Classification Systems are needed.">
+          
+     <createForPack name="Core" />
+   </shortcut>
+   <shortcut
+     name="Ramus Web Navigator"
+     programGroup="yes"
+     desktop="no"
+     applications="no"
+     startMenu="no"
+     startup="no"
+     target="javaw"
+	 iconFile="$INSTALL_PATH\navigator.ico"
+     commandLine="-cp &quot;$INSTALL_PATH\bin\ramus-startup.jar&quot; com.ramussoft.Startup com.ramussoft.navigator.ProjectNavigator"
+     description="Ramus Web Navigator">
+          
+     <createForPack name="Core" />
+   </shortcut>
+   
+   <shortcut
+     name="Uninstall Ramus"
+     programGroup="yes"
+     desktop="no"
+     applications="no"
+     startMenu="no"
+     startup="no"
+     target="$INSTALL_PATH\Uninstaller\uninstaller.jar"     
+     commandLine=""
+	 iconFile="%SystemRoot%\system32\SHELL32.dll"
+     iconIndex="31" 
+     description="Uninstall Ramus">
+     
+     <createForPack name="Core" />
+   </shortcut>
+   
+</shortcuts>
+
