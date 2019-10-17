@@ -78,7 +78,7 @@ public class JSSPDocBookReportEngine extends JSSPReportEngine {
                 e.printStackTrace();
             }
             if (!exceptionHolder.finished) {
-                thread.stop(new Exception());
+                thread.stop();
                 throw new ScriptException(SCRIPT_WORKED_TOO_LONG);
             }
             if (exceptionHolder.scriptException != null) {

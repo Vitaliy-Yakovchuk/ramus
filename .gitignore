@@ -52,7 +52,8 @@ crashlytics-build.properties
 ### Gradle ###
 .gradle
 build/
-dest/full
+dest/ramus-2.0/
+dest/ramus-2.0.zip
 
 # Ignore Gradle GUI config
 gradle-app.setting

@@ -68,7 +68,7 @@ import com.ramussoft.pb.types.GlobalId;
 public class MainFrame implements ActionListener {
 
     public static Image mainIcon = Toolkit.getDefaultToolkit().getImage(
-            MainFrame.class.getClass().getResource("/images/main.gif"));
+            MainFrame.class.getResource("/images/main.gif"));
 
     public ImageIcon clasificatorIcon = new ImageIcon(getClass().getResource(
             "/images/clasificatorIcon.png"));

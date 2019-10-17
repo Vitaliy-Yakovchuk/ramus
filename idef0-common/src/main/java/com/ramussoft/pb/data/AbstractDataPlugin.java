@@ -502,9 +502,9 @@ public abstract class AbstractDataPlugin implements DataPlugin {
             }
 
             private boolean calc(final Function base) {
-                final Enumeration<Function> cs = base.children();
+                final Enumeration cs = base.children();
                 while (cs.hasMoreElements()) {
-                    final Function c = cs.nextElement();
+                    final Function c = (Function)cs.nextElement();
                     if (c.getType() >= Function.TYPE_EXTERNAL_REFERENCE)
                         continue;
                     if (c.equals(f)) {

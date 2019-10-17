@@ -1647,10 +1647,10 @@ public class MovingArea extends JPanel {
                                         function.getElement(), attr));
                     }
             }
-            Enumeration<Function> e = ((MovingFunction) activeObject)
+            Enumeration e = ((MovingFunction) activeObject)
                     .getFunction().children();
             while (e.hasMoreElements())
-                e.nextElement().getSectors();
+                ((Function)e.nextElement()).getSectors();
         }
         final Object o = this.activeObject;
         if ((activeObject == null) && (!silent)) {
