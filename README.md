@@ -1,7 +1,12 @@
-#RAMUS
+# RAMUS
 
 Java-based
 IDEF0 & DFD Modeler 
+
+<img width="1792" alt="Screenshot 2019-11-18 at 11 14 26" src="https://user-images.githubusercontent.com/2261228/69039713-23c56d00-09f5-11ea-99c5-b6714efe3037.png">
+
+<img width="1792" alt="Screenshot 2019-11-18 at 11 14 59" src="https://user-images.githubusercontent.com/2261228/69039723-27f18a80-09f5-11ea-9a8d-508069ce7bbd.png">
+
 
 To start application
 
