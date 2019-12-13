@@ -61,6 +61,18 @@ task copyDeps(type: Copy) {
 
 task copyFiles(dependsOn: [copyJars, copyDeps, moveStartup])
 
+task windowsInstallerDocker(type:Exec, dependsOn: [copyFiles]) {
+    workingDir './dest'
+
+    commandLine './build-installer', '--docker'
+}
+
+task windowsInstaller(type:Exec, dependsOn: [copyFiles]) {
+    workingDir './dest'
+
+    commandLine './build-installer'
+}
+
 izpack {
    // baseDir = file("$buildDir/assemble/izpack")
     installFile = file('dest/izpack/ramus.xml')

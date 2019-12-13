@@ -11,4 +11,6 @@ else
         echo "Done"
 fi
 
+echo "Installer should be in the $(pwd)/full"
+
 rm LICENSE
