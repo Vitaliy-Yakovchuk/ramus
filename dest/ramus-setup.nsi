@@ -4,7 +4,7 @@ SetCompressor /SOLID lzma
 
 # Defines
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION "2.0"
+!define VERSION "2.0.1"
 !define COMPANY "Ramus Soft Group"
 !define URL http://www.ramussoftware.com/
 !define JRE_VERSION "1.6"
@@ -77,7 +77,7 @@ Var javawPath
 ;!insertmacro MUI_LANGUAGE Ukrainian
 
 ; License Language
-LicenseLangString MUILicense ${LANG_ENGLISH} "../LICENSE"
+LicenseLangString MUILicense ${LANG_ENGLISH} "LICENSE"
 ; LicenseLangString MUILicense ${LANG_RUSSIAN} "license_ru.rtf"
 ; LicenseLangString MUILicense ${LANG_UKRAINIAN} "license_uk.rtf"
 ; LicenseData MUILicense
@@ -91,12 +91,12 @@ LicenseLangString MUILicense ${LANG_ENGLISH} "../LICENSE"
 
 
 # Installer attributes
-OutFile full/ramus-2.0-setup.exe
+OutFile full/ramus-2.0.1-setup.exe
 InstallDir "$PROGRAMFILES\Ramus"
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 2.0.0.0
+VIProductVersion 2.0.1.0
 VIAddVersionKey ProductName "Ramus"
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"

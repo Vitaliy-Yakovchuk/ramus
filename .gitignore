@@ -101,3 +101,4 @@ tmp/
 # TeXlipse plugin
 .texlipse
 /dest/full/
+/dest/LICENSE

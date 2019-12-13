@@ -1,2 +1,14 @@
 #!/bin/sh
-wine "/root/.wine/drive_c/Program Files/NSIS/makensis.exe" ramus-setup.nsi
+
+cp ../LICENSE LICENSE
+if [ "$1" == "--docker" ]; then
+        echo "Building windows installer with docker"
+        docker run -v $(pwd):/wine/drive_c/src/ cdrx/nsis
+        echo "Done"
+else
+        echo "Building windows installer with wine"
+        wine "/root/.wine/drive_c/Program Files/NSIS/makensis.exe" ramus-setup.nsi
+        echo "Done"
+fi
+
+rm LICENSE
