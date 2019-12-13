@@ -41,7 +41,7 @@ public class Startup {
         } else {
             StringTokenizer st = new StringTokenizer(version, ".");
             String f = st.nextToken();
-            String s = st.nextToken();
+            String s = st.hasMoreTokens() ? st.nextToken() : null;
             if (f.equals("1")) {
                 try {
                     if (Integer.parseInt(s) < 6) {

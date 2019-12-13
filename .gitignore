@@ -100,3 +100,4 @@ tmp/
 
 # TeXlipse plugin
 .texlipse
+/dest/full/
