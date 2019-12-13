@@ -48,6 +48,9 @@ public class FilePlugin extends AbstractFilePlugin {
                     res[0].add(p);
                     FilePlugin.this.toPersistens(p.getData(), elementId,
                             attributeId, engine);
+                } else {
+                    FilePlugin.this.toPersistens(null, elementId,
+                            attributeId, engine);
                 }
                 return res;
             }

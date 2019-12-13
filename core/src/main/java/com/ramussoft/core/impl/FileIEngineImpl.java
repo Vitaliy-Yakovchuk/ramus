@@ -18,13 +18,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -33,13 +27,10 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.transform.TransformerConfigurationException;
 
+import com.ramussoft.common.*;
+import com.ramussoft.common.persistent.Persistent;
 import org.xml.sax.SAXException;
 
-import com.ramussoft.common.AttributeType;
-import com.ramussoft.common.Metadata;
-import com.ramussoft.common.Plugin;
-import com.ramussoft.common.PluginFactory;
-import com.ramussoft.common.FileVersionException;
 import com.ramussoft.common.attribute.AttributePlugin;
 import com.ramussoft.jdbc.JDBCTemplate;
 import com.ramussoft.jdbc.RowMapper;
@@ -164,8 +155,9 @@ public class FileIEngineImpl extends IEngineImpl {
         String copy = tmpPath + File.separator + "source.rms";
         copy(file, new File(copy));
         zFile = new ZipFile(file);
+        FileMetadata metadata = null;
         if (!ignoreFileVersion) {
-            checkFileVersion();
+            metadata = checkFileVersion();
         }
         loadSequences();
 
@@ -187,6 +179,30 @@ public class FileIEngineImpl extends IEngineImpl {
         loadTable("", "formulas");
         loadTable("", "formula_dependences");
         openPersistentTables();
+
+        if (metadata != null)
+            deleteOrphanFileAttachments(metadata);
+    }
+
+    private void deleteOrphanFileAttachments(FileMetadata metadata) {
+        if (isOlderVersion("2.0.1", metadata.getApplicationVersion())) {
+            HashSet<String> streams = new HashSet<String>(Arrays.asList(getStreamNames()));
+            for (Qualifier qualifier : getQualifiers()) {
+                for (Attribute attr : qualifier.getAttributes())
+                    if (attr.getAttributeType().equals(new AttributeType("Core", "File"))) {
+                        for (Element element : getElements(qualifier.getId())) {
+                            String path = "/elements/" + element.getId() + "/" + attr.getId()
+                                    + "/Core/file";
+                            if (streams.contains(path)) {
+                                List<Persistent>[] data = getBinaryAttribute(element.getId(), attr.getId());
+                                if (data.length == 1 && data[0].isEmpty()) {
+                                    deleteStream(path);
+                                }
+                            }
+                        }
+                    }
+            }
+        }
     }
 
     private void loadSequences() throws IOException {
@@ -219,11 +235,11 @@ public class FileIEngineImpl extends IEngineImpl {
         }
     }
 
-    private void checkFileVersion() throws FileVersionException, IOException {
+    private FileMetadata checkFileVersion() throws FileVersionException, IOException {
         String[] names = getAllPluginNames(factory.getPlugins());
         FileMetadata metadata = loadFileMetadata();
         if (metadata == null)
-            return;
+            return null;
         if (isOlderVersion(metadata.getFileOpenMinimumVersion())) {
             throw new FileMinimumVersionException(
                     metadata.getFileOpenMinimumVersion());
@@ -243,6 +259,7 @@ public class FileIEngineImpl extends IEngineImpl {
                 }
             }
         }
+        return metadata;
     }
 
     private boolean isOlderVersion(String minimumVersion) {
@@ -505,6 +522,7 @@ public class FileIEngineImpl extends IEngineImpl {
                 if ((e.getName().startsWith("/data"))
                         || (e.getName().startsWith("data"))
                         || (deletedPaths.indexOf(e.getName()) >= 0)
+                        || (deletedPaths.indexOf("/" + e.getName()) >= 0)
                         || (extractedFiles.get(e.getName()) != null)
                         || (extractedFiles.get("/" + e.getName()) != null)) {
 
