@@ -1,29 +1,6 @@
 package com.ramussoft.gui.attribute;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Properties;
-
-import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-
-import org.dts.spell.swing.JTextComponentSpellChecker;
-
-import com.ramussoft.common.AccessRules;
-import com.ramussoft.common.Attribute;
-import com.ramussoft.common.AttributeType;
-import com.ramussoft.common.Element;
-import com.ramussoft.common.Engine;
+import com.ramussoft.common.*;
 import com.ramussoft.gui.common.AbstractAttributeEditor;
 import com.ramussoft.gui.common.AbstractAttributePlugin;
 import com.ramussoft.gui.common.AttributeEditor;
@@ -31,8 +8,26 @@ import com.ramussoft.gui.common.GlobalResourcesManager;
 import com.ramussoft.gui.common.prefrence.Options;
 import com.ramussoft.gui.spell.Language;
 import com.ramussoft.gui.spell.SpellFactory;
+import org.dts.spell.swing.JTextComponentSpellChecker;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TextAttributePlugin extends AbstractAttributePlugin {
+
+    public static final Pattern urlPattern = Pattern.compile(
+            "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
+                    + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
+                    + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
     public static final String SPELL_CHECK = "SPELL_CHECK";
 
@@ -66,7 +61,7 @@ public class TextAttributePlugin extends AbstractAttributePlugin {
             old.close();
         return new AbstractAttributeEditor() {
 
-            private JTextArea area = new JTextArea();
+            private TextPanelWithLinksDetector area = new TextPanelWithLinksDetector(TextAttributePlugin.this);
 
             protected JTextComponentSpellChecker checker;
 
@@ -164,8 +159,6 @@ public class TextAttributePlugin extends AbstractAttributePlugin {
                 boolean canEdit = rules.canUpdateElement(element.getId(),
                         attribute.getId());
                 area.setEditable(canEdit);
-                area.setWrapStyleWord(true);
-                area.setLineWrap(true);
                 area.setComponentPopupMenu(createSelectLanguageMenu());
                 createChecker();
                 return pane;
@@ -197,6 +190,38 @@ public class TextAttributePlugin extends AbstractAttributePlugin {
                 return area;
             }
 
+        };
+    }
+
+    public Object transformURLIntoLinks(Object object) {
+        if (!(object instanceof String)) {
+            return object;
+        }
+        String text = (String) object;
+        Matcher matcher = TextAttributePlugin.urlPattern.matcher(text);
+        StringBuffer sb = null;
+        while (matcher.find()) {
+            if (sb == null) {
+                sb = new StringBuffer("<html><body>");
+            }
+            String found = matcher.group(0);
+            matcher.appendReplacement(sb, "<a href='" + found + "'>" + found + "</a>");
+        }
+        if (sb == null) {
+            return object;
+        }
+        matcher.appendTail(sb);
+        sb.append("</body></html>");
+        return sb.toString();
+    }
+
+    @Override
+    public TableCellRenderer getTableCellRenderer(Engine engine, AccessRules rules, Attribute attribute) {
+        return new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                return super.getTableCellRendererComponent(table, transformURLIntoLinks(value), isSelected, hasFocus, row, column);
+            }
         };
     }
 }

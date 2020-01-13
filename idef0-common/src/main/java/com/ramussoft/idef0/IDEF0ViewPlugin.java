@@ -20,6 +20,7 @@ import static com.ramussoft.pb.frames.MainFrame.TILDA_TOOL;
 import static com.ramussoft.pb.frames.MainFrame.USER_TEMPLATES;
 import static com.ramussoft.pb.frames.MainFrame.CREATE_LEVEL;
 
+import com.ramussoft.gui.common.*;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
@@ -76,15 +77,6 @@ import com.ramussoft.common.event.QualifierAdapter;
 import com.ramussoft.common.event.QualifierEvent;
 import com.ramussoft.common.event.QualifierListener;
 import com.ramussoft.common.journal.Journaled;
-import com.ramussoft.gui.common.AbstractViewPlugin;
-import com.ramussoft.gui.common.ActionDescriptor;
-import com.ramussoft.gui.common.ActionLevel;
-import com.ramussoft.gui.common.BaseDialog;
-import com.ramussoft.gui.common.GUIFramework;
-import com.ramussoft.gui.common.GlobalResourcesManager;
-import com.ramussoft.gui.common.TabView;
-import com.ramussoft.gui.common.TabbedView;
-import com.ramussoft.gui.common.UniqueView;
 import com.ramussoft.gui.common.event.ActionEvent;
 import com.ramussoft.gui.common.event.ActionListener;
 import com.ramussoft.gui.common.event.CloseMainFrameAdapter;
@@ -108,8 +100,6 @@ import com.ramussoft.pb.master.NewProjectDialog;
 import com.ramussoft.pb.print.web.HTTPServer;
 import com.ramussoft.pb.print.web.Navigator;
 import com.ramussoft.web.HTTPParser;
-
-import edu.stanford.ejalbert.BrowserLauncher;
 
 public class IDEF0ViewPlugin extends AbstractViewPlugin {
 
@@ -440,31 +430,16 @@ public class IDEF0ViewPlugin extends AbstractViewPlugin {
                             .getDataPlugin(null, engine, rules), framework) {
                         @Override
                         protected void serverStarted() {
-                            openBroser("http://127.0.0.1:"
-                                    + getServer().getLocalPort());
+                            AbstractAttributePlugin.openUrl("http://127.0.0.1:"
+                                    + getServer().getLocalPort(), framework);
                         }
 
                     };
                 } else {
-                    openBroser("http://127.0.0.1:"
-                            + server.getServer().getLocalPort());
+                    AbstractAttributePlugin.openUrl("http://127.0.0.1:"
+                            + server.getServer().getLocalPort(), framework);
                 }
 
-            }
-
-            private void openBroser(String url) {
-                try {
-                    Desktop.getDesktop().browse(new URI(url));
-                } catch (Exception e1) {
-                    try {
-                        new BrowserLauncher().openURLinBrowser(url);
-                    } catch (Exception e2) {
-                        e1.printStackTrace();
-                        e2.printStackTrace();
-                        JOptionPane.showMessageDialog(framework.getMainFrame(),
-                                e1.getLocalizedMessage());
-                    }
-                }
             }
 
         });

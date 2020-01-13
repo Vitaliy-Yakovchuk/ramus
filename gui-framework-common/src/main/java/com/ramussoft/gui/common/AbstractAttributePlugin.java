@@ -1,7 +1,10 @@
 package com.ramussoft.gui.common;
 
+import java.awt.*;
+import java.net.URI;
 import java.util.List;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -9,6 +12,7 @@ import com.ramussoft.common.AccessRules;
 import com.ramussoft.common.Attribute;
 import com.ramussoft.common.Element;
 import com.ramussoft.common.Engine;
+import edu.stanford.ejalbert.BrowserLauncher;
 
 public abstract class AbstractAttributePlugin implements AttributePlugin {
 
@@ -109,5 +113,43 @@ public abstract class AbstractAttributePlugin implements AttributePlugin {
     @Override
     public int getSyncPriority() {
         return 1;
+    }
+
+
+    public static boolean openUrl(URI uri) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(uri);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public boolean openUrl(String url) {
+        return openUrl(url, framework);
+    }
+
+    public static boolean openUrl(String url, GUIFramework framework) {
+        try {
+            return openUrl(new URI(url));
+        } catch (Exception e) {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (Exception e1) {
+                try {
+                    new BrowserLauncher().openURLinBrowser(url);
+                } catch (Exception e2) {
+                    e1.printStackTrace();
+                    e2.printStackTrace();
+                    JOptionPane.showMessageDialog(framework.getMainFrame(),
+                            e1.getLocalizedMessage());
+                }
+            }
+        }
+        return false;
     }
 }

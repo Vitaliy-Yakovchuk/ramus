@@ -1,6 +1,6 @@
 package com.ramussoft.gui.common;
 
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 import com.ramussoft.gui.common.event.TabbedEvent;
