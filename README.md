@@ -10,21 +10,17 @@ IDEF0 & DFD Modeler
 
 ## To start application
 
-Install oracle JDK
-http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+Install ![Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
-### Windows
+Run in console
 
-Run in console (PowerShell or cmd) inside the ramus folder
-
-`.\gradlew.bat`
-
-Allow access when Firewall asks
+`gradlew runLocal`
 
 Test the app
 
 ### Linux
-Tested in Ubuntu 20.04 and Fedora 34
+Tested in Ubuntu 20.04 and Fedora 34</br>
+
 Download repo</br>
 `git clone https://github.com/Vitaliy-Yakovchuk/ramus.git`</br>
 
