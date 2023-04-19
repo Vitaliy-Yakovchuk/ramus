@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.jar.JarFile;
-import java.util.jar.Pack200;
-import java.util.jar.Pack200.Packer;
 
 public class Pack {
 
@@ -23,16 +21,7 @@ public class Pack {
             System.exit(1);
         }
 
-        Packer packer = Pack200.newPacker();
-
-        Map p = packer.properties();
-        p.put(Packer.EFFORT, "9");
-        p.put(Packer.SEGMENT_LIMIT, "-1");
-        p.put(Packer.KEEP_FILE_ORDER, Packer.FALSE);
-        p.put(Packer.MODIFICATION_TIME, Packer.LATEST);
-        p.put(Packer.DEFLATE_HINT, Packer.FALSE);
-        p.put(Packer.CODE_ATTRIBUTE_PFX + "LineNumberTable", Packer.STRIP);
-        p.put(Packer.UNKNOWN_ATTRIBUTE, Packer.ERROR);
+        Pack200.Packer packer = Pack200.newPacker();
 
         File inputDirectory = new File(args[0]);
 
@@ -41,7 +30,7 @@ public class Pack {
         pack(packer, inputDirectory, outputDirectory);
     }
 
-    private static void pack(Packer packer, File inputDirectory,
+    private static void pack(Pack200.Packer packer, File inputDirectory,
                              File outputDirectory) throws IOException, FileNotFoundException {
         File[] files = inputDirectory.listFiles();
 

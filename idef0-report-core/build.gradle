@@ -8,8 +8,11 @@ repositories {
 }
 
 dependencies {
-    compile project(':data-framework-common')
-    compile project(':report-core')
-    compile project(':idef0-core')
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    implementation project(':database-storage')
+    implementation project(':common')
+    implementation project(':core-simple-attributes')
+    implementation project(':data-framework-common')
+    implementation project(':report-core')
+    implementation project(':idef0-core')
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }

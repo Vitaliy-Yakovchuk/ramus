@@ -4,9 +4,11 @@ version '1.0-SNAPSHOT'
 apply plugin: 'java'
 
 dependencies {
-    compile project(':data-framework-common')
-    compile project(':database-storage')
-    compile project(':core')
-    compile 'net.htmlparser.jericho:jericho-html:3.3'
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    implementation project(':data-framework-common')
+    implementation project(':database-storage')
+    implementation project(':common')
+    implementation project(':core')
+    implementation project(':core-simple-attributes')
+    implementation 'net.htmlparser.jericho:jericho-html:3.3'
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }

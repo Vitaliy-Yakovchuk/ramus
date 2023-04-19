@@ -4,11 +4,11 @@ version '1.0-SNAPSHOT'
 apply plugin: 'com.bmuschko.izpack'
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-izpack-plugin:2.1'
+        classpath 'com.bmuschko:gradle-izpack-plugin:3.1'
     }
 }
 
@@ -19,8 +19,8 @@ dependencies {
 
 allprojects {
     apply plugin: 'java'
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenCentral()
@@ -55,7 +55,7 @@ task moveStartup{
 }
 
 task copyDeps(type: Copy) {
-    from(subprojects.configurations.runtime)
+    from(subprojects.configurations.compileClasspath)
     into project.file('dest/full/lib/thirdparty')
 }
 

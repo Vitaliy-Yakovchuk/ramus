@@ -8,21 +8,32 @@ repositories {
 }
 
 dependencies {
-    compile project(':gui-framework-common')
-    compile project(':gui-framework-core')
-    compile project(':idef0-core')
-    compile project(':report-common')
-    compile 'org.freehep:freehep-graphicsio-emf:2.4'
-    compile 'batik:batik-svggen:1.6-1'
-    compile 'javax.help:javahelp:2.0.05'
-
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    implementation project(':gui-framework-common')
+    implementation project(':gui-framework-core')
+    implementation project(':idef0-core')
+    implementation project(':report-common')
+    implementation 'org.freehep:freehep-graphicsio-emf:2.4'
+    implementation 'batik:batik-svggen:1.6-1'
+    implementation 'javax.help:javahelp:2.0.05'
+    implementation project(':common')
+    implementation project(':core')
+    implementation project(':report-core')
+    implementation project(':gui-qualifier')
+    implementation project(':core-simple-attributes')
+    implementation project(':database-storage')
+    implementation project(':data-framework-common')
+    implementation files('../gui-qualifier/libs/my-spell-core.jar')
+    implementation files('../gui-qualifier/libs/my-spell-swing.jar')
+    implementation 'net.htmlparser.jericho:jericho-html:3.3'
+    implementation 'org.swinglabs.swingx:swingx-all:1.6.5-1'
+    implementation 'tablelayout:TableLayout:20050920'
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
 
 if(JavaVersion.current() >= JavaVersion.VERSION_11) {
     dependencies {
-        compile 'javax.xml.bind:jaxb-api:2.3.0'
-        compile 'com.sun.xml.bind:jaxb-core:2.3.0'
-        compile 'com.sun.xml.bind:jaxb-impl:2.3.0'
+        implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+        implementation 'com.sun.xml.bind:jaxb-core:2.3.0'
+        implementation 'com.sun.xml.bind:jaxb-impl:2.3.0'
     }
 }

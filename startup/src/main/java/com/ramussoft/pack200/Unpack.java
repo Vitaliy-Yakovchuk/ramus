@@ -6,8 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.jar.JarOutputStream;
-import java.util.jar.Pack200;
-import java.util.jar.Pack200.Unpacker;
 
 public class Unpack {
 
@@ -24,14 +22,14 @@ public class Unpack {
 
         outputDirectory.mkdirs();
 
-        Unpacker unpacker = Pack200.newUnpacker();
+        Pack200.Unpacker unpacker = Pack200.newUnpacker();
 
         unpack(inputDirectory, outputDirectory, unpacker);
 
     }
 
     private static void unpack(File inputDirectory, File outputDirectory,
-                               Unpacker unpacker) throws FileNotFoundException, IOException {
+                               Pack200.Unpacker unpacker) throws FileNotFoundException, IOException {
         File[] files = inputDirectory.listFiles();
 
         for (int i = 0; i < files.length; i++) {

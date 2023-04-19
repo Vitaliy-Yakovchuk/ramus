@@ -8,11 +8,14 @@ repositories {
 }
 
 dependencies {
-    compile project(':data-framework-common')
-    compile project(':core-simple-attributes')
-    compile project(':gui-framework-common')
-    compile 'tablelayout:TableLayout:20050920'
-    compile files('libs/my-spell-core.jar')
-    compile files('libs/my-spell-swing.jar')
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    implementation project(':common')
+    implementation project(':core')
+    implementation project(':data-framework-common')
+    implementation project(':core-simple-attributes')
+    implementation project(':gui-framework-common')
+    implementation 'tablelayout:TableLayout:20050920'
+    implementation files('libs/my-spell-core.jar')
+    implementation files('libs/my-spell-swing.jar')
+    implementation 'org.swinglabs.swingx:swingx-all:1.6.5-1'
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }

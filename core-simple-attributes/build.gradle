@@ -8,6 +8,8 @@ repositories {
 }
 
 dependencies {
-    compile project(':core')
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    implementation project(':core')
+    implementation project(':common')
+    implementation project(':database-storage')
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }

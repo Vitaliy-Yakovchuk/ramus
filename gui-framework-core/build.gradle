@@ -8,8 +8,9 @@ repositories {
 }
 
 dependencies {
-    compile project(':gui-framework-common')
-    compile 'org.dockingframes:docking-frames-common:1.1.2-SNAPSHOT'
-    compile 'javax.help:javahelp:2.0.05'
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    implementation project(':gui-framework-common')
+    implementation project(':common')
+    implementation 'org.dockingframes:docking-frames-common:1.1.2-SNAPSHOT'
+    implementation 'javax.help:javahelp:2.0.05'
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }

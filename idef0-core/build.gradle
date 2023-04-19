@@ -8,6 +8,11 @@ repositories {
 }
 
 dependencies {
-    compile project(':data-framework-common')
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    implementation project(':common')
+    implementation project(':core')
+    implementation project(':core-simple-attributes')
+    implementation project(':database-storage')
+
+    implementation project(':data-framework-common')
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
