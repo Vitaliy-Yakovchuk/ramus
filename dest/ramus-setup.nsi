@@ -4,7 +4,7 @@ SetCompressor /SOLID lzma
 
 # Defines
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION "2.0.1"
+!define VERSION "2.0.2"
 !define COMPANY "Ramus Soft Group"
 !define URL http://www.ramussoftware.com/
 !define JRE_VERSION "1.6"
@@ -91,7 +91,7 @@ LicenseLangString MUILicense ${LANG_ENGLISH} "LICENSE"
 
 
 # Installer attributes
-OutFile full/ramus-2.0.1-setup.exe
+OutFile full/ramus-2.0.2-setup.exe
 InstallDir "$PROGRAMFILES\Ramus"
 CRCCheck on
 XPStyle on
