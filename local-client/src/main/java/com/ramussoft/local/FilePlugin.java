@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -114,7 +115,7 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
             putValue(SMALL_ICON, new ImageIcon(getClass().getResource(
                     "/com/ramussoft/gui/file-save.png")));
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S,
-                    KeyEvent.CTRL_MASK));
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override
@@ -401,7 +402,7 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
                 putValue(SMALL_ICON, new ImageIcon(getClass().getResource(
                         "/com/ramussoft/gui/file-open.png")));
                 putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O,
-                        KeyEvent.CTRL_MASK));
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             }
 
             @Override
@@ -436,7 +437,7 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
             {
                 putValue(ACTION_COMMAND_KEY, "OpenInNewWindows");
                 putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N,
-                        KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK));
+                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_MASK));
             }
 
             @Override

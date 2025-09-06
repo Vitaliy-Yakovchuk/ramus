@@ -291,7 +291,7 @@ public class QualifierView extends TableView implements UniqueView {
                             "/com/ramussoft/gui/preferencies.png")));
             this.putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK
+                    KeyStroke.getKeyStroke(KeyEvent.VK_P, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                             | KeyEvent.SHIFT_MASK));
         }
 

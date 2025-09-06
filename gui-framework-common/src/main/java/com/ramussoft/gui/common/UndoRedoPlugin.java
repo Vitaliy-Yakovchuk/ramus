@@ -1,5 +1,6 @@
 package com.ramussoft.gui.common;
 
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -103,7 +104,7 @@ public class UndoRedoPlugin extends AbstractViewPlugin {
 
         {
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-                    KeyEvent.CTRL_MASK));
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override
@@ -124,7 +125,7 @@ public class UndoRedoPlugin extends AbstractViewPlugin {
 
         {
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y,
-                    KeyEvent.CTRL_MASK));
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override

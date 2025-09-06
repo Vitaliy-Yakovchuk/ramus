@@ -101,7 +101,7 @@ public abstract class PrintPreviewComponent extends JComponent {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-                    if (e.getModifiers() == KeyEvent.CTRL_MASK) {
+                    if (e.getModifiers() == java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) {
                         double r = e.getWheelRotation();
                         double zoom = getZoom() - 0.2 * r;
                         setCurrentZoom(zoom);
@@ -504,7 +504,7 @@ public abstract class PrintPreviewComponent extends JComponent {
             putValue(SHORT_DESCRIPTION,
                     GlobalResourcesManager.getString("Action.Print"));
             putValue(ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_P, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override

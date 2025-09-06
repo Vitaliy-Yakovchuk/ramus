@@ -1,8 +1,6 @@
 group 'com.vitalex.ramus'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
-
 dependencies {
     implementation project(':database-storage')
     implementation project(':data-framework-common')
