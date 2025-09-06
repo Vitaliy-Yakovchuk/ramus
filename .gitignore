@@ -54,6 +54,8 @@ crashlytics-build.properties
 build/
 dest/ramus-2.0/
 dest/ramus-2.0.zip
+dest/macos/
+gradle-local.properties
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -102,3 +104,5 @@ tmp/
 .texlipse
 /dest/full/
 /dest/LICENSE
+
+.DS_Store
