@@ -344,14 +344,15 @@ public class BaseDialog extends JDialog {
         });
         field.getActionMap().put("undo-action-x", undoAction);
         field.getActionMap().put("redo-action-x", redoAction);
+        int menuMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
         field.getInputMap()
                 .put(
                         KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-                                InputEvent.CTRL_DOWN_MASK), "undo-action-x");
+                                menuMask), "undo-action-x");
         field.getInputMap()
                 .put(
                         KeyStroke.getKeyStroke(KeyEvent.VK_Y,
-                                InputEvent.CTRL_DOWN_MASK), "redo-action-x");
+                                menuMask), "redo-action-x");
         return undo;
     }
 

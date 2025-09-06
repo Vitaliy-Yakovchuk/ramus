@@ -4,6 +4,7 @@ import java.awt.Font;
 
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
@@ -62,7 +63,7 @@ public class Plugin implements PrintPlugin {
             putValue(SHORT_DESCRIPTION,
                     GlobalResourcesManager.getString("Action.Print") + " (PDF)");
             putValue(ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override

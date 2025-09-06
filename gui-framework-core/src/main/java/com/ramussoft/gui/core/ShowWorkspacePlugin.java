@@ -95,9 +95,9 @@ public class ShowWorkspacePlugin extends AbstractViewPlugin {
                 String workspace = workspaces.get(i);
                 Action action = new ShowWorkspaceAction(workspace);
 
+                int menuMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
                 action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-                        KeyEvent.VK_1 + i, KeyEvent.CTRL_MASK
-                                | KeyEvent.SHIFT_MASK));
+                        KeyEvent.VK_1 + i, menuMask | KeyEvent.SHIFT_MASK));
 
                 URL resource = getClass().getResource(
                         "/com/ramussoft/gui/" + workspace + ".png");

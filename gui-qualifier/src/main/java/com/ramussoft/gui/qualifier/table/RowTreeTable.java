@@ -235,10 +235,10 @@ public class RowTreeTable extends JXTreeTable implements ImportExport,
 
         getActionMap().put("copyTableToClipboard", copy);
         getInputMap().put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
                 "copyTableToClipboard");
         getInputMap().put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
                 "copyTableToClipboard");
 
         setShowGrid(false, true);

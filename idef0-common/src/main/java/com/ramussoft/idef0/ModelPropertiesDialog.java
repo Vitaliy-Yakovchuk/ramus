@@ -446,7 +446,7 @@ public class ModelPropertiesDialog extends BaseDialog {
                     new ImageIcon(getClass().getResource(
                             "/com/ramussoft/gui/table/add.png")));
             this.putValue(ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_ADD, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override

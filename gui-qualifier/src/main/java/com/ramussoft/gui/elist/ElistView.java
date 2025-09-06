@@ -216,7 +216,7 @@ public class ElistView extends AbstractUniqueView implements UniqueView,
                     new ImageIcon(getClass().getResource(
                             "/com/ramussoft/gui/table/add.png")));
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_PLUS,
-                    KeyEvent.CTRL_MASK));
+                    java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override
@@ -284,7 +284,7 @@ public class ElistView extends AbstractUniqueView implements UniqueView,
                             "/com/ramussoft/gui/open.png")));
             putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK
+                    KeyStroke.getKeyStroke(KeyEvent.VK_O, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                             | KeyEvent.SHIFT_MASK));
             setEnabled(false);
         }
@@ -312,7 +312,7 @@ public class ElistView extends AbstractUniqueView implements UniqueView,
                             "/com/ramussoft/gui/open-element-list.png")));
             putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_MASK
+                    KeyStroke.getKeyStroke(KeyEvent.VK_L, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                             | KeyEvent.SHIFT_MASK));
             setEnabled(false);
         }

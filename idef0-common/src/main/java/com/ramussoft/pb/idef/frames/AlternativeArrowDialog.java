@@ -223,7 +223,7 @@ public class AlternativeArrowDialog extends BaseDialog {
             jList.setModel(streamModel);
             jList.getInputMap()
                     .put(KeyStroke.getKeyStroke(KeyEvent.VK_F,
-                            InputEvent.CTRL_MASK), "showFindPanel");
+                            java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "showFindPanel");
             jList.getActionMap().put("showFindPanel", new AbstractAction() {
                 public void actionPerformed(final ActionEvent e) {
                     rowFindPanel.setVisible(true);

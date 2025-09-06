@@ -284,7 +284,7 @@ public abstract class AbstractTableView extends AbstractView implements
                     new ImageIcon(getClass().getResource(
                             "/com/ramussoft/gui/table/add.png")));
             this.putValue(ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_ADD, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         /**
@@ -358,7 +358,7 @@ public abstract class AbstractTableView extends AbstractView implements
                     new ImageIcon(getClass().getResource(
                             "/com/ramussoft/gui/set-icon.png")));
             this.putValue(ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_I, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override
@@ -594,7 +594,7 @@ public abstract class AbstractTableView extends AbstractView implements
                             "/com/ramussoft/gui/table/collapse.png")));
             this.putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK
+                    KeyStroke.getKeyStroke(KeyEvent.VK_C, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                             | KeyEvent.SHIFT_MASK));
         }
 
@@ -620,7 +620,7 @@ public abstract class AbstractTableView extends AbstractView implements
                             "/com/ramussoft/gui/table/expand.png")));
             this.putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_MASK
+                    KeyStroke.getKeyStroke(KeyEvent.VK_E, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                             | KeyEvent.SHIFT_MASK));
         }
 
