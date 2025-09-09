@@ -2,6 +2,8 @@
 
 This is a macOS‑optimized fork of the Ramus IDEF0/DFD modeling tool. It focuses on native macOS integration and packaging. Windows support is not a goal here and may not work properly.
 
+Download: the latest macOS DMG is available in this repository’s GitHub Releases section.
+
 License: see LICENSE in this repository (unchanged from upstream).
 
 ## What’s Different vs. Upstream
@@ -38,6 +40,8 @@ open dest-macos
 ```
 
 The DMG contains a standalone app that does not require users to install Java.
+
+Alternatively, download the latest DMG from this repository’s GitHub Releases section.
 
 ## Configuration (Optional)
 
