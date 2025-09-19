@@ -16,6 +16,7 @@ import com.ramussoft.common.Engine;
 import com.ramussoft.common.journal.Journaled;
 import com.ramussoft.common.Qualifier;
 import com.ramussoft.gui.common.GUIFramework;
+import com.ramussoft.gui.common.event.ActionEvent;
 import com.ramussoft.idef0.IDEF0Plugin;
 import com.ramussoft.idef0.IDEF0ViewPlugin;
 import com.ramussoft.idef0.NDataPluginFactory;
@@ -86,7 +87,8 @@ public class AiDiagramApplier {
         }
 
         NDataPluginFactory.fullRefrash(framework);
-        framework.propertyChanged(IDEF0ViewPlugin.ACTIVE_DIAGRAM, target);
+        ActionEvent openEvent = new ActionEvent(IDEF0ViewPlugin.OPEN_DIAGRAM, target);
+        framework.propertyChanged(IDEF0ViewPlugin.ACTIVE_DIAGRAM, openEvent);
         return target;
     }
 

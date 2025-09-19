@@ -15,7 +15,6 @@ import com.ramussoft.gui.common.ActionDescriptor;
 import com.ramussoft.gui.common.ActionLevel;
 import com.ramussoft.gui.common.GUIFramework;
 import com.ramussoft.gui.common.event.ActionListener;
-import com.ramussoft.gui.common.event.PropertyChangeListener;
 import com.ramussoft.idef0.IDEF0ViewPlugin;
 import com.ramussoft.idef0.OpenDiagram;
 
@@ -82,14 +81,20 @@ public class AiDiagramGuiPlugin extends AbstractViewPlugin {
     @Override
     public void setFramework(final GUIFramework framework) {
         super.setFramework(framework);
-        framework.addPropertyChangeListener(IDEF0ViewPlugin.ACTIVE_DIAGRAM, new PropertyChangeListener() {
+        framework.addActionListener(IDEF0ViewPlugin.ACTIVE_DIAGRAM, new ActionListener() {
             @Override
-            public void propertyChanged(Object value) {
-                if (value instanceof OpenDiagram) {
-                    currentDiagram = (OpenDiagram) value;
-                } else {
-                    currentDiagram = null;
+            public void onAction(com.ramussoft.gui.common.event.ActionEvent event) {
+                Object value = event.getValue();
+                if (value instanceof com.ramussoft.gui.common.event.ActionEvent) {
+                    com.ramussoft.gui.common.event.ActionEvent actionEvent =
+                            (com.ramussoft.gui.common.event.ActionEvent) value;
+                    Object diagramValue = actionEvent.getValue();
+                    if (diagramValue instanceof OpenDiagram) {
+                        currentDiagram = (OpenDiagram) diagramValue;
+                        return;
+                    }
                 }
+                currentDiagram = null;
             }
         });
         framework.addActionListener(ACTION_KEY, new ActionListener() {
