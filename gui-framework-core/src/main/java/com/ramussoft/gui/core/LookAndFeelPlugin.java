@@ -1,6 +1,7 @@
 package com.ramussoft.gui.core;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -14,6 +15,7 @@ import com.ramussoft.gui.common.ActionDescriptor;
 import com.ramussoft.gui.common.ActionLevel;
 import com.ramussoft.gui.common.GlobalResourcesManager;
 import com.ramussoft.gui.common.prefrence.Options;
+import com.ramussoft.gui.core.laf.IOS26LookAndFeel;
 
 public class LookAndFeelPlugin extends AbstractViewPlugin {
 
@@ -33,7 +35,27 @@ public class LookAndFeelPlugin extends AbstractViewPlugin {
 
     @Override
     public ActionDescriptor[] getActionDescriptors() {
-        LookAndFeelInfo[] infos = UIManager.getInstalledLookAndFeels();
+        IOS26LookAndFeel.install();
+
+        LookAndFeelInfo[] installed = UIManager.getInstalledLookAndFeels();
+        ArrayList<LookAndFeelInfo> infoList = new ArrayList<LookAndFeelInfo>();
+        for (int i = 0; i < installed.length; i++) {
+            infoList.add(installed[i]);
+        }
+        boolean hasIOS = false;
+        for (LookAndFeelInfo info : infoList) {
+            if (IOS26LookAndFeel.class.getName().equals(info.getClassName())) {
+                hasIOS = true;
+                break;
+            }
+        }
+        if (!hasIOS) {
+            infoList.add(new LookAndFeelInfo(IOS26LookAndFeel.NAME,
+                    IOS26LookAndFeel.class.getName()));
+        }
+
+        LookAndFeelInfo[] infos = infoList
+                .toArray(new LookAndFeelInfo[infoList.size()]);
         ActionDescriptor[] res = new ActionDescriptor[infos.length];
         final LookAndFeel laf = UIManager.getLookAndFeel();
         for (int i = 0; i < infos.length; i++) {

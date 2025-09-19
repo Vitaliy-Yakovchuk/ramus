@@ -141,6 +141,7 @@ public class IDEFPanel extends ViewPanel {
     private JPanel jPanel5 = null;
 
     private ArrowOptionstDialog rowSelectDialog = null;
+    private ArrowConnectionsDialog arrowConnectionsDialog = null;
 
     private JPopupMenu arrowPopupMenu = null; // @jve:decl-index=0:visual-constraint="611,235"
 
@@ -151,6 +152,7 @@ public class IDEFPanel extends ViewPanel {
     private JPopupMenu functionPopupMenu = null; // @jve:decl-index=0:visual-constraint="619,95"
 
     private JMenuItem jMenuItem1 = null;
+    private JMenuItem arrowConnectionsMenuItem = null;
 
     private boolean systemViewState = false;
 
@@ -670,6 +672,27 @@ public class IDEFPanel extends ViewPanel {
         }
     }
 
+    private ArrowConnectionsDialog getArrowConnectionsDialog() {
+        synchronized (lock) {
+            if (arrowConnectionsDialog == null) {
+                arrowConnectionsDialog = new ArrowConnectionsDialog(
+                        framework.getMainFrame(), movingArea);
+            }
+            return arrowConnectionsDialog;
+        }
+    }
+
+    private void showArrowConnectionsDialog() {
+        Function function = null;
+        final Object activeObject = movingArea.getActiveObject();
+        if (activeObject instanceof MovingFunction) {
+            function = ((MovingFunction) activeObject).getFunction();
+        }
+        if (function == null)
+            return;
+        getArrowConnectionsDialog().showForFunction(function);
+    }
+
     /**
      * This method initializes jPopupMenu
      *
@@ -768,6 +791,8 @@ public class IDEFPanel extends ViewPanel {
             functionPopupMenu.add(frame.findAction(MainFrame.VISUAL_OPTIONS));
             functionPopupMenu.addSeparator();
             functionPopupMenu.add(getJMenuItem1());
+            functionPopupMenu.addSeparator();
+            functionPopupMenu.add(getArrowConnectionsMenuItem());
         }
         return functionPopupMenu;
     }
@@ -783,6 +808,15 @@ public class IDEFPanel extends ViewPanel {
             jMenuItem1.setAction(frame.findAction(MainFrame.EDIT));
         }
         return jMenuItem1;
+    }
+
+    private JMenuItem getArrowConnectionsMenuItem() {
+        if (arrowConnectionsMenuItem == null) {
+            arrowConnectionsMenuItem = new JMenuItem();
+            arrowConnectionsMenuItem
+                    .setAction(frame.findAction(MainFrame.ARROW_CONNECTIONS));
+        }
+        return arrowConnectionsMenuItem;
     }
 
     private JMenuItem jMenuItem2 = null; // @jve:decl-index=0:
@@ -1531,6 +1565,8 @@ public class IDEFPanel extends ViewPanel {
                 res.add(MainFrame.RENAME);
                 res.add(MainFrame.COPY);
                 res.add(MainFrame.CUT);
+                if (function.getType() < Function.TYPE_EXTERNAL_REFERENCE)
+                    res.add(MainFrame.ARROW_CONNECTIONS);
                 switch (function.getType()) {
                     case Function.TYPE_ACTION: {
                         getJRadioButtonMenuItemAction().setSelected(true);
@@ -1940,6 +1976,8 @@ public class IDEFPanel extends ViewPanel {
             openInnerTab();
         else if (MainFrame.OPEN_TAB.equals(cmd))
             openTab();
+        else if (MainFrame.ARROW_CONNECTIONS.equals(cmd))
+            showArrowConnectionsDialog();
         else if (MainFrame.SET_TRANSPARENT_ARROW_TEXT.equals(cmd))
             movingArea.setTransparent();
         else if (MainFrame.SET_LOOK_FOR_CHILDRENS.equals(cmd))
