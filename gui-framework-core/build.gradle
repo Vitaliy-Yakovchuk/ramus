@@ -5,12 +5,15 @@ apply plugin: 'java'
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
     implementation project(':gui-framework-common')
     implementation project(':common')
-    implementation 'org.dockingframes:docking-frames-common:1.1.2-SNAPSHOT'
+    implementation 'org.dockingframes:docking-frames-common:1.1.1'
     implementation 'javax.help:javahelp:2.0.05'
     testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
