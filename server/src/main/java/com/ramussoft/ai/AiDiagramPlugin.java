@@ -52,12 +52,12 @@ public class AiDiagramPlugin extends AbstractPlugin {
     @SuppressWarnings("unchecked")
     @Override
     public Class getFunctionalInterface() {
-        return AiDiagramService.class;
+        return AiDiagramApi.class;
     }
 
     @Override
     public Object createFunctionalInterfaceObject(Engine engine, IEngine iEngine) {
-        return service;
+        return (AiDiagramApi) service;
     }
 
     public AiDiagramService getService() {

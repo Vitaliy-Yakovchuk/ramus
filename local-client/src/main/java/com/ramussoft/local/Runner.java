@@ -34,6 +34,7 @@ import com.ramussoft.common.Engine;
 import com.ramussoft.common.Metadata;
 import com.ramussoft.common.PluginFactory;
 import com.ramussoft.common.PluginProvider;
+import com.ramussoft.ai.AiDiagramPluginProvider;
 import com.ramussoft.common.journal.DirectoryJournalFactory;
 import com.ramussoft.common.journal.Journal;
 import com.ramussoft.common.journal.Journaled;
@@ -801,5 +802,7 @@ public class Runner implements Commands {
     }
 
     protected void initAdditionalPluginSuits(ArrayList<PluginProvider> ps) {
+        // Register AI Diagram plugin provider so the AI service is available in the engine
+        ps.add(new AiDiagramPluginProvider());
     }
 }

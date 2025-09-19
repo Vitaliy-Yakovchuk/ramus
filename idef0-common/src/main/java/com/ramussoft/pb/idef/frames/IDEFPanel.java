@@ -121,6 +121,8 @@ public class IDEFPanel extends ViewPanel {
 
     public static final int FIT_HEIGHT = 2;
 
+    private static final String AI_DIAGRAM_ACTION = "AiDiagram.Generate";
+
     private MainFrame frame;
 
     public static Color DEFAULT_BACKGROUND = Options.getColor(
@@ -153,6 +155,7 @@ public class IDEFPanel extends ViewPanel {
 
     private JMenuItem jMenuItem1 = null;
     private JMenuItem arrowConnectionsMenuItem = null;
+    private JMenuItem aiDiagramMenuItem = null;
 
     private boolean systemViewState = false;
 
@@ -793,6 +796,7 @@ public class IDEFPanel extends ViewPanel {
             functionPopupMenu.add(getJMenuItem1());
             functionPopupMenu.addSeparator();
             functionPopupMenu.add(getArrowConnectionsMenuItem());
+            functionPopupMenu.add(getAiDiagramMenuItem());
         }
         return functionPopupMenu;
     }
@@ -817,6 +821,26 @@ public class IDEFPanel extends ViewPanel {
                     .setAction(frame.findAction(MainFrame.ARROW_CONNECTIONS));
         }
         return arrowConnectionsMenuItem;
+    }
+
+    private JMenuItem getAiDiagramMenuItem() {
+        if (aiDiagramMenuItem == null) {
+            aiDiagramMenuItem = new JMenuItem();
+            String title = GlobalResourcesManager.getString(AI_DIAGRAM_ACTION);
+            if (title == null) {
+                title = AI_DIAGRAM_ACTION;
+            }
+            aiDiagramMenuItem.setText(title);
+            aiDiagramMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (framework != null) {
+                        framework.propertyChanged(AI_DIAGRAM_ACTION);
+                    }
+                }
+            });
+        }
+        return aiDiagramMenuItem;
     }
 
     private JMenuItem jMenuItem2 = null; // @jve:decl-index=0:

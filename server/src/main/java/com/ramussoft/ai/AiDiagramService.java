@@ -20,7 +20,7 @@ import okhttp3.ResponseBody;
  * HTTP client facade for communicating with the OpenRouter API using OkHttp 3.x
  * (compatible with Java 8) with JSON serialization support.
  */
-public class AiDiagramService {
+public class AiDiagramService implements AiDiagramApi {
 
     private static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
 
@@ -86,6 +86,7 @@ public class AiDiagramService {
         return builder.build();
     }
 
+    @Override
     public String requestDiagram(String jsonBody) throws IOException {
         if (httpClient == null || apiUrl == null || apiKey == null) {
             throw new IllegalStateException("HTTP client not configured. Use constructor with HTTP parameters.");
@@ -93,36 +94,48 @@ public class AiDiagramService {
         if (jsonBody == null) {
             throw new IllegalArgumentException("jsonBody must not be null");
         }
-        RequestBody requestBody = RequestBody.create(JSON_MEDIA_TYPE, jsonBody);
-        Request.Builder requestBuilder = new Request.Builder().url(apiUrl).post(requestBody)
-                .addHeader("Authorization", "Bearer " + apiKey)
-                .addHeader("Content-Type", "application/json");
-        if (referer != null && referer.length() > 0) {
-            requestBuilder.addHeader("HTTP-Referer", referer);
-        }
-        if (title != null && title.length() > 0) {
-            requestBuilder.addHeader("X-Title", title);
-        }
-        try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
-            ResponseBody responseBody = response.body();
-            if (!response.isSuccessful()) {
-                StringBuilder message = new StringBuilder();
-                message.append("OpenRouter request failed with status ").append(response.code());
-                if (responseBody != null) {
-                    String errorBody = responseBody.string();
-                    if (errorBody.length() > 0) {
-                        message.append(": ").append(errorBody);
+        IOException lastError = null;
+        for (int attempt = 1; attempt <= 10; attempt++) {
+            RequestBody requestBody = RequestBody.create(JSON_MEDIA_TYPE, jsonBody);
+            Request.Builder requestBuilder = new Request.Builder().url(apiUrl).post(requestBody)
+                    .addHeader("Authorization", "Bearer " + apiKey)
+                    .addHeader("Content-Type", "application/json");
+            if (referer != null && referer.length() > 0) {
+                requestBuilder.addHeader("HTTP-Referer", referer);
+            }
+            if (title != null && title.length() > 0) {
+                requestBuilder.addHeader("X-Title", title);
+            }
+            try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
+                ResponseBody responseBody = response.body();
+                if (!response.isSuccessful()) {
+                    StringBuilder message = new StringBuilder();
+                    message.append("OpenRouter request failed with status ").append(response.code());
+                    if (responseBody != null) {
+                        String errorBody = responseBody.string();
+                        if (errorBody.length() > 0) {
+                            message.append(": ").append(errorBody);
+                        }
                     }
+                    lastError = new IOException(message.toString());
+                } else {
+                    if (responseBody == null) {
+                        return "";
+                    }
+                    return responseBody.string();
                 }
-                throw new IOException(message.toString());
+            } catch (IOException ex) {
+                lastError = ex;
             }
-            if (responseBody == null) {
-                return "";
+            try {
+                Thread.sleep(Math.min(1000L * attempt, 5000L));
+            } catch (InterruptedException ignored) {
             }
-            return responseBody.string();
         }
+        throw lastError != null ? lastError : new IOException("OpenRouter request failed after retries");
     }
 
+    @Override
     public String createChatCompletionRequest(String model, List<OpenRouterMessage> messages) throws JsonProcessingException {
         Map<String, Object> payload = new HashMap<>();
         payload.put("model", model);
@@ -130,6 +143,7 @@ public class AiDiagramService {
         return objectMapper.writeValueAsString(payload);
     }
 
+    @Override
     public OpenRouterResponse parseResponse(String responseJson) throws IOException {
         if (responseJson == null) {
             return null;
@@ -137,6 +151,18 @@ public class AiDiagramService {
         return objectMapper.readValue(responseJson, OpenRouterResponse.class);
     }
 
+    public AiDiagramDefinition parseDiagramDefinition(String responseJson) throws IOException {
+        if (responseJson == null) {
+            return null;
+        }
+        String trimmed = responseJson.trim();
+        if (trimmed.length() == 0) {
+            return null;
+        }
+        return objectMapper.readValue(trimmed, AiDiagramDefinition.class);
+    }
+
+    @Override
     public String extractFirstMessageContent(String responseJson) throws IOException {
         OpenRouterResponse response = parseResponse(responseJson);
         if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {

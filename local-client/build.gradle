@@ -24,13 +24,19 @@ dependencies {
     implementation project(':chart-common')
     implementation project(':chart-core')
     implementation project(':chart-gui')
+    implementation project(':server')
 
     implementation 'com.h2database:h2:1.3.163'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
     testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
 
 task runLocal(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     main = "com.ramussoft.local.Main"
+    // Ensure AI config at conf/ramus-ai.conf is discoverable
+    systemProperty 'ramus.server.base', rootProject.rootDir.absolutePath
     args[]
 }
