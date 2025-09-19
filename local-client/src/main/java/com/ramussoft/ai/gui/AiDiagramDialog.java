@@ -55,7 +55,7 @@ public class AiDiagramDialog extends JDialog {
     private final GUIFramework framework;
     private final AiDiagramService service;
     private final AiConfig config;
-    private final OpenDiagram target;
+    private OpenDiagram target;
     private final AiDiagramApplier applier;
 
     private JTextArea promptArea;
@@ -163,7 +163,7 @@ public class AiDiagramDialog extends JDialog {
             protected void done() {
                 try {
                     AiDiagramDefinition definition = get();
-                    applier.apply(target, definition);
+                    target = applier.apply(target, definition);
                     responseArea.setText(responseJson);
                     statusLabel.setText("Диаграмма обновлена");
                 } catch (Exception ex) {

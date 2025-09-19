@@ -122,6 +122,7 @@ public class IDEFPanel extends ViewPanel {
     public static final int FIT_HEIGHT = 2;
 
     private static final String AI_DIAGRAM_ACTION = "AiDiagram.Generate";
+    private static final String AI_IMPORT_ACTION = "AiDiagram.ImportJson";
 
     private MainFrame frame;
 
@@ -156,6 +157,7 @@ public class IDEFPanel extends ViewPanel {
     private JMenuItem jMenuItem1 = null;
     private JMenuItem arrowConnectionsMenuItem = null;
     private JMenuItem aiDiagramMenuItem = null;
+    private JMenuItem aiImportMenuItem = null;
 
     private boolean systemViewState = false;
 
@@ -797,6 +799,7 @@ public class IDEFPanel extends ViewPanel {
             functionPopupMenu.addSeparator();
             functionPopupMenu.add(getArrowConnectionsMenuItem());
             functionPopupMenu.add(getAiDiagramMenuItem());
+            functionPopupMenu.add(getAiImportMenuItem());
         }
         return functionPopupMenu;
     }
@@ -841,6 +844,26 @@ public class IDEFPanel extends ViewPanel {
             });
         }
         return aiDiagramMenuItem;
+    }
+
+    private JMenuItem getAiImportMenuItem() {
+        if (aiImportMenuItem == null) {
+            aiImportMenuItem = new JMenuItem();
+            String title = GlobalResourcesManager.getString(AI_IMPORT_ACTION);
+            if (title == null) {
+                title = AI_IMPORT_ACTION;
+            }
+            aiImportMenuItem.setText(title);
+            aiImportMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (framework != null) {
+                        framework.propertyChanged(AI_IMPORT_ACTION);
+                    }
+                }
+            });
+        }
+        return aiImportMenuItem;
     }
 
     private JMenuItem jMenuItem2 = null; // @jve:decl-index=0:

@@ -3,21 +3,26 @@ package com.ramussoft.ai.gui;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dsoft.pb.idef.ResourceLoader;
 import com.dsoft.pb.types.FRectangle;
 import com.dsoft.utils.DataLoader.MemoryData;
 import com.ramussoft.ai.AiDiagramDefinition;
 import com.ramussoft.ai.AiFunctionDefinition;
 import com.ramussoft.ai.AiStreamDefinition;
 import com.ramussoft.ai.AiStreamEndpoint;
+import com.ramussoft.common.Attribute;
+import com.ramussoft.common.AttributeType;
 import com.ramussoft.common.Engine;
 import com.ramussoft.common.journal.Journaled;
 import com.ramussoft.common.Qualifier;
 import com.ramussoft.gui.common.GUIFramework;
+import com.ramussoft.idef0.IDEF0Plugin;
 import com.ramussoft.idef0.IDEF0ViewPlugin;
 import com.ramussoft.idef0.NDataPluginFactory;
 import com.ramussoft.idef0.OpenDiagram;
 import com.ramussoft.pb.DataPlugin;
 import com.ramussoft.pb.Function;
+import com.ramussoft.pb.Row;
 import com.ramussoft.pb.Stream;
 import com.ramussoft.pb.idef.elements.Ordinate;
 import com.ramussoft.pb.idef.elements.PaintSector;
@@ -41,15 +46,13 @@ public class AiDiagramApplier {
         this.framework = framework;
     }
 
-    public void apply(OpenDiagram target, AiDiagramDefinition definition) throws Exception {
+    public OpenDiagram apply(OpenDiagram target, AiDiagramDefinition definition) throws Exception {
         if (definition == null) {
-            return;
+            return target;
         }
-        Qualifier qualifier = (target != null) ? target.getQualifier() : null;
-        if (qualifier == null) {
-            qualifier = framework.getEngine().createQualifier();
-            target = new OpenDiagram(qualifier, -1l);
-        }
+        Qualifier qualifier = ensureFunctionQualifier((target != null) ? target.getQualifier() : null);
+        long functionId = (target != null) ? target.getFunctionId() : -1l;
+        target = new OpenDiagram(qualifier, functionId);
         DataPlugin dataPlugin = NDataPluginFactory.getDataPlugin(qualifier,
                 framework.getEngine(), framework.getAccessRules());
         if (dataPlugin == null) {
@@ -84,6 +87,51 @@ public class AiDiagramApplier {
 
         NDataPluginFactory.fullRefrash(framework);
         framework.propertyChanged(IDEF0ViewPlugin.ACTIVE_DIAGRAM, target);
+        return target;
+    }
+
+    private Qualifier ensureFunctionQualifier(Qualifier qualifier) {
+        Engine engine = framework.getEngine();
+        if (qualifier == null) {
+            qualifier = engine.createQualifier();
+        }
+        boolean updated = ensureNameAttribute(qualifier, engine);
+        if (!IDEF0Plugin.isFunction(qualifier)) {
+            IDEF0Plugin.installFunctionAttributes(qualifier, engine);
+            updated = true;
+        }
+        if (updated) {
+            engine.updateQualifier(qualifier);
+        }
+        return qualifier;
+    }
+
+    private boolean ensureNameAttribute(Qualifier qualifier, Engine engine) {
+        if (qualifier.getAttributeForName() > 0) {
+            return false;
+        }
+        Attribute nameAttribute = findOrCreateNameAttribute(engine);
+        if (!qualifier.getAttributes().contains(nameAttribute)) {
+            qualifier.getAttributes().add(nameAttribute);
+        }
+        qualifier.setAttributeForName(nameAttribute.getId());
+        return true;
+    }
+
+    private Attribute findOrCreateNameAttribute(Engine engine) {
+        String expectedName = ResourceLoader.getString("name");
+        for (Attribute attribute : engine.getAttributes()) {
+            AttributeType type = attribute.getAttributeType();
+            if (type != null && "Core.Text".equals(type.toString())
+                    && expectedName.equals(attribute.getName())) {
+                return attribute;
+            }
+        }
+        AttributeType textType = new AttributeType("Core", "Text", true);
+        Attribute attribute = engine.createAttribute(textType);
+        attribute.setName(expectedName);
+        engine.updateAttribute(attribute);
+        return attribute;
     }
 
     private void rollback(MovingArea area) {
@@ -100,7 +148,11 @@ public class AiDiagramApplier {
         if (target.getFunctionId() < 0) {
             return dataPlugin.getBaseFunction();
         }
-        return (Function) dataPlugin.findRowByGlobalId(target.getFunctionId());
+        Row row = dataPlugin.findRowByGlobalId(target.getFunctionId());
+        if (row instanceof Function) {
+            return (Function) row;
+        }
+        throw new IllegalStateException("Unable to resolve function with id " + target.getFunctionId());
     }
 
     private void createFunctions(AiDiagramDefinition definition, Function context,
