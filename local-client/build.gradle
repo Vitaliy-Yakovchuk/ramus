@@ -243,31 +243,32 @@ tasks.register('macDmg') {
 }
 
 task createMacApp(type: Copy, dependsOn: [shadowJar, makeIcns]) {
+    // Resolve bundle directories eagerly so Gradle doesn't treat DirectoryProperty objects as strings.
+    def appDir = new File(buildDir, 'mac-app/Ramus.app')
+    def contentsDir = new File(appDir, 'Contents')
+    def macOSDir = new File(contentsDir, 'MacOS')
+    def resourcesDir = new File(contentsDir, 'Resources')
+
     from shadowJar.archiveFile
-    into file("${buildDir}/mac-app/Ramus.app/Contents/MacOS")
+    into macOSDir
     rename { filename -> 'ramus.jar' }
-    
+
     doLast {
         // Create app bundle structure
-        def appDir = file("${buildDir}/mac-app/Ramus.app")
-        def contentsDir = file("${appDir}/Contents")
-        def macOSDir = file("${contentsDir}/MacOS")
-        def resourcesDir = file("${contentsDir}/Resources")
-        
         macOSDir.mkdirs()
         resourcesDir.mkdirs()
-        
+
         // Copy app icon (prefer generated .icns)
         def iconFile = file("${macWorkDir}/Ramus.icns")
         if (!iconFile.exists()) {
-            iconFile = file("src/main/resources/Ramus.icns")
+            iconFile = file('src/main/resources/Ramus.icns')
         }
         if (iconFile.exists()) {
             copy { from iconFile; into resourcesDir }
         }
-        
+
         // Create Info.plist
-        def infoPlist = file("${contentsDir}/Info.plist")
+        def infoPlist = new File(contentsDir, 'Info.plist')
         infoPlist.text = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -298,16 +299,16 @@ task createMacApp(type: Copy, dependsOn: [shadowJar, makeIcns]) {
     <true/>
 </dict>
 </plist>"""
-        
+
         // Create executable script
-        def executable = file("${macOSDir}/Ramus")
+        def executable = new File(macOSDir, 'Ramus')
         executable.text = """#!/bin/bash
 cd "\$(dirname "\$0")"
 # Use the app's icon in the Dock instead of the Java default
 exec java -Xdock:name=Ramus -Xdock:icon="../Resources/Ramus.icns" -jar ramus.jar "\$@"
 """
         executable.setExecutable(true)
-        
-        println "macOS app created at: \${appDir.absolutePath}"
+
+        println "macOS app created at: ${appDir.absolutePath}"
     }
 }
