@@ -3,24 +3,18 @@ package com.ramussoft.ai;
 import com.dsoft.pb.types.FRectangle;
 import com.ramussoft.common.Engine;
 import com.ramussoft.idef0.NDataPluginFactory;
+import com.ramussoft.idef0.attribute.SectorPointPersistent;
+import com.ramussoft.idef0.attribute.SectorPropertiesPersistent;
+import com.ramussoft.pb.Crosspoint;
 import com.ramussoft.pb.DataPlugin;
 import com.ramussoft.pb.Function;
 import com.ramussoft.pb.Sector;
 import com.ramussoft.pb.Stream;
-<<<<<<< ours
-=======
 import com.ramussoft.pb.data.SectorBorder;
->>>>>>> theirs
 import com.ramussoft.pb.data.negine.NSector;
 import com.ramussoft.pb.data.negine.NSectorBorder;
 import com.ramussoft.pb.idef.visual.MovingArea;
 import com.ramussoft.pb.idef.visual.MovingPanel;
-<<<<<<< ours
-import com.ramussoft.pb.Crosspoint;
-import com.ramussoft.idef0.attribute.SectorPointPersistent;
-import com.ramussoft.idef0.attribute.SectorPropertiesPersistent;
-=======
->>>>>>> theirs
 import com.ramussoft.server.EngineFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -51,8 +45,7 @@ public class JsonDiagramImporterTest {
     }
 
     @Test
-<<<<<<< ours
-    public void importsBoxesStreamsAndArrows() throws Exception {
+    public void importsLegacyDiagramWithDetailedSectorData() throws Exception {
         String json = "{" +
                 "\"streams\":[{" +
                 "\"id\":7,\"name\":\"Material\",\"emptyName\":false" +
@@ -75,45 +68,22 @@ public class JsonDiagramImporterTest {
                 "\"bendPoints\":[{" +
                 "\"xOrdinateId\":1001,\"yOrdinateId\":2001,\"x\":180.0,\"y\":90.0,\"type\":\"MIDDLE\",\"position\":1" +
                 "}]}}]}";
-=======
-    public void importsBoxesAndArrowsFromCompactJson() throws Exception {
-        String json = "[" +
-                "{\"type\":\"box\",\"id\":1,\"name\":\"A1\",\"father\":0,\"x\":120,\"y\":80,\"width\":140,\"height\":90}," +
-                "{\"type\":\"box\",\"id\":2,\"name\":\"A2\",\"father\":0,\"x\":320,\"y\":80,\"width\":140,\"height\":90}," +
-                "{\"type\":\"box\",\"id\":3,\"name\":\"A1.1\",\"father\":1,\"x\":140,\"y\":140,\"width\":120,\"height\":70}," +
-                "{\"type\":\"box\",\"id\":4,\"name\":\"A1.2\",\"father\":1,\"x\":320,\"y\":140,\"width\":120,\"height\":70}," +
-                "{\"type\":\"arrow\",\"id\":10,\"name\":\"Material\",\"father\":0,\"source\":1,\"sourceSide\":\"RIGHT\",\"target\":2,\"targetSide\":\"LEFT\"}," +
-                "{\"type\":\"arrow\",\"id\":11,\"name\":\"External\",\"father\":0,\"source\":\"LEFT\",\"target\":1,\"targetSide\":\"LEFT\"}," +
-                "{\"type\":\"arrow\",\"id\":12,\"name\":\"Detail\",\"father\":1,\"source\":3,\"sourceSide\":\"RIGHT\",\"target\":4,\"targetSide\":\"LEFT\"}," +
-                "{\"type\":\"arrow\",\"id\":13,\"name\":\"Output\",\"father\":1,\"source\":4,\"sourceSide\":\"RIGHT\",\"target\":\"RIGHT\",\"targetSide\":\"RIGHT\"}" +
-                "]";
->>>>>>> theirs
 
         JsonDiagramImporter importer = new JsonDiagramImporter(dataPlugin, baseFunction);
         JsonDiagramImporter.ImportResult result = importer.importDiagram(json);
 
         Map<Long, Function> functions = result.getFunctions();
-<<<<<<< ours
         assertEquals(2, functions.size());
 
         Function box1 = functions.get(12L);
         assertNotNull(box1);
         assertEquals("A1", box1.getName());
-=======
-        assertEquals(4, functions.size());
-
-        Function box1 = functions.get(1L);
-        assertNotNull(box1);
-        assertEquals("A1", box1.getName());
         assertEquals(MovingArea.DIAGRAM_TYPE_DFD, box1.getDecompositionType());
->>>>>>> theirs
         FRectangle bounds1 = box1.getBounds();
         assertEquals(120.0, bounds1.getX(), 0.001);
         assertEquals(80.0, bounds1.getY(), 0.001);
         assertEquals(140.0, bounds1.getWidth(), 0.001);
         assertEquals(90.0, bounds1.getHeight(), 0.001);
-<<<<<<< ours
-        assertEquals(MovingArea.DIAGRAM_TYPE_DFD, box1.getDecompositionType());
 
         Function box2 = functions.get(18L);
         assertNotNull(box2);
@@ -122,6 +92,7 @@ public class JsonDiagramImporterTest {
         Map<Long, Stream> streams = result.getStreams();
         assertTrue(streams.containsKey(7L));
         Stream stream = streams.get(7L);
+        assertNotNull(stream);
         assertEquals("Material", stream.getName());
 
         Sector sector = result.getSectors().get(34L);
@@ -133,14 +104,14 @@ public class JsonDiagramImporterTest {
         assertEquals(1, sector.getCreateState());
         assertEquals(0.5, sector.getCreatePos(), 0.0001);
 
-        NSectorBorder start = (NSectorBorder) ((NSector) sector).getStart();
+        NSectorBorder start = sector.getStart();
         assertEquals(box1, start.getFunction());
         assertEquals(MovingPanel.RIGHT, start.getFunctionType());
         Crosspoint crosspoint = start.getCrosspoint();
         assertNotNull(crosspoint);
         assertEquals(301L, crosspoint.getGlobalId());
 
-        NSectorBorder end = (NSectorBorder) ((NSector) sector).getEnd();
+        NSectorBorder end = sector.getEnd();
         assertEquals(box2, end.getFunction());
         assertEquals(MovingPanel.LEFT, end.getFunctionType());
         assertEquals(crosspoint, end.getCrosspoint());
@@ -160,9 +131,35 @@ public class JsonDiagramImporterTest {
         assertEquals(1, point.getPointType());
         assertEquals(1, point.getPosition());
     }
-}
 
-=======
+    @Test
+    public void importsBoxesAndArrowsFromCompactJson() throws Exception {
+        String json = "[" +
+                "{\"type\":\"box\",\"id\":1,\"name\":\"A1\",\"father\":0,\"x\":120,\"y\":80,\"width\":140,\"height\":90}," +
+                "{\"type\":\"box\",\"id\":2,\"name\":\"A2\",\"father\":0,\"x\":320,\"y\":80,\"width\":140,\"height\":90}," +
+                "{\"type\":\"box\",\"id\":3,\"name\":\"A1.1\",\"father\":1,\"x\":140,\"y\":140,\"width\":120,\"height\":70}," +
+                "{\"type\":\"box\",\"id\":4,\"name\":\"A1.2\",\"father\":1,\"x\":320,\"y\":140,\"width\":120,\"height\":70}," +
+                "{\"type\":\"arrow\",\"id\":10,\"name\":\"Material\",\"father\":0,\"source\":1,\"sourceSide\":\"RIGHT\",\"target\":2,\"targetSide\":\"LEFT\"}," +
+                "{\"type\":\"arrow\",\"id\":11,\"name\":\"External\",\"father\":0,\"source\":\"LEFT\",\"target\":1,\"targetSide\":\"LEFT\"}," +
+                "{\"type\":\"arrow\",\"id\":12,\"name\":\"Detail\",\"father\":1,\"source\":3,\"sourceSide\":\"RIGHT\",\"target\":4,\"targetSide\":\"LEFT\"}," +
+                "{\"type\":\"arrow\",\"id\":13,\"name\":\"Output\",\"father\":1,\"source\":4,\"sourceSide\":\"RIGHT\",\"target\":\"RIGHT\",\"targetSide\":\"RIGHT\"}" +
+                "]";
+
+        JsonDiagramImporter importer = new JsonDiagramImporter(dataPlugin, baseFunction);
+        JsonDiagramImporter.ImportResult result = importer.importDiagram(json);
+
+        Map<Long, Function> functions = result.getFunctions();
+        assertEquals(4, functions.size());
+
+        Function box1 = functions.get(1L);
+        assertNotNull(box1);
+        assertEquals("A1", box1.getName());
+        assertEquals(MovingArea.DIAGRAM_TYPE_DFD, box1.getDecompositionType());
+        FRectangle bounds1 = box1.getBounds();
+        assertEquals(120.0, bounds1.getX(), 0.001);
+        assertEquals(80.0, bounds1.getY(), 0.001);
+        assertEquals(140.0, bounds1.getWidth(), 0.001);
+        assertEquals(90.0, bounds1.getHeight(), 0.001);
 
         Function box3 = functions.get(3L);
         assertNotNull(box3);
@@ -218,4 +215,3 @@ public class JsonDiagramImporterTest {
         assertEquals(MovingPanel.RIGHT, end13.getFunctionType());
     }
 }
->>>>>>> theirs
