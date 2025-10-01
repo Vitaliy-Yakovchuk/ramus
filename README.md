@@ -87,3 +87,20 @@ In the console, navigate to the project folder and run:
 
 4. Now, you can simply run `ramus` in the terminal to launch the application.
 
+## Troubleshooting
+
+### "java.util.zip.ZipException: error in opening zip file" on Windows
+
+If the Gradle wrapper download becomes corrupted (for example, when the build stops with
+`java.util.zip.ZipException: error in opening zip file` while unpacking `gradle-6.9.4-all.zip`),
+remove the cached distribution and rerun the command. Gradle will download a fresh copy on the
+next invocation.
+
+```powershell
+Remove-Item "$env:USERPROFILE\.gradle\wrapper\dists" -Recurse -Force
+```
+
+If you prefer to delete only the failing version, remove the specific directory shown in the error
+message instead of the whole `dists` folder. After the cleanup, re-run `./gradlew build` (or any
+other Gradle wrapper command) and the build should proceed normally.
+
