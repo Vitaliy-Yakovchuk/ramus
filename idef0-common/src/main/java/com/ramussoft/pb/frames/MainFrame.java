@@ -158,6 +158,7 @@ public class MainFrame implements ActionListener {
     public static final String DATA_STORE_TOOL = "data_store_tool";
 
     public static final String ARROW_TOOL = "arrow_tool"; // @jve:decl-index=0:
+    public static final String ARROW_CONNECTIONS = "arrow_connections";
 
     public static final String TILDA_TOOL = "squiggle_tool"; // @jve:decl-index=0:
 
@@ -597,6 +598,10 @@ public class MainFrame implements ActionListener {
                 ResourceLoader.getString(ARROW_TOOL), new ImageIcon(getClass()
                         .getResource("/images/arrow.gif")),
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, 0));
+
+        createAction(ARROW_CONNECTIONS,
+                ResourceLoader.getString("ArrowConnections.menu"),
+                ResourceLoader.getString("ArrowConnections.menu"), null, null);
 
         createAction(TILDA_TOOL, ResourceLoader.getString(TILDA_TOOL),
                 ResourceLoader.getString(TILDA_TOOL), new ImageIcon(getClass()

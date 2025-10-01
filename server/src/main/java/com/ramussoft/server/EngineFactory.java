@@ -36,6 +36,7 @@ import com.ramussoft.common.logger.Event;
 import com.ramussoft.common.logger.ILog;
 import com.ramussoft.common.logger.Log;
 import com.ramussoft.common.logger.UpdateEventCallback;
+import com.ramussoft.ai.AiDiagramPluginProvider;
 import com.ramussoft.core.attribute.simple.SimpleAttributePluginSuit;
 import com.ramussoft.core.impl.IntegrityAccessorSuit;
 import com.ramussoft.core.persistent.PersistentFactory;
@@ -240,6 +241,8 @@ public class EngineFactory {
             suits.add(new SimpleAttributePluginSuit());
 
             suits.add(new IDEF0PluginProvider());
+
+            suits.add(new AiDiagramPluginProvider());
 
             Properties ps = getPropeties();
             if (ps != null) {
