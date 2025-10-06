@@ -6,15 +6,6 @@ Download: the latest macOS DMG is available in this repository’s GitHub Releas
 
 License: see LICENSE in this repository (unchanged from upstream).
 
-## What’s Different vs. Upstream
-
-- macOS app bundle and DMG packaging via Gradle + jpackage.
-- Proper Dock icon and Info.plist; icons are sourced from `packaging/macos/AppIcon.appiconset` and converted to `.icns` during build (uses macOS `sips`/`iconutil`; falls back to `dwebp` if needed).
-- Uses the macOS system menu bar (`apple.laf.useScreenMenuBar=true`).
-- macOS keyboard shortcuts use the Command key (⌘) via the platform menu shortcut mask (e.g., ⌘S, ⌘O, ⌘Z, ⌘⇧S, etc.).
-- Standalone distribution: bundles a Java runtime. Optionally uses `jlink` to create a minimized runtime; falls back to bundling the full JDK if `jlink` isn’t available.
-- Modernized build/toolchain: project compiles for Java 17 (upstream used Java 8) and uses a recent Gradle (8.x). Packaging targets JDK 21 for the bundled runtime.
-
 ## Requirements (macOS)
 
 - macOS with developer tools (preinstalled utilities: `sips`, `iconutil`).
@@ -90,9 +81,11 @@ Note: the dev run uses your local Java installation; for the full native experie
 
 Contributions are very welcome—bug reports, macOS improvements, docs, and packaging tweaks. Please open issues or pull requests.
 
-## Credits
+## What’s new in 2.0.2
 
-This work is a fork of the open‑source Ramus project by Vitaliy Yakovchuk and contributors.
-
-- Original repository: https://github.com/Vitaliy-Yakovchuk/ramus
-- Original authors retain their respective copyrights and licenses.
+- macOS app bundle and DMG packaging via Gradle + jpackage.
+- Proper Dock icon and Info.plist; icons are sourced from `packaging/macos/AppIcon.appiconset` and converted to `.icns` during build (uses macOS `sips`/`iconutil`; falls back to `dwebp` if needed).
+- Uses the macOS system menu bar (`apple.laf.useScreenMenuBar=true`).
+- macOS keyboard shortcuts use the Command key (⌘) via the platform menu shortcut mask (e.g., ⌘S, ⌘O, ⌘Z, ⌘⇧S, etc.).
+- Standalone distribution: bundles a Java runtime. Optionally uses `jlink` to create a minimized runtime; falls back to bundling the full JDK if `jlink` isn’t available.
+- Modernized build/toolchain: project compiles for Java 17 (upstream used Java 8) and uses a recent Gradle (8.x). Packaging targets JDK 21 for the bundled runtime.
