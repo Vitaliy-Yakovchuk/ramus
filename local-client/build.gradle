@@ -1,7 +1,11 @@
-group 'com.vitalex.ramus'
-version '1.0-SNAPSHOT'
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
 
-apply plugin: 'java'
+group 'com.vitalex.ramus'
+version '2.0.2'
 
 repositories {
     mavenCentral()
@@ -31,6 +35,280 @@ dependencies {
 
 task runLocal(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
-    main = "com.ramussoft.local.Main"
+    mainClass = "com.ramussoft.local.Main"
     args[]
+}
+
+application {
+    mainClass = 'com.ramussoft.local.Main'
+    applicationName = 'Ramus'
+}
+
+shadowJar {
+    archiveBaseName.set('ramus')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+    
+    mergeServiceFiles()
+    
+    manifest {
+        attributes 'Main-Class': 'com.ramussoft.local.Main'
+    }
+}
+
+// --- macOS packaging (ICNS + DMG via jpackage) ---
+
+def macWorkDir = file("${buildDir}/macos")
+def iconsetDir = file("${macWorkDir}/AppIcon.iconset")
+def icnsFile = file("${macWorkDir}/Ramus.icns")
+def jpkgInputDir = file("${macWorkDir}/jpackage-input")
+def dmgDestDir = file("${rootProject.projectDir}/dest/macos")
+def runtimeImageDir = file("${macWorkDir}/runtime")
+
+tasks.register('prepareMacIcons') {
+    doLast {
+        if (!org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+            throw new GradleException('prepareMacIcons must be executed on macOS (uses sips)')
+        }
+        iconsetDir.mkdirs()
+        def srcBase = file("${rootProject.projectDir}/packaging/macos/AppIcon.appiconset")
+        if (!srcBase.exists()) {
+            throw new GradleException("Missing dest/Assets.xcassets/AppIcon.appiconset with mac icon images")
+        }
+        def mapping = [
+            'icon_16x16.png'      : [file:'16-mac.png',   size:16],
+            'icon_16x16@2x.png'   : [file:'32-mac.png',   size:32],
+            'icon_32x32.png'      : [file:'32-mac.png',   size:32],
+            'icon_32x32@2x.png'   : [file:'64-mac.png',   size:64],
+            'icon_128x128.png'    : [file:'128-mac.png',  size:128],
+            'icon_128x128@2x.png' : [file:'256-mac.png',  size:256],
+            'icon_256x256.png'    : [file:'256-mac.png',  size:256],
+            'icon_256x256@2x.png' : [file:'512-mac.png',  size:512],
+            'icon_512x512.png'    : [file:'512-mac.png',  size:512],
+            'icon_512x512@2x.png' : [file:'1024-mac.png', size:1024],
+        ]
+        mapping.each { targetName, meta ->
+            def src = new File(srcBase, meta.file)
+            if (!src.exists()) throw new GradleException("Missing icon asset: ${src}")
+            def out = new File(iconsetDir, targetName)
+            // Convert to true PNG and ensure correct dimensions using sips
+            // sips -s format png -z <h> <w> <in> --out <out>
+            exec {
+                commandLine 'sips', '-s', 'format', 'png', '-z', meta.size as String, meta.size as String, src.absolutePath, '--out', out.absolutePath
+            }
+        }
+        println "Prepared iconset at: ${iconsetDir}"
+    }
+}
+
+tasks.register('makeIcns') {
+    dependsOn 'prepareMacIcons'
+    doLast {
+        if (!org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+            throw new GradleException('makeIcns requires macOS (iconutil)')
+        }
+        exec {
+            commandLine 'iconutil', '-c', 'icns', iconsetDir.absolutePath, '-o', icnsFile.absolutePath
+        }
+        println "Built ICNS: ${icnsFile}"
+    }
+}
+
+tasks.register('prepareJpackageInput') {
+    dependsOn shadowJar
+    doLast {
+        jpkgInputDir.mkdirs()
+        copy {
+            from shadowJar.archiveFile.get().asFile
+            into jpkgInputDir
+            rename { 'ramus.jar' }
+        }
+        println "Prepared jpackage input at: ${jpkgInputDir}"
+    }
+}
+
+// Build a minimized runtime image with jlink using detected modules
+tasks.register('jlinkImage') {
+    dependsOn 'prepareJpackageInput'
+    doLast {
+        if (!org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+            println 'jlinkImage skipped: not macOS'
+            return
+        }
+        if (project.findProperty('packagingUseJlink')?.toString()?.toBoolean() == false) {
+            println 'jlinkImage skipped: packagingUseJlink=false'
+            return
+        }
+        def javaHome = (project.findProperty('packagingJavaHome') ?: project.findProperty('org.gradle.java.home') ?: System.getenv('JAVA_HOME') ?: System.getProperty('java.home'))
+        def jdepsBin = (project.findProperty('packagingJdepsBin') ?: new File(javaHome, 'bin/jdeps').absolutePath)
+        def jlinkBin = (project.findProperty('packagingJlinkBin') ?: new File(javaHome, 'bin/jlink').absolutePath)
+        def explicitJmods = project.findProperty('packagingJmodsPath')
+        // Build a module-path for jlink that works across different JDK layouts (Temurin/Oracle/GraalVM)
+        def modulePathCandidates = [] as List<File>
+        if (explicitJmods) modulePathCandidates << new File(explicitJmods.toString())
+        modulePathCandidates.addAll([
+                new File(javaHome, 'jmods'),
+                new File(javaHome, 'lib/jmods'),
+                new File(javaHome, 'lib/modules')
+        ])
+        modulePathCandidates = modulePathCandidates.findAll { it.exists() }
+        if (modulePathCandidates.isEmpty()) {
+            println "jlinkImage warning: No platform modules found under ${javaHome}. Looked in packagingJmodsPath, jmods, lib/jmods, lib/modules. Falling back to full JDK at runtime."
+            return
+        }
+        def jmodsDir = modulePathCandidates.collect { it.absolutePath }.join(File.pathSeparator)
+        runtimeImageDir.deleteDir() // jlink requires output directory to NOT exist
+
+        def mr = (System.properties['java.specification.version'] ?: '17').toString()
+        def sout = new ByteArrayOutputStream()
+        def serr = new ByteArrayOutputStream()
+        try {
+            exec {
+                // -q to suppress warnings mixing into stdout on some JDKs
+                commandLine jdepsBin, '-q', '--multi-release', mr, '--ignore-missing-deps', '--print-module-deps', new File(jpkgInputDir, 'ramus.jar').absolutePath
+                standardOutput = sout
+                errorOutput = serr
+                ignoreExitValue true
+            }
+        } catch (Exception ex) {
+            println "jlinkImage warning: jdeps not available at ${jdepsBin}. Falling back to default module set."
+        }
+        def raw = sout.toString()
+        def lines = raw.readLines().collect { it.trim() }.findAll { it }
+        // Pick the last line that looks like a comma-separated module list
+        def detected = lines.reverse().find { it ==~ /[a-z0-9_.]+(\s*,\s*[a-z0-9_.]+)*/ }
+        if (!detected) {
+            // Reasonable default set for Swing + H2 + common APIs
+            detected = 'java.base,java.desktop,java.datatransfer,java.logging,java.prefs,java.scripting,java.xml,java.xml.crypto,java.sql,java.naming,jdk.unsupported,jdk.charsets,jdk.xml.dom'
+            println "jdeps did not detect modules; using default set: ${detected}"
+        } else {
+            // Sanitize and ensure base module present
+            def mods = detected.split(',').collect { it.trim() }.findAll { it ==~ /[a-z][a-z0-9_.]*/ }
+            if (!mods.contains('java.base')) mods.add(0, 'java.base')
+            detected = mods.unique().join(',')
+            println "Detected modules: ${detected}"
+        }
+        try {
+            exec {
+                commandLine jlinkBin,
+                        '--module-path', jmodsDir,
+                        '--add-modules', detected,
+                        '--no-header-files', '--no-man-pages', '--strip-debug', '--compress', '2',
+                        '--output', runtimeImageDir.absolutePath
+            }
+            println "Built custom runtime image at: ${runtimeImageDir}"
+        } catch (Exception ex) {
+            println "jlinkImage warning: jlink failed (${ex.message}). Falling back to full JDK at runtime."
+            runtimeImageDir.deleteDir()
+        }
+    }
+}
+
+tasks.register('jpackageDmg', Exec) {
+    dependsOn 'prepareJpackageInput', 'makeIcns', 'jlinkImage'
+    doFirst {
+        if (!org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+            throw new GradleException('jpackageDmg must be executed on macOS')
+        }
+        dmgDestDir.mkdirs()
+    }
+    workingDir macWorkDir
+    def javaHome = (project.findProperty('packagingJavaHome') ?: project.findProperty('org.gradle.java.home') ?: System.getenv('JAVA_HOME') ?: System.getProperty('java.home'))
+    def jpackageBin = new File(javaHome, 'bin/jpackage').absolutePath
+    def rawVer = (project.version ?: '1.0.0').toString()
+    def appVer = rawVer.replaceAll(/[^0-9.]/,'')
+    if (!(appVer ==~ /\d+(\.\d+){0,2}/)) { appVer = '1.0.0' }
+    // Choose a runtime image: prefer the jlink output, otherwise use the full JDK
+    def runtimePath = (runtimeImageDir.exists() && new File(runtimeImageDir, 'bin/java').exists()) ? runtimeImageDir.absolutePath : javaHome
+    commandLine jpackageBin,
+            '--type', 'dmg',
+            '--dest', dmgDestDir.absolutePath,
+            '--name', 'Ramus',
+            '--app-version', appVer,
+            '--input', jpkgInputDir.absolutePath,
+            '--main-jar', 'ramus.jar',
+            '--main-class', 'com.ramussoft.local.Main',
+            '--icon', icnsFile.absolutePath,
+            '--vendor', 'Ramus Project',
+            '--mac-package-identifier', 'com.vitalex.ramus',
+            '--runtime-image', runtimePath,
+            '--java-options', '-Dapple.laf.useScreenMenuBar=true',
+            '--java-options', '-Dapple.awt.application.name=Ramus'
+}
+
+tasks.register('macDmg') {
+    group = 'distribution'
+    description = 'Builds a DMG at dest/macos using jpackage.'
+    dependsOn 'jpackageDmg'
+}
+
+task createMacApp(type: Copy, dependsOn: [shadowJar, makeIcns]) {
+    // Resolve bundle directories eagerly so Gradle doesn't treat DirectoryProperty objects as strings.
+    def appDir = new File(buildDir, 'mac-app/Ramus.app')
+    def contentsDir = new File(appDir, 'Contents')
+    def macOSDir = new File(contentsDir, 'MacOS')
+    def resourcesDir = new File(contentsDir, 'Resources')
+
+    from shadowJar.archiveFile
+    into macOSDir
+    rename { filename -> 'ramus.jar' }
+
+    doLast {
+        // Create app bundle structure
+        macOSDir.mkdirs()
+        resourcesDir.mkdirs()
+
+        // Copy app icon (prefer generated .icns)
+        def iconFile = file("${macWorkDir}/Ramus.icns")
+        if (!iconFile.exists()) {
+            iconFile = file('src/main/resources/Ramus.icns')
+        }
+        if (iconFile.exists()) {
+            copy { from iconFile; into resourcesDir }
+        }
+
+        // Create Info.plist
+        def infoPlist = new File(contentsDir, 'Info.plist')
+        infoPlist.text = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>Ramus</string>
+    <key>CFBundleDisplayName</key>
+    <string>Ramus</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.vitalex.ramus</string>
+    <key>CFBundleVersion</key>
+    <string>2.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>2.0</string>
+    <key>CFBundleExecutable</key>
+    <string>Ramus</string>
+    <key>CFBundleIconFile</key>
+    <string>Ramus</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.9</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>"""
+
+        // Create executable script
+        def executable = new File(macOSDir, 'Ramus')
+        executable.text = """#!/bin/bash
+cd "\$(dirname "\$0")"
+# Use the app's icon in the Dock instead of the Java default
+exec java -Xdock:name=Ramus -Xdock:icon="../Resources/Ramus.icns" -jar ramus.jar "\$@"
+"""
+        executable.setExecutable(true)
+
+        println "macOS app created at: ${appDir.absolutePath}"
+    }
 }

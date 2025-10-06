@@ -493,7 +493,7 @@ public class Navigator extends AbstractUniqueView implements UniqueView {
                 putValue(SMALL_ICON, new ImageIcon(getClass().getResource(
                         "/com/ramussoft/gui/refresh.png")));
                 putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R,
-                        KeyEvent.CTRL_MASK));
+                        java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             }
 
             @Override

@@ -125,7 +125,7 @@ public class RowTreeTableComponent extends JPanel {
         this.add(findPanel, BorderLayout.SOUTH);
 
         table.getInputMap().put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
                 "showFindPanel");
 
         table.getActionMap().put("showFindPanel", new AbstractAction() {

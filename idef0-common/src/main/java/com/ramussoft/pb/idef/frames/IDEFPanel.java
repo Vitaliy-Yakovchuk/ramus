@@ -535,14 +535,14 @@ public class IDEFPanel extends ViewPanel {
         };
         getInputMap()
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_F,
-                        java.awt.event.InputEvent.CTRL_DOWN_MASK), "findActive");
+                        java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "findActive");
         getActionMap().put("findActive", action);
 
         findPanel
                 .getJTextField()
                 .getInputMap()
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_F,
-                        java.awt.event.InputEvent.CTRL_DOWN_MASK), "findActive");
+                        java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "findActive");
         findPanel.getJTextField().getActionMap().put("findActive", action);
 
         getMovingArea().addMouseListener(new MouseAdapter() {

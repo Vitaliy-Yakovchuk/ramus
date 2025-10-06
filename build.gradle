@@ -1,15 +1,21 @@
+plugins {
+    id 'com.bmuschko.izpack' version '3.2'
+}
+
 group 'com.vitalex.ramus'
-version '1.0-SNAPSHOT'
+version '2.0.2'
 
-apply plugin: 'com.bmuschko.izpack'
-buildscript {
-    repositories {
-        mavenCentral()
+// Load optional local overrides from gradle-local.properties (gitignored)
+def localPropsFile = rootProject.file('gradle-local.properties')
+if (localPropsFile.exists()) {
+    def lp = new Properties()
+    localPropsFile.withInputStream { lp.load(it) }
+    lp.each { k, v ->
+        if (!project.hasProperty(k)) {
+            project.ext.set(k.toString(), v)
+        }
     }
-
-    dependencies {
-        classpath 'com.bmuschko:gradle-izpack-plugin:3.1'
-    }
+    logger.lifecycle("Loaded local Gradle overrides from gradle-local.properties")
 }
 
 dependencies {
@@ -19,8 +25,15 @@ dependencies {
 
 allprojects {
     apply plugin: 'java'
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        // Prefer toolchains to ensure consistent compilation regardless of the JVM Gradle runs on
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     repositories {
         mavenCentral()
@@ -28,7 +41,8 @@ allprojects {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
     }
-    compileJava {
+    
+    tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
     }
 }
@@ -55,7 +69,7 @@ task moveStartup{
 }
 
 task copyDeps(type: Copy) {
-    from(subprojects.configurations.compileClasspath)
+    from(subprojects.configurations.runtimeClasspath)
     into project.file('dest/full/lib/thirdparty')
 }
 

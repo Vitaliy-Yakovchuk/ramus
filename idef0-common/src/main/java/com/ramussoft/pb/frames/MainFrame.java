@@ -461,22 +461,19 @@ public class MainFrame implements ActionListener {
         createAction(NEW_PROJECT, ResourceLoader.getString(NEW_PROJECT),
                 ResourceLoader.getString(NEW_PROJECT), new ImageIcon(getClass()
                         .getResource("/images/new.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         createAction(OPEN_PROJECT, ResourceLoader.getString(OPEN_PROJECT),
                 ResourceLoader.getString(OPEN_PROJECT), new ImageIcon(
                         getClass().getResource("/images/open.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         createAction(SAVE_PROJECT, ResourceLoader.getString(SAVE_PROJECT),
                 ResourceLoader.getString(SAVE_PROJECT), new ImageIcon(
                         getClass().getResource("/images/save.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         createAction(SAVE_PROJECT_AS,
                 ResourceLoader.getString(SAVE_PROJECT_AS),
-                ResourceLoader.getString(SAVE_PROJECT_AS), null, null);
-
-        createAction(EXIT, ResourceLoader.getString(EXIT),
-                ResourceLoader.getString(EXIT), null,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
+                ResourceLoader.getString(SAVE_PROJECT_AS), null,
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_MASK));
 
         createAction(OPEN_WEB_SERVER,
                 ResourceLoader.getString(OPEN_WEB_SERVER),
@@ -500,21 +497,21 @@ public class MainFrame implements ActionListener {
         createAction(INSERT, ResourceLoader.getString(INSERT),
                 ResourceLoader.getString(INSERT), new ImageIcon(getClass()
                         .getResource("/images/insert.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_K, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         createAction(ADD_CHILD, ResourceLoader.getString(ADD_CHILD),
                 ResourceLoader.getString(ADD_CHILD), new ImageIcon(getClass()
                         .getResource("/images/add_child.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_L, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         createAction(LEVEL_UP, ResourceLoader.getString(LEVEL_UP),
                 ResourceLoader.getString(LEVEL_UP), new ImageIcon(getClass()
                         .getResource("/images/left.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         createAction(LEVEL_DOWN, ResourceLoader.getString(LEVEL_DOWN),
                 ResourceLoader.getString(LEVEL_DOWN), new ImageIcon(getClass()
                         .getResource("/images/right.png")),
                 KeyStroke
-                        .getKeyStroke(KeyEvent.VK_RIGHT, ActionEvent.CTRL_MASK));
+                        .getKeyStroke(KeyEvent.VK_RIGHT, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         createAction(ADD_MODEL_TO_TEMPLATE);
 
         createAction(USER_TEMPLATES);
@@ -548,17 +545,17 @@ public class MainFrame implements ActionListener {
         createAction(CUT, ResourceLoader.getString(CUT),
                 ResourceLoader.getString(CUT), new ImageIcon(getClass()
                         .getResource("/images/cut.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_X, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         createAction(COPY, ResourceLoader.getString(COPY),
                 ResourceLoader.getString(COPY), new ImageIcon(getClass()
                         .getResource("/images/copy.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         createAction(PASTE, ResourceLoader.getString(PASTE),
                 ResourceLoader.getString(PASTE), new ImageIcon(getClass()
                         .getResource("/images/paste.png")),
-                KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         createAction(MOVE_ROWS);
 
@@ -569,12 +566,12 @@ public class MainFrame implements ActionListener {
         createAction(IDEF0_UNDO,
                 new ImageIcon(getClass().getResource("/images/iUndo.png")),
                 KeyStroke
-                        .getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+                        .getKeyStroke(KeyEvent.VK_Z, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         createAction(IDEF0_REDO,
                 new ImageIcon(getClass().getResource("/images/iRedo.png")),
                 KeyStroke
-                        .getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
+                        .getKeyStroke(KeyEvent.VK_Y, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         createAction(FUNCTION_TOOL, ResourceLoader.getString(FUNCTION_TOOL),
                 ResourceLoader.getString(FUNCTION_TOOL), new ImageIcon(

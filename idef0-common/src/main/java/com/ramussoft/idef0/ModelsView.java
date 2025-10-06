@@ -3,6 +3,7 @@ package com.ramussoft.idef0;
 import java.awt.BorderLayout;
 
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 
 import java.awt.event.KeyEvent;
 
@@ -61,10 +62,10 @@ public class ModelsView extends AbstractUniqueView implements UniqueView {
                     SMALL_ICON,
                     new ImageIcon(getClass().getResource(
                             "/com/ramussoft/gui/open.png")));
+            int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
             this.putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK
-                            | KeyEvent.SHIFT_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask | KeyEvent.SHIFT_MASK));
             setEnabled(false);
         }
 
@@ -425,10 +426,10 @@ public class ModelsView extends AbstractUniqueView implements UniqueView {
                     SMALL_ICON,
                     new ImageIcon(getClass().getResource(
                             "/com/ramussoft/gui/preferencies.png")));
+            int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
             this.putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK
-                            | KeyEvent.SHIFT_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask | KeyEvent.SHIFT_MASK));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -465,10 +466,10 @@ public class ModelsView extends AbstractUniqueView implements UniqueView {
                     SMALL_ICON,
                     new ImageIcon(getClass().getResource(
                             "/com/ramussoft/gui/table/collapse.png")));
+            int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
             this.putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK
-                            | KeyEvent.SHIFT_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_C, menuMask | KeyEvent.SHIFT_MASK));
         }
 
         @Override
@@ -491,10 +492,10 @@ public class ModelsView extends AbstractUniqueView implements UniqueView {
                     SMALL_ICON,
                     new ImageIcon(getClass().getResource(
                             "/com/ramussoft/gui/table/expand.png")));
+            int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
             this.putValue(
                     ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_MASK
-                            | KeyEvent.SHIFT_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask | KeyEvent.SHIFT_MASK));
         }
 
         @Override

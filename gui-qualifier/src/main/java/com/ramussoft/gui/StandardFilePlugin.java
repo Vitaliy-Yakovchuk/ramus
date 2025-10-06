@@ -160,7 +160,7 @@ public class StandardFilePlugin extends AbstractViewPlugin {
             putValue(SMALL_ICON, new ImageIcon(getClass().getResource(
                     "/com/ramussoft/gui/print.png")));
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_P,
-                    KeyEvent.CTRL_MASK));
+                    java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override

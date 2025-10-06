@@ -205,7 +205,7 @@ public class TableEditor extends AbstractAttributeEditor {
             this.putValue(SMALL_ICON, new ImageIcon(getClass().getResource(
                     "/com/ramussoft/gui/table/add.png")));
             this.putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-                    KeyEvent.VK_ADD, KeyEvent.CTRL_MASK));
+                    KeyEvent.VK_ADD, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         }
 
         @Override
