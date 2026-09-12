@@ -33,10 +33,6 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
 
-/**
- * Запуск застосунку з робочого дерева. Проєкт можна передати одразу:
- * ./gradlew :local-client:runLocal -Popen=<каталог проєкту або файл .rsf>
- */
 task runLocal(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.ramussoft.local.Main"
