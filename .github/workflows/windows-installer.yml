@@ -78,13 +78,42 @@ jobs:
               Write-Host "$ext -> $((Get-ItemProperty $key).'(default)')"
           }
 
-          # Запис у «Програми та засоби» — і водночас підтвердження, що
-          # установка бачиться системою як окремий продукт.
-          $uninstall = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
-              ForEach-Object { Get-ItemProperty $_.PSPath } |
-              Where-Object { $_.DisplayName -eq 'Ramus' }
-          if (-not $uninstall) { throw 'немає запису в списку встановлених програм' }
-          Write-Host "У списку програм: $($uninstall.DisplayName) $($uninstall.DisplayVersion)"
+          # Система має бачити це як окремий встановлений продукт — інакше його
+          # не видалити звичайним шляхом. Місце запису залежить від того, чи
+          # установка для користувача, чи для машини, а гілки ARP для
+          # користувача може взагалі не існувати, тому перебираємо всі три.
+          $found = $null
+          foreach ($root in @(
+                  'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
+                  'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
+                  'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall')) {
+              if (-not (Test-Path $root)) { continue }
+              $found = Get-ChildItem $root |
+                  ForEach-Object { Get-ItemProperty $_.PSPath } |
+                  Where-Object { $_.DisplayName -eq 'Ramus' } |
+                  Select-Object -First 1
+              if ($found) {
+                  Write-Host "У списку програм ($root): $($found.DisplayName) $($found.DisplayVersion)"
+                  break
+              }
+          }
+          if (-not $found) {
+              # Запис може бути лише в базі Windows Installer, без рядка в ARP.
+              $wi = New-Object -ComObject WindowsInstaller.Installer
+              $codes = $wi.GetType().InvokeMember('Products', 'GetProperty', $null, $wi, $null)
+              foreach ($code in $codes) {
+                  try {
+                      $name = $wi.GetType().InvokeMember('ProductInfo', 'GetProperty',
+                          $null, $wi, @($code, 'ProductName'))
+                  } catch { continue }
+                  if ($name -eq 'Ramus') {
+                      $found = $code
+                      Write-Host "Продукт Windows Installer: $code"
+                      break
+                  }
+              }
+          }
+          if (-not $found) { throw 'система не бачить Ramus як встановлений продукт' }
 
       - name: Запустити встановлену програму
         run: |
