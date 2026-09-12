@@ -7,14 +7,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.ramussoft.common.Engine;
 import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
+import com.ramussoft.pb.Function;
 
 /**
  * Допоміжні засоби для тестів формату: пошук зразків, відкриття та перезапис
@@ -176,6 +180,40 @@ public final class RsfFixture {
                     // з'єднання вже могло не відкритись
                 }
         }
+    }
+
+    /**
+     * Дата, яку тести підставляють у моделі.
+     * <p>
+     * Рамка діаграми показує дати створення й перегляду функції. Зразки їх
+     * здебільшого не зберігають, і тоді модель повертає
+     * {@code new Timestamp(System.currentTimeMillis())} — тобто сьогоднішнє
+     * число. Еталонний знімок від цього застаріває наступного ж дня, тому
+     * перед відмальовуванням дати замінюються сталою.
+     * <p>
+     * Полудень, а не північ: рядок форматується в часовому поясі машини, і
+     * значення посеред доби дає те саме число в будь-якому поясі.
+     */
+    public static final Date FIXED_DATE = fixedDate();
+
+    private static Date fixedDate() {
+        Calendar calendar = new GregorianCalendar(2020, Calendar.JANUARY, 1,
+                12, 0, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    /**
+     * Проставляє {@link #FIXED_DATE} усім функціям піддерева.
+     * <p>
+     * Саме всім: функція без власної дати бере її в батька, а корінь — з
+     * налаштувань моделі, тож жодна гілка не має лишитися з порожнім полем.
+     */
+    public static void freezeDates(Function function) {
+        function.setCreateDate(FIXED_DATE);
+        function.setRevDate(FIXED_DATE);
+        for (int i = 0; i < function.getChildCount(); i++)
+            freezeDates((Function) function.getChildAt(i));
     }
 
     public static void copy(File from, File to) throws IOException {

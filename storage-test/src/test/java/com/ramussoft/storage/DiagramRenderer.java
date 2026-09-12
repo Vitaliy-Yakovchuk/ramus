@@ -1,12 +1,11 @@
 package com.ramussoft.storage;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -20,6 +19,10 @@ import com.ramussoft.idef0.IDEF0Plugin;
 import com.ramussoft.idef0.NDataPluginFactory;
 import com.ramussoft.pb.DataPlugin;
 import com.ramussoft.pb.Function;
+import com.ramussoft.pb.idef.elements.PaintSector;
+import com.ramussoft.pb.idef.elements.SectorRefactor;
+import com.ramussoft.pb.idef.visual.MovingArea;
+import com.ramussoft.pb.idef.visual.MovingText;
 import com.ramussoft.pb.print.PIDEF0painter;
 
 /**
@@ -28,6 +31,11 @@ import com.ramussoft.pb.print.PIDEF0painter;
  * Потрібен, щоб зміни в коді відображення (винесення блоба, розділення
  * семантики й розкладки) можна було перевіряти автоматично: якщо картинка
  * змінилась — тест це побачить, а не людина під час клікання.
+ * <p>
+ * Перед малюванням модель приводиться до вигляду, що не залежить від машини:
+ * дати замінюються сталою ({@link RsfFixture#freezeDates}), а всі шрифти —
+ * вбудованим ({@link TestFonts}). Без цього знімок ловив би не зміну коду, а
+ * сьогоднішнє число в рамці та набір шрифтів, який стоїть у системі.
  */
 public final class DiagramRenderer {
 
@@ -62,9 +70,54 @@ public final class DiagramRenderer {
             Function base = plugin.getBaseFunction();
             if (base == null)
                 continue;
+            prepare(base);
             renderRecursive(plugin, base, model.getName(), result);
         }
         return result;
+    }
+
+    /**
+     * Прибирає з моделі все, що зробило б знімок залежним від машини й дня.
+     */
+    static void prepare(Function base) {
+        RsfFixture.freezeDates(base);
+        useTestFont(base);
+    }
+
+    /**
+     * Замінює шрифти функцій вбудованим, зберігаючи накреслення й розмір.
+     * <p>
+     * Функція без власного шрифту лишається без нього: тоді напис малюється
+     * шрифтом, який заданий на {@link Graphics2D}, а він теж наш.
+     */
+    private static void useTestFont(Function function) {
+        Font font = function.getFont();
+        if (font != null)
+            function.setFont(TestFonts.like(font));
+        for (int i = 0; i < function.getChildCount(); i++)
+            useTestFont((Function) function.getChildAt(i));
+    }
+
+    /**
+     * Те саме для стрілок і написів.
+     * <p>
+     * Вони живуть не в моделі, а у візуальному шарі, і з'являються аж під час
+     * підготовки діаграми, тому замінювати доводиться після створення
+     * {@link PIDEF0painter}, а не разом із функціями.
+     */
+    private static void useTestFont(MovingArea area) {
+        SectorRefactor refactor = area.getRefactor();
+        for (int i = 0; i < refactor.getSectorsCount(); i++) {
+            PaintSector sector = refactor.getSector(i);
+            sector.setFont(TestFonts.like(sector.getFont()));
+            MovingText text = sector.getText();
+            if (text != null)
+                text.setFont(TestFonts.like(text.getFont()));
+        }
+        for (int i = 0; i < refactor.getTextCount(); i++) {
+            MovingText text = refactor.getText(i);
+            text.setFont(TestFonts.like(text.getFont()));
+        }
     }
 
     private static void renderRecursive(DataPlugin plugin, Function function,
@@ -81,21 +134,58 @@ public final class DiagramRenderer {
      * Стиснутий відбиток зображення: сірий {@value #SIGNATURE_SIDE}×{@value
      * #SIGNATURE_SIDE}.
      * <p>
-     * Точний хеш PNG для еталона не годиться: відмальовування має ділянки, що
-     * залежать від порядку обходу множин, і одна діаграма зі зразків між
-     * запусками JVM дає різні байти при однаковій картинці. Стиснутий відбиток
-     * такі дрібниці поглинає, але зсув блоку чи зникнення стрілки — ні.
+     * Точний хеш зображення для еталона не годиться: відмальовування має
+     * ділянки, що залежать від порядку обходу множин, і одна діаграма зі
+     * зразків між запусками JVM дає різні байти при однаковій картинці.
+     * Стиснутий відбиток такі дрібниці поглинає, але зсув блоку чи зникнення
+     * стрілки — ні.
      */
     private static String fingerprint(DataPlugin plugin, Function function)
             throws IOException {
         PIDEF0painter painter = new PIDEF0painter(function, SIZE, plugin);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        painter.writeToStream(out, PIDEF0painter.PNG_FORMAT);
-        BufferedImage image = ImageIO.read(
-                new java.io.ByteArrayInputStream(out.toByteArray()));
-        if (image == null)
-            throw new IOException("Не вдалося прочитати відмальоване зображення");
-        return signature(image);
+        useTestFont(painter.getMovingArea());
+        return signature(painter.createImage(
+                TestFonts.of(Font.PLAIN, DEFAULT_FONT_SIZE)));
+    }
+
+    /**
+     * Розмір типового шрифта {@link Graphics2D}. Написи рамки виводяться саме
+     * від нього, тож заміна родини має лишити розмір таким, як у застосунку.
+     */
+    private static final int DEFAULT_FONT_SIZE = 12;
+
+    /**
+     * Усі шрифти, якими малюється діаграма.
+     * <p>
+     * Потрібні тесту, який стежить, щоб жоден напис не лишився на системному
+     * шрифті: підміна робиться поелементно, і новий вид елемента легко
+     * забути. Повертається стан після підготовки діаграми — тобто те, чим
+     * малювання справді скористається.
+     */
+    static List<Font> paintedFonts(DataPlugin plugin, Function function) {
+        List<Font> fonts = new ArrayList<Font>();
+        fonts.add(TestFonts.of(Font.PLAIN, DEFAULT_FONT_SIZE));
+        collectFonts(function, fonts);
+
+        PIDEF0painter painter = new PIDEF0painter(function, SIZE, plugin);
+        useTestFont(painter.getMovingArea());
+        SectorRefactor refactor = painter.getMovingArea().getRefactor();
+        for (int i = 0; i < refactor.getSectorsCount(); i++) {
+            PaintSector sector = refactor.getSector(i);
+            fonts.add(sector.getFont());
+            if (sector.getText() != null)
+                fonts.add(sector.getText().getFont());
+        }
+        for (int i = 0; i < refactor.getTextCount(); i++)
+            fonts.add(refactor.getText(i).getFont());
+        return fonts;
+    }
+
+    private static void collectFonts(Function function, List<Font> fonts) {
+        if (function.getFont() != null)
+            fonts.add(function.getFont());
+        for (int i = 0; i < function.getChildCount(); i++)
+            collectFonts((Function) function.getChildAt(i), fonts);
     }
 
     static final int SIGNATURE_SIDE = 48;
