@@ -1,0 +1,123 @@
+# Збирає інсталятор Ramus для Windows і перевіряє його на живій системі.
+#
+# Зібрати пакунок можна лише на Windows — jpackage не крос-платформний. Тут же
+# він і встановлюється, запускається й видаляється: «зібралось» нічого не
+# каже про те, чи програма ставиться, чи з'являється в меню «Пуск» і чи
+# прибирає за собою.
+name: Windows installer
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'packaging/windows/**'
+      - 'local-client/build.gradle'
+      - '.github/workflows/windows-installer.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  installer:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # Ставимо WiX 3 явно, а не покладаємось на образ раннера: jpackage з
+      # JDK 21 працює лише з третьою гілкою (підтримку WiX 4/5 додали в JDK 24),
+      # і якщо GitHub колись лишить в образі саму лише четверту, збірка впаде
+      # незрозумілою помилкою.
+      - name: Встановити WiX Toolset 3
+        run: |
+          choco install wixtoolset --no-progress -y
+          # Chocolatey дописує PATH для наступних сеансів, а кроки workflow
+          # успадковують оточення раннера — тож шлях додаємо явно, інакше
+          # jpackage не знайде candle.exe у цій же джобі.
+          "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin" |
+            Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+      - name: Зібрати інсталятор
+        run: .\packaging\windows\build-installer.ps1 -Jdk "$env:JAVA_HOME"
+
+      - name: Встановити
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $msi = Get-ChildItem dest\windows\*.msi | Select-Object -First 1
+          Write-Host "Ставимо $($msi.Name)"
+          $p = Start-Process msiexec -ArgumentList @('/i', "`"$($msi.FullName)`"", '/qn', '/l*v', 'install.log') -Wait -PassThru
+          if ($p.ExitCode -ne 0) {
+              Get-Content install.log -Tail 60
+              throw "msiexec завершився з кодом $($p.ExitCode)"
+          }
+
+      - name: Перевірити встановлене
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $exe = Join-Path $env:LOCALAPPDATA 'Ramus\Ramus.exe'
+          if (-not (Test-Path $exe)) { throw "не знайдено $exe" }
+          Write-Host "Виконуваний файл: $exe"
+
+          # Ярлик у меню «Пуск» — те, чим програму запускають щодня.
+          $menu = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Ramus'
+          if (-not (Test-Path $menu)) { throw "немає групи в меню «Пуск»: $menu" }
+          Get-ChildItem $menu | ForEach-Object { Write-Host "Ярлик: $($_.Name)" }
+
+          # Асоціації: без них проєкт не відкривається подвійним клацанням.
+          foreach ($ext in @('.ramus', '.rsf')) {
+              $key = "HKCU:\Software\Classes\$ext"
+              if (-not (Test-Path $key)) { throw "не зареєстровано розширення $ext" }
+              Write-Host "$ext -> $((Get-ItemProperty $key).'(default)')"
+          }
+
+          # Запис у «Програми та засоби» — і водночас підтвердження, що
+          # установка бачиться системою як окремий продукт.
+          $uninstall = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
+              ForEach-Object { Get-ItemProperty $_.PSPath } |
+              Where-Object { $_.DisplayName -eq 'Ramus' }
+          if (-not $uninstall) { throw 'немає запису в списку встановлених програм' }
+          Write-Host "У списку програм: $($uninstall.DisplayName) $($uninstall.DisplayVersion)"
+
+      - name: Запустити встановлену програму
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = Join-Path $env:LOCALAPPDATA 'Ramus\Ramus.exe'
+          $app = Start-Process $exe -PassThru
+          Start-Sleep -Seconds 30
+          if ($app.HasExited) {
+              throw "програма завершилась одразу після запуску, код $($app.ExitCode)"
+          }
+          Write-Host "Процес живий через 30 с — запуск вдався"
+          Stop-Process -Id $app.Id -Force
+
+      - name: Видалити
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $msi = Get-ChildItem dest\windows\*.msi | Select-Object -First 1
+          $p = Start-Process msiexec -ArgumentList @('/x', "`"$($msi.FullName)`"", '/qn') -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "видалення завершилось з кодом $($p.ExitCode)" }
+          $dir = Join-Path $env:LOCALAPPDATA 'Ramus'
+          if (Test-Path $dir) { throw "після видалення лишився каталог $dir" }
+          Write-Host 'Видалилось чисто'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ramus-windows
+          path: dest/windows/*
+          if-no-files-found: error
+
+      - name: Додати до релізу
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$env:GITHUB_REF_NAME" --generate-notes 2>$null
+          gh release upload "$env:GITHUB_REF_NAME" (Get-ChildItem dest\windows\*).FullName --clobber

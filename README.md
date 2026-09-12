@@ -196,14 +196,43 @@ about ten megabytes; `packagingLocales` is the dial between the two.
 
 ### Windows installer
 
-```bash
-./gradlew windowsInstallerDocker     # via the cdrx/nsis image
-./gradlew windowsInstaller           # via a local wine + NSIS
+```powershell
+.\packaging\windows\build-installer.ps1     # one command: checks, builds, reports
 ```
 
-Windows is not actively maintained in this fork and may not work properly.
+The script checks the environment (Windows, a full JDK 21+, WiX Toolset 3) and
+runs the Gradle pipeline, which can also be called directly:
 
----
+```powershell
+.\gradlew.bat :local-client:winInstaller                        # MSI in dest\windows\
+.\gradlew.bat :local-client:winInstaller -PpackagingWinType=exe # EXE instead
+```
+
+Building needs [WiX Toolset 3](https://github.com/wixtoolset/wix3/releases)
+(`choco install wixtoolset`): jpackage from JDK 21 drives WiX 3, support for
+WiX 4 and 5 arrived only in JDK 24. Like the DMG, the installer can only be
+built on the system it targets — [`.github/workflows/windows-installer.yml`](.github/workflows/windows-installer.yml)
+does it on GitHub's runners, and on a tag push attaches the result to the
+release.
+
+**Installing.** Double-click, and that is the whole procedure:
+
+- the Java runtime is inside the package, nothing else to install;
+- it installs into the user profile, so no administrator rights are needed;
+- a Start menu shortcut appears, and `.ramus` and `.rsf` files open on
+  double-click;
+- the next version replaces this one instead of installing beside it — that is
+  what the fixed `winUpgradeUuid` in `local-client/build.gradle` is for, and it
+  must never change;
+- uninstall goes through the normal Apps & features list.
+
+The package is not signed, so SmartScreen greets a freshly downloaded
+installer with "Windows protected your PC" → *More info* → *Run anyway*. Only
+a code signing certificate removes that.
+
+The old NSIS and IzPack path (`./gradlew windowsInstaller`) is still in the
+tree but superseded: it hunts for a system JRE 1.6 and, failing to find one,
+downloads it from a Sun URL that has not existed for over a decade.
 
 ## Documentation
 
