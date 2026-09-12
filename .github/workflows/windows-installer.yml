@@ -1,9 +1,3 @@
-# Збирає інсталятор Ramus для Windows і перевіряє його на живій системі.
-#
-# Зібрати пакунок можна лише на Windows — jpackage не крос-платформний. Тут же
-# він і встановлюється, запускається й видаляється: «зібралось» нічого не
-# каже про те, чи програма ставиться, чи з'являється в меню «Пуск» і чи
-# прибирає за собою.
 name: Windows installer
 
 on:
@@ -31,57 +25,44 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      # Ставимо WiX 3 явно, а не покладаємось на образ раннера: jpackage з
-      # JDK 21 працює лише з третьою гілкою (підтримку WiX 4/5 додали в JDK 24),
-      # і якщо GitHub колись лишить в образі саму лише четверту, збірка впаде
-      # незрозумілою помилкою.
-      - name: Встановити WiX Toolset 3
+      - name: Install WiX Toolset 3
         run: |
           choco install wixtoolset --no-progress -y
-          # Chocolatey дописує PATH для наступних сеансів, а кроки workflow
-          # успадковують оточення раннера — тож шлях додаємо явно, інакше
-          # jpackage не знайде candle.exe у цій же джобі.
           "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin" |
             Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
-      - name: Зібрати інсталятор
+      - name: Build the installer
         run: .\packaging\windows\build-installer.ps1 -Jdk "$env:JAVA_HOME"
 
-      - name: Встановити
+      - name: Install
         run: |
           $ErrorActionPreference = 'Stop'
           $msi = Get-ChildItem dest\windows\*.msi | Select-Object -First 1
-          Write-Host "Ставимо $($msi.Name)"
+          Write-Host "Installing $($msi.Name)"
           $p = Start-Process msiexec -ArgumentList @('/i', "`"$($msi.FullName)`"", '/qn', '/l*v', 'install.log') -Wait -PassThru
           if ($p.ExitCode -ne 0) {
               Get-Content install.log -Tail 60
-              throw "msiexec завершився з кодом $($p.ExitCode)"
+              throw "msiexec exited with code $($p.ExitCode)"
           }
 
-      - name: Перевірити встановлене
+      - name: Check what was installed
         run: |
           $ErrorActionPreference = 'Stop'
 
           $exe = Join-Path $env:LOCALAPPDATA 'Ramus\Ramus.exe'
-          if (-not (Test-Path $exe)) { throw "не знайдено $exe" }
-          Write-Host "Виконуваний файл: $exe"
+          if (-not (Test-Path $exe)) { throw "not found: $exe" }
+          Write-Host "Executable: $exe"
 
-          # Ярлик у меню «Пуск» — те, чим програму запускають щодня.
           $menu = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Ramus'
-          if (-not (Test-Path $menu)) { throw "немає групи в меню «Пуск»: $menu" }
-          Get-ChildItem $menu | ForEach-Object { Write-Host "Ярлик: $($_.Name)" }
+          if (-not (Test-Path $menu)) { throw "no Start menu group: $menu" }
+          Get-ChildItem $menu | ForEach-Object { Write-Host "Shortcut: $($_.Name)" }
 
-          # Асоціації: без них проєкт не відкривається подвійним клацанням.
           foreach ($ext in @('.ramus', '.rsf')) {
               $key = "HKCU:\Software\Classes\$ext"
-              if (-not (Test-Path $key)) { throw "не зареєстровано розширення $ext" }
+              if (-not (Test-Path $key)) { throw "extension not registered: $ext" }
               Write-Host "$ext -> $((Get-ItemProperty $key).'(default)')"
           }
 
-          # Головна обіцянка інсталятора — що він не потребує прав
-          # адміністратора. Її вирішує не те, куди лягли файли, а тип
-          # установки, який записав Windows Installer: 0 — для користувача,
-          # 1 — для машини. Питаємо саме його, а не здогадуємось по реєстру.
           $wi = New-Object -ComObject WindowsInstaller.Installer
           $code = $null
           foreach ($c in $wi.GetType().InvokeMember('Products', 'GetProperty', $null, $wi, $null)) {
@@ -91,21 +72,19 @@ jobs:
               } catch { continue }
               if ($n -eq 'Ramus') { $code = $c; break }
           }
-          if (-not $code) { throw 'Windows Installer не знає продукту Ramus' }
+          if (-not $code) { throw 'Windows Installer does not know a product named Ramus' }
 
           $assignment = $wi.GetType().InvokeMember('ProductInfo', 'GetProperty',
               $null, $wi, @($code, 'AssignmentType'))
           $location = $wi.GetType().InvokeMember('ProductInfo', 'GetProperty',
               $null, $wi, @($code, 'InstallLocation'))
-          Write-Host "Продукт: $code"
-          Write-Host "AssignmentType: $assignment (0 = для користувача, 1 = для машини)"
+          Write-Host "Product: $code"
+          Write-Host "AssignmentType: $assignment (0 = per-user, 1 = per-machine)"
           Write-Host "InstallLocation: $location"
           if ($assignment -ne '0') {
-              throw "установка не для користувача (AssignmentType=$assignment): знадобляться права адміністратора, а README обіцяє протилежне"
+              throw "the install is not per-user (AssignmentType=$assignment): administrator rights would be needed, and the README promises otherwise"
           }
 
-          # Рядок у «Програмах та засобах» — те, що бачить користувач. Корінь
-          # залежить від типу установки, тому просто показуємо, де він є.
           foreach ($root in @(
                   'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
                   'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
@@ -115,30 +94,30 @@ jobs:
                   ForEach-Object { Get-ItemProperty $_.PSPath } |
                   Where-Object { $_.DisplayName -eq 'Ramus' } |
                   Select-Object -First 1
-              if ($row) { Write-Host "У списку програм ($root): $($row.DisplayName) $($row.DisplayVersion)" }
+              if ($row) { Write-Host "In the installed programs list ($root): $($row.DisplayName) $($row.DisplayVersion)" }
           }
 
-      - name: Запустити встановлену програму
+      - name: Start the installed application
         run: |
           $ErrorActionPreference = 'Stop'
           $exe = Join-Path $env:LOCALAPPDATA 'Ramus\Ramus.exe'
           $app = Start-Process $exe -PassThru
           Start-Sleep -Seconds 30
           if ($app.HasExited) {
-              throw "програма завершилась одразу після запуску, код $($app.ExitCode)"
+              throw "the application exited right after start, code $($app.ExitCode)"
           }
-          Write-Host "Процес живий через 30 с — запуск вдався"
+          Write-Host 'Still running after 30 s — the application starts'
           Stop-Process -Id $app.Id -Force
 
-      - name: Видалити
+      - name: Uninstall
         run: |
           $ErrorActionPreference = 'Stop'
           $msi = Get-ChildItem dest\windows\*.msi | Select-Object -First 1
           $p = Start-Process msiexec -ArgumentList @('/x', "`"$($msi.FullName)`"", '/qn') -Wait -PassThru
-          if ($p.ExitCode -ne 0) { throw "видалення завершилось з кодом $($p.ExitCode)" }
+          if ($p.ExitCode -ne 0) { throw "uninstall exited with code $($p.ExitCode)" }
           $dir = Join-Path $env:LOCALAPPDATA 'Ramus'
-          if (Test-Path $dir) { throw "після видалення лишився каталог $dir" }
-          Write-Host 'Видалилось чисто'
+          if (Test-Path $dir) { throw "the directory survived the uninstall: $dir" }
+          Write-Host 'Uninstalled cleanly'
 
       - uses: actions/upload-artifact@v4
         with:
@@ -146,7 +125,7 @@ jobs:
           path: dest/windows/*
           if-no-files-found: error
 
-      - name: Додати до релізу
+      - name: Attach to the release
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}

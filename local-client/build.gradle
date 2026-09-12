@@ -65,9 +65,6 @@ shadowJar {
 
 // --- macOS packaging (ICNS + DMG via jpackage) ---
 
-// Спільне для обох систем: у образ і macOS, і Windows іде той самий jar і той
-// самий зменшений runtime. Різняться лише пакувальники — jpackage кожної
-// системи вміє пакувати тільки під себе.
 def packagingWorkDir = file("${buildDir}/packaging")
 def jpkgInputDir = file("${packagingWorkDir}/input")
 def runtimeImageDir = file("${packagingWorkDir}/runtime")
@@ -77,11 +74,6 @@ def iconsetDir = file("${macWorkDir}/AppIcon.iconset")
 def icnsFile = file("${macWorkDir}/Ramus.icns")
 def dmgDestDir = file("${rootProject.projectDir}/dest/macos")
 
-/**
- * Архітектура зібраного образу — з release-файлу самого runtime, а не з
- * os.arch: Gradle може виконуватись на іншій JVM, ніж packagingJavaHome, а в
- * назву має потрапити те, що всередині.
- */
 def packagingArch = {
     def archOf = { File release ->
         if (!release?.isFile()) return null
@@ -100,13 +92,6 @@ def packagingArch = {
             : ((arch == 'x86_64' || arch == 'amd64') ? 'x86_64' : arch)
 }
 
-/**
- * Дописує архітектуру в назву зібраного пакунка.
- * <p>
- * jpackage називає файл лише за назвою застосунку, тож пакунок з Apple silicon
- * не відрізнити від інтелівського, хоча runtime усередині працює тільки на
- * своїй архітектурі.
- */
 def nameWithArch = { File destDir, String extension, String arch ->
     destDir.listFiles()?.findAll {
         it.name.startsWith('Ramus-') && it.name.endsWith(extension) &&
@@ -122,10 +107,6 @@ def nameWithArch = { File destDir, String extension, String arch ->
     }
 }
 
-/**
- * Версія у форматі, який приймає jpackage: лише цифри й крапки, не більше
- * трьох частин.
- */
 def packagingVersion = {
     def raw = (project.version ?: '1.0.0').toString().replaceAll(/[^0-9.]/, '')
     return (raw ==~ /\d+(\.\d+){0,2}/) ? raw : '1.0.0'
@@ -336,12 +317,6 @@ def winDestDir = file("${rootProject.projectDir}/dest/windows")
 def winIconFile = file("${rootProject.projectDir}/dest/win32-bin/icon.ico")
 def winAssociations = file("${rootProject.projectDir}/packaging/windows")
 
-/**
- * Ідентифікатор оновлення. Стала величина, і змінювати її не можна: за нею
- * Windows упізнає, що нова версія — це та сама програма, і замінює стару
- * замість поставити другу поруч. Новий GUID означає новий застосунок, і
- * користувач отримає два Ramus у списку програм.
- */
 def winUpgradeUuid = 'CB3AA8FE-7C16-44D5-BB42-F99F9D299ACB'
 
 tasks.register('winPackage', Exec) {
@@ -365,7 +340,6 @@ tasks.register('winPackage', Exec) {
     def javaHome = (project.findProperty('packagingJavaHome') ?: project.findProperty('org.gradle.java.home') ?: System.getenv('JAVA_HOME') ?: System.getProperty('java.home'))
     def jpackageBin = new File(javaHome, 'bin/jpackage.exe').absolutePath
 
-    // Коли jlink не спрацював, у образ іде повний JDK: більший, зате робочий.
     def runtimePath = (runtimeImageDir.exists() && new File(runtimeImageDir, 'bin/java.exe').exists()) ? runtimeImageDir.absolutePath : javaHome.toString()
 
     workingDir packagingWorkDir
@@ -381,15 +355,11 @@ tasks.register('winPackage', Exec) {
             '--vendor', 'Ramus Project',
             '--description', 'Ramus — business process modelling (IDEF0, DFD)',
             '--runtime-image', runtimePath,
-            // Установка в профіль користувача: не потребує прав адміністратора,
-            // а на робочих машинах їх зазвичай і немає.
             '--win-per-user-install',
             '--win-menu',
             '--win-menu-group', 'Ramus',
             '--win-shortcut',
             '--win-upgrade-uuid', winUpgradeUuid,
-            // Подвійне клацання по проєкту відкриває його: головний клас
-            // приймає шлях аргументом.
             '--file-associations', new File(winAssociations, 'association-ramus.properties').absolutePath,
             '--file-associations', new File(winAssociations, 'association-rsf.properties').absolutePath
 

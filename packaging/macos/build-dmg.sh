@@ -1,20 +1,4 @@
 #!/usr/bin/env bash
-#
-# Збирає Ramus.dmg — самодостатній образ із вбудованою Java.
-#
-#   ./packaging/macos/build-dmg.sh
-#
-# Скрипт перевіряє оточення перед збіркою, а не після: jpackage падає
-# маловимовними помилками, і виявити бракуючий JDK за п'ять секунд краще, ніж
-# за п'ять хвилин. Вся робота лишається за Gradle (:local-client:macDmg), тут
-# лише те, чого build.gradle не бачить — вибір JDK, архітектура й підпис.
-#
-# Ключі:
-#   --jdk PATH        конкретний JDK замість знайденого автоматично
-#   --no-jlink        покласти в образ весь JDK, а не зменшений jlink-runtime
-#   --locales LIST    мови, дані яких лишити в runtime (типово en,uk,ru)
-#   --keep-quarantine не знімати карантин із зібраного DMG
-#   -h, --help        ця довідка
 
 set -euo pipefail
 
@@ -30,7 +14,7 @@ locales=""
 keep_quarantine=false
 
 die() {
-    printf '\n%s\n' "Помилка: $*" >&2
+    printf '\n%s\n' "Error: $*" >&2
     exit 1
 }
 
@@ -38,15 +22,28 @@ note() {
     printf '%s\n' "$*"
 }
 
-# Довідка — це сам заголовок файлу: два описи розходяться вже на другій правці.
 usage() {
-    awk 'NR > 2 { if (!/^#/) exit; sub(/^# ?/, ""); print }' "${BASH_SOURCE[0]}"
+    cat <<'USAGE'
+Builds Ramus.dmg — a self-contained image with Java inside.
+
+    ./packaging/macos/build-dmg.sh
+
+The build itself is :local-client:macDmg; this script adds what build.gradle
+cannot see — the choice of JDK, the architecture, and the signature.
+
+Options:
+    --jdk PATH        use this JDK instead of the one found automatically
+    --no-jlink        bundle the whole JDK instead of a trimmed jlink runtime
+    --locales LIST    locale data to keep in the runtime (default en,uk,ru)
+    --keep-quarantine leave the quarantine flag on the built DMG
+    -h, --help        this help
+USAGE
 }
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --jdk)
-            [[ $# -ge 2 ]] || die "--jdk потребує шляху"
+            [[ $# -ge 2 ]] || die "--jdk needs a path"
             jdk="$2"
             shift 2
             ;;
@@ -55,7 +52,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --locales)
-            [[ $# -ge 2 ]] || die "--locales потребує переліку, наприклад en,uk,ru"
+            [[ $# -ge 2 ]] || die "--locales needs a list, for example en,uk,ru"
             locales="$2"
             shift 2
             ;;
@@ -68,23 +65,18 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         *)
-            die "невідомий ключ «$1» (--help покаже перелік)"
+            die "unknown option \"$1\" (--help lists them)"
             ;;
     esac
 done
 
-# --- оточення ---------------------------------------------------------------
-
 [[ "$(uname -s)" == "Darwin" ]] ||
-    die "DMG збирається лише на macOS: jpackage, iconutil і sips існують тільки тут.
-Без Mac під рукою скористайтеся GitHub Actions — .github/workflows/macos-dmg.yml
-збирає образи для обох архітектур."
+    die "a DMG can only be built on macOS: jpackage, iconutil and sips exist nowhere else.
+With no Mac at hand use GitHub Actions — .github/workflows/macos-dmg.yml builds
+the images for both architectures."
 
 host_arch="$(uname -m)"
 
-# Порядок пошуку: явний ключ, змінна оточення, java_home, JAVA_HOME. Останній
-# — навмисно останній: у ньому часто лежить JRE або старий JDK, успадкований
-# від чужого інсталятора.
 if [[ -z "${jdk}" ]]; then
     jdk="${PACKAGING_JAVA_HOME:-}"
 fi
@@ -96,22 +88,22 @@ if [[ -z "${jdk}" ]]; then
 fi
 
 [[ -n "${jdk}" ]] ||
-    die "не знайдено JDK ${MIN_JDK} або новіший.
-Встановіть його (наприклад: brew install --cask temurin@${MIN_JDK}) або вкажіть явно:
+    die "no JDK ${MIN_JDK} or newer found.
+Install one (for example: brew install --cask temurin@${MIN_JDK}) or name it:
     $0 --jdk /Library/Java/JavaVirtualMachines/temurin-${MIN_JDK}.jdk/Contents/Home"
 
-[[ -x "${jdk}/bin/java" ]] || die "у «${jdk}» немає bin/java"
+[[ -x "${jdk}/bin/java" ]] || die "\"${jdk}\" has no bin/java"
 
 for tool in jpackage jlink jdeps; do
     [[ -x "${jdk}/bin/${tool}" ]] ||
-        die "у «${jdk}» немає bin/${tool} — це JRE, а не повний JDK"
+        die "\"${jdk}\" has no bin/${tool} — that is a JRE, not a full JDK"
 done
 
 jdk_version="$("${jdk}/bin/java" -XshowSettings:properties -version 2>&1 |
     awk -F'= ' '/java\.specification\.version/ { print $2; exit }')"
-[[ -n "${jdk_version}" ]] || die "не вдалося визначити версію JDK у «${jdk}»"
+[[ -n "${jdk_version}" ]] || die "could not read the JDK version in \"${jdk}\""
 (( ${jdk_version%%.*} >= MIN_JDK )) ||
-    die "потрібен JDK ${MIN_JDK} або новіший, а в «${jdk}» — ${jdk_version}"
+    die "JDK ${MIN_JDK} or newer is required, and \"${jdk}\" is ${jdk_version}"
 
 jdk_arch="$("${jdk}/bin/java" -XshowSettings:properties -version 2>&1 |
     awk -F'= ' '/os\.arch/ { print $2; exit }')"
@@ -121,19 +113,15 @@ case "${jdk_arch}" in
     *)       dmg_arch="${jdk_arch}" ;;
 esac
 
-# Образ успадковує архітектуру JDK, а не машини: JDK для Intel під Rosetta
-# збере DMG, який на Apple silicon працюватиме через емуляцію, і мовчки.
 if [[ "${host_arch}" == "arm64" && "${dmg_arch}" != "arm64" ]]; then
-    note "Увага: JDK зібрано під ${jdk_arch}, тож DMG вийде для ${dmg_arch}."
-    note "      Для рідного образу поставте arm64-збірку JDK."
+    note "Warning: the JDK is built for ${jdk_arch}, so the DMG will be for ${dmg_arch}."
+    note "         Install an arm64 build of the JDK for a native image."
 fi
 
-note "JDK:          ${jdk} (${jdk_version}, ${jdk_arch})"
-note "Архітектура:  ${dmg_arch}"
-note "Runtime:      $([[ "${use_jlink}" == true ]] && echo "jlink${locales:+, мови: ${locales}}" || echo "повний JDK")"
+note "JDK:           ${jdk} (${jdk_version}, ${jdk_arch})"
+note "Architecture:  ${dmg_arch}"
+note "Runtime:       $([[ "${use_jlink}" == true ]] && echo "jlink${locales:+, locales: ${locales}}" || echo "the full JDK")"
 note ""
-
-# --- збірка -----------------------------------------------------------------
 
 args=(":local-client:macDmg" "-PpackagingJavaHome=${jdk}")
 [[ "${use_jlink}" == true ]] || args+=("-PpackagingUseJlink=false")
@@ -149,15 +137,10 @@ for candidate in dest/macos/*.dmg; do
         dmg="${candidate}"
     fi
 done
-[[ -n "${dmg}" ]] || die "Gradle відпрацював, але DMG у dest/macos не з'явився"
+[[ -n "${dmg}" ]] || die "Gradle finished, but no DMG appeared in dest/macos"
 dmg="$(cd "$(dirname "${dmg}")" && pwd)/$(basename "${dmg}")"
 
-# --- підпис -----------------------------------------------------------------
-
-# Без сертифіката Developer ID jpackage підписує застосунок ad-hoc. Цього
-# досить, щоб він запускався на Apple silicon, але не досить для Gatekeeper на
-# чужій машині — тому нижче й друкується інструкція про карантин.
-signature="невідомо"
+signature="unknown"
 mount_point="$(mktemp -d)"
 if hdiutil attach "${dmg}" -nobrowse -readonly -mountpoint "${mount_point}" >/dev/null 2>&1; then
     app="${mount_point}/Ramus.app"
@@ -167,42 +150,37 @@ if hdiutil attach "${dmg}" -nobrowse -readonly -mountpoint "${mount_point}" >/de
                 awk -F'=' '/^Authority/ { print $2; exit }')"
             [[ -n "${signature}" ]] || signature="ad-hoc"
         else
-            signature="немає"
+            signature="none"
         fi
     else
-        signature="у образі немає Ramus.app"
+        signature="the image holds no Ramus.app"
     fi
     hdiutil detach "${mount_point}" >/dev/null 2>&1 || true
 fi
 rmdir "${mount_point}" 2>/dev/null || true
 
-# Файл, щойно створений локально, карантину не має; прапорець лишається на
-# тому, що завантажують. Знімаємо про всяк випадок, щоб свіжозібраний образ
-# точно відкривався на цій машині.
 if [[ "${keep_quarantine}" == false ]]; then
     xattr -d com.apple.quarantine "${dmg}" 2>/dev/null || true
 fi
-
-# --- підсумок ---------------------------------------------------------------
 
 size="$(du -h "${dmg}" | cut -f1)"
 
 cat <<EOF
 
-Готово: ${dmg}
-Розмір: ${size}, архітектура: ${dmg_arch}, підпис: ${signature}
+Done: ${dmg}
+Size: ${size}, architecture: ${dmg_arch}, signature: ${signature}
 
-Встановлення: відкрити DMG подвійним клацанням і перетягнути Ramus до
-«Програм». Java встановлювати не треба — вона всередині.
+To install, open the DMG and drag Ramus into Applications. There is no Java to
+install — it is inside.
 
-Якщо образ передаватимуть на інший Mac (пошта, сайт, GitHub Releases),
-Gatekeeper там скаже «Ramus пошкоджено» — не тому, що пошкоджено, а тому,
-що застосунок не має сертифіката Apple Developer ID. Що робити тому, хто
-встановлює:
+If the image travels to another Mac (email, a website, GitHub Releases),
+Gatekeeper there will report that Ramus is damaged — not because it is, but
+because the application carries no Apple Developer ID. What the person
+installing it can do:
 
     xattr -dr com.apple.quarantine /Applications/Ramus.app
 
-або перший запуск через контекстне меню: правою кнопкою на Ramus → «Відкрити»
-→ «Відкрити» у діалозі.
+or open it once through the context menu: right-click Ramus, choose Open, then
+Open again in the dialog.
 
 EOF
