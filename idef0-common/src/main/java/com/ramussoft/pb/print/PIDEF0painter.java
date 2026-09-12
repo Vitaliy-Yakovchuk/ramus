@@ -6,6 +6,7 @@ package com.ramussoft.pb.print;
 import java.awt.Color;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
@@ -187,6 +188,22 @@ public class PIDEF0painter {
 
     private void writeImage(final OutputStream stream, final String format)
             throws IOException {
+        ImageIO.write(createImage(null), format, stream);
+    }
+
+    /**
+     * Малює діаграму в зображення.
+     * <p>
+     * Виділено з запису у файл, щоб діаграму можна було отримати як картинку —
+     * наприклад, порівняти з еталоном у тесті — не проходячи через формат
+     * файлу.
+     *
+     * @param defaultFont шрифт, з якого починається малювання: від нього
+     *                    відштовхуються написи рамки, які не мають власного
+     *                    шрифту. {@code null} лишає типовий шрифт
+     *                    {@link Graphics2D}, тобто поведінку експорту
+     */
+    public BufferedImage createImage(final Font defaultFont) {
         final int y1 = movingArea.getIntOrdinate(movingArea.TOP_PART_A);
 
         final int y2 = movingArea.getIntOrdinate(movingArea.CLIENT_HEIGHT);
@@ -219,8 +236,12 @@ public class PIDEF0painter {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
+        if (defaultFont != null)
+            g.setFont(defaultFont);
+
         paint(g, 0, 0);
-        ImageIO.write(bi, format, stream);
+        g.dispose();
+        return bi;
     }
 
     private void writeBMP(final OutputStream stream) throws IOException {

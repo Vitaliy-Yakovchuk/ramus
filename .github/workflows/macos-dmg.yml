@@ -1,0 +1,66 @@
+name: macOS DMG
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'packaging/macos/**'
+      - 'local-client/build.gradle'
+      - '.github/workflows/macos-dmg.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dmg:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-26
+            arch: arm64
+          - runner: macos-26-intel
+            arch: x86_64
+
+    runs-on: ${{ matrix.runner }}
+    name: ${{ matrix.arch }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build the DMG
+        run: ./packaging/macos/build-dmg.sh --jdk "$JAVA_HOME"
+
+      - name: Check that the image opens and holds the application
+        run: |
+          set -euo pipefail
+          dmg=$(ls dest/macos/*-${{ matrix.arch }}.dmg)
+          mount=$(mktemp -d)
+          hdiutil attach "$dmg" -nobrowse -readonly -mountpoint "$mount"
+          test -x "$mount/Ramus.app/Contents/MacOS/Ramus"
+          test -x "$mount/Ramus.app/Contents/runtime/Contents/Home/bin/java"
+          file "$mount/Ramus.app/Contents/MacOS/Ramus" | tee /dev/stderr |
+            grep -q "${{ matrix.arch }}"
+          hdiutil detach "$mount"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ramus-macos-${{ matrix.arch }}
+          path: dest/macos/*.dmg
+          if-no-files-found: error
+
+      - name: Attach to the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "${GITHUB_REF_NAME}" --generate-notes 2>/dev/null || true
+          gh release upload "${GITHUB_REF_NAME}" dest/macos/*.dmg --clobber

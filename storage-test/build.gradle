@@ -33,16 +33,6 @@ test {
         }
     }
 
-    // Еталонні знімки діаграм прив'язані до шрифтів, встановлених на машині:
-    // Dialog розкладається у різні файли на Fedora й у контейнері, і піксель
-    // у піксель картинки не збігаються. Допуск тут нульовий свідомо, тож у
-    // чужому середовищі (Docker, CI) знімки вимикаються прапорцем.
-    if (project.hasProperty('skipGolden')) {
-        filter {
-            excludeTestsMatching 'com.ramussoft.storage.DiagramGoldenTest'
-        }
-    }
-
     testLogging {
         events 'passed', 'failed', 'skipped'
         exceptionFormat 'full'

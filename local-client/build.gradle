@@ -61,12 +61,52 @@ shadowJar {
 
 // --- macOS packaging (ICNS + DMG via jpackage) ---
 
+def packagingWorkDir = file("${buildDir}/packaging")
+def jpkgInputDir = file("${packagingWorkDir}/input")
+def runtimeImageDir = file("${packagingWorkDir}/runtime")
+
 def macWorkDir = file("${buildDir}/macos")
 def iconsetDir = file("${macWorkDir}/AppIcon.iconset")
 def icnsFile = file("${macWorkDir}/Ramus.icns")
-def jpkgInputDir = file("${macWorkDir}/jpackage-input")
 def dmgDestDir = file("${rootProject.projectDir}/dest/macos")
-def runtimeImageDir = file("${macWorkDir}/runtime")
+
+def packagingArch = {
+    def archOf = { File release ->
+        if (!release?.isFile()) return null
+        def line = release.readLines().find { it.startsWith('OS_ARCH=') }
+        return line == null ? null
+                : line.substring('OS_ARCH='.length()).replace('"', '').trim()
+    }
+    def home = (project.findProperty('packagingJavaHome')
+            ?: project.findProperty('org.gradle.java.home')
+            ?: System.getenv('JAVA_HOME')
+            ?: System.getProperty('java.home')).toString()
+    def arch = archOf(new File(runtimeImageDir, 'release')) ?:
+            archOf(new File(home, 'release')) ?:
+                    System.getProperty('os.arch')
+    return (arch == 'aarch64') ? 'arm64'
+            : ((arch == 'x86_64' || arch == 'amd64') ? 'x86_64' : arch)
+}
+
+def nameWithArch = { File destDir, String extension, String arch ->
+    destDir.listFiles()?.findAll {
+        it.name.startsWith('Ramus-') && it.name.endsWith(extension) &&
+                !it.name.contains(arch)
+    }?.each { built ->
+        def target = new File(destDir, built.name.replaceFirst(
+                java.util.regex.Pattern.quote(extension) + '$', "-${arch}${extension}"))
+        if (target.exists()) target.delete()
+        if (built.renameTo(target))
+            println "Package: ${target}"
+        else
+            println "Package: ${built} (could not add the architecture to the name)"
+    }
+}
+
+def packagingVersion = {
+    def raw = (project.version ?: '1.0.0').toString().replaceAll(/[^0-9.]/, '')
+    return (raw ==~ /\d+(\.\d+){0,2}/) ? raw : '1.0.0'
+}
 
 tasks.register('prepareMacIcons') {
     doLast {
@@ -131,13 +171,11 @@ tasks.register('prepareJpackageInput') {
 }
 
 // Build a minimized runtime image with jlink using detected modules
+// The runtime image is not macOS-specific: Windows packaging needs exactly the
+// same one, and jlink builds it wherever it runs.
 tasks.register('jlinkImage') {
     dependsOn 'prepareJpackageInput'
     doLast {
-        if (!org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
-            println 'jlinkImage skipped: not macOS'
-            return
-        }
         if (project.findProperty('packagingUseJlink')?.toString()?.toBoolean() == false) {
             println 'jlinkImage skipped: packagingUseJlink=false'
             return
@@ -191,12 +229,34 @@ tasks.register('jlinkImage') {
             detected = mods.unique().join(',')
             println "Detected modules: ${detected}"
         }
+
+        // jdeps sees only what bytecode references by name, so modules reached
+        // through service lookup or Charset.forName() stay invisible to it.
+        // Without them the bundled runtime starts and then fails at the worst
+        // possible moment — on opening a file or sorting a list:
+        //   jdk.localedata  — dates and Cyrillic sorting outside the root locale
+        //   jdk.charsets    — cp1251 in IDL import/export and PDF output
+        //   jdk.zipfs       — the jar:/zip: filesystem provider
+        //   jdk.crypto.ec   — TLS handshakes with modern servers
+        //   jdk.unsupported — sun.misc.Unsafe, still used by libraries
+        //   java.logging    — java.util.logging backend
+        def extras = ['jdk.localedata', 'jdk.charsets', 'jdk.zipfs',
+                      'jdk.crypto.ec', 'jdk.unsupported', 'java.logging']
+        def all = (detected.split(',').collect { it.trim() } + extras).unique()
+        detected = all.join(',')
+        println "Runtime modules: ${detected}"
         try {
             exec {
+                // Locale data is the bulk of jdk.localedata, so the image keeps
+                // only the languages the interface is translated into. Override
+                // with -PpackagingLocales=en,uk,ru,pl when that is not enough.
+                def locales = (project.findProperty('packagingLocales') ?: 'en,uk,ru').toString()
                 commandLine jlinkBin,
                         '--module-path', jmodsDir,
                         '--add-modules', detected,
-                        '--no-header-files', '--no-man-pages', '--strip-debug', '--compress', '2',
+                        '--include-locales', locales,
+                        '--no-header-files', '--no-man-pages', '--strip-debug',
+                        '--compress', 'zip-6',
                         '--output', runtimeImageDir.absolutePath
             }
             println "Built custom runtime image at: ${runtimeImageDir}"
@@ -214,13 +274,12 @@ tasks.register('jpackageDmg', Exec) {
             throw new GradleException('jpackageDmg must be executed on macOS')
         }
         dmgDestDir.mkdirs()
+        packagingWorkDir.mkdirs()
     }
-    workingDir macWorkDir
+    workingDir packagingWorkDir
     def javaHome = (project.findProperty('packagingJavaHome') ?: project.findProperty('org.gradle.java.home') ?: System.getenv('JAVA_HOME') ?: System.getProperty('java.home'))
     def jpackageBin = new File(javaHome, 'bin/jpackage').absolutePath
-    def rawVer = (project.version ?: '1.0.0').toString()
-    def appVer = rawVer.replaceAll(/[^0-9.]/,'')
-    if (!(appVer ==~ /\d+(\.\d+){0,2}/)) { appVer = '1.0.0' }
+    def appVer = packagingVersion()
     // Choose a runtime image: prefer the jlink output, otherwise use the full JDK
     def runtimePath = (runtimeImageDir.exists() && new File(runtimeImageDir, 'bin/java').exists()) ? runtimeImageDir.absolutePath : javaHome
     commandLine jpackageBin,
@@ -243,6 +302,72 @@ tasks.register('macDmg') {
     group = 'distribution'
     description = 'Builds a DMG at dest/macos using jpackage.'
     dependsOn 'jpackageDmg'
+    doLast {
+        nameWithArch(dmgDestDir, '.dmg', packagingArch())
+    }
+}
+
+// --- Windows packaging (MSI or EXE via jpackage + WiX) ---
+
+def winDestDir = file("${rootProject.projectDir}/dest/windows")
+def winIconFile = file("${rootProject.projectDir}/dest/win32-bin/icon.ico")
+def winAssociations = file("${rootProject.projectDir}/packaging/windows")
+
+def winUpgradeUuid = 'CB3AA8FE-7C16-44D5-BB42-F99F9D299ACB'
+
+tasks.register('winPackage', Exec) {
+    dependsOn 'prepareJpackageInput', 'jlinkImage'
+
+    def type = (project.findProperty('packagingWinType') ?: 'msi').toString()
+
+    doFirst {
+        if (!org.gradle.internal.os.OperatingSystem.current().isWindows())
+            throw new GradleException('winPackage must be executed on Windows:'
+                    + ' jpackage builds Windows packages only on Windows.'
+                    + ' See .github/workflows/windows-installer.yml')
+        if (!(type in ['msi', 'exe']))
+            throw new GradleException("packagingWinType must be msi or exe, not ${type}")
+        if (!winIconFile.isFile())
+            throw new GradleException("Missing icon: ${winIconFile}")
+        winDestDir.mkdirs()
+        packagingWorkDir.mkdirs()
+    }
+
+    def javaHome = (project.findProperty('packagingJavaHome') ?: project.findProperty('org.gradle.java.home') ?: System.getenv('JAVA_HOME') ?: System.getProperty('java.home'))
+    def jpackageBin = new File(javaHome, 'bin/jpackage.exe').absolutePath
+
+    def runtimePath = (runtimeImageDir.exists() && new File(runtimeImageDir, 'bin/java.exe').exists()) ? runtimeImageDir.absolutePath : javaHome.toString()
+
+    workingDir packagingWorkDir
+    commandLine jpackageBin,
+            '--type', type,
+            '--dest', winDestDir.absolutePath,
+            '--name', 'Ramus',
+            '--app-version', packagingVersion(),
+            '--input', jpkgInputDir.absolutePath,
+            '--main-jar', 'ramus.jar',
+            '--main-class', 'com.ramussoft.local.Main',
+            '--icon', winIconFile.absolutePath,
+            '--vendor', 'Ramus Project',
+            '--description', 'Ramus — business process modelling (IDEF0, DFD)',
+            '--runtime-image', runtimePath,
+            '--win-per-user-install',
+            '--win-menu',
+            '--win-menu-group', 'Ramus',
+            '--win-shortcut',
+            '--win-upgrade-uuid', winUpgradeUuid,
+            '--file-associations', new File(winAssociations, 'association-ramus.properties').absolutePath,
+            '--file-associations', new File(winAssociations, 'association-rsf.properties').absolutePath
+
+    doLast {
+        nameWithArch(winDestDir, ".${type}", packagingArch())
+    }
+}
+
+tasks.register('winInstaller') {
+    group = 'distribution'
+    description = 'Builds a Windows installer at dest/windows using jpackage'
+    dependsOn 'winPackage'
 }
 
 task createMacApp(type: Copy, dependsOn: [shadowJar, makeIcns]) {
