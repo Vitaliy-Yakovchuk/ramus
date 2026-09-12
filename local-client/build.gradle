@@ -195,12 +195,34 @@ tasks.register('jlinkImage') {
             detected = mods.unique().join(',')
             println "Detected modules: ${detected}"
         }
+
+        // jdeps sees only what bytecode references by name, so modules reached
+        // through service lookup or Charset.forName() stay invisible to it.
+        // Without them the bundled runtime starts and then fails at the worst
+        // possible moment — on opening a file or sorting a list:
+        //   jdk.localedata  — dates and Cyrillic sorting outside the root locale
+        //   jdk.charsets    — cp1251 in IDL import/export and PDF output
+        //   jdk.zipfs       — the jar:/zip: filesystem provider
+        //   jdk.crypto.ec   — TLS handshakes with modern servers
+        //   jdk.unsupported — sun.misc.Unsafe, still used by libraries
+        //   java.logging    — java.util.logging backend
+        def extras = ['jdk.localedata', 'jdk.charsets', 'jdk.zipfs',
+                      'jdk.crypto.ec', 'jdk.unsupported', 'java.logging']
+        def all = (detected.split(',').collect { it.trim() } + extras).unique()
+        detected = all.join(',')
+        println "Runtime modules: ${detected}"
         try {
             exec {
+                // Locale data is the bulk of jdk.localedata, so the image keeps
+                // only the languages the interface is translated into. Override
+                // with -PpackagingLocales=en,uk,ru,pl when that is not enough.
+                def locales = (project.findProperty('packagingLocales') ?: 'en,uk,ru').toString()
                 commandLine jlinkBin,
                         '--module-path', jmodsDir,
                         '--add-modules', detected,
-                        '--no-header-files', '--no-man-pages', '--strip-debug', '--compress', '2',
+                        '--include-locales', locales,
+                        '--no-header-files', '--no-man-pages', '--strip-debug',
+                        '--compress', 'zip-6',
                         '--output', runtimeImageDir.absolutePath
             }
             println "Built custom runtime image at: ${runtimeImageDir}"
@@ -247,6 +269,43 @@ tasks.register('macDmg') {
     group = 'distribution'
     description = 'Builds a DMG at dest/macos using jpackage.'
     dependsOn 'jpackageDmg'
+    doLast {
+        // jpackage names the file after the app alone, so a DMG built on an
+        // Apple silicon Mac is indistinguishable from an Intel one — and each
+        // carries a runtime that only runs on its own architecture. The
+        // architecture goes into the name, or releases get mixed up.
+        //
+        // It is read from the bundled runtime rather than from os.arch: the
+        // architecture that matters is the one inside the image, and Gradle
+        // may well be running on another JVM than packagingJavaHome.
+        def archOf = { File release ->
+            if (!release?.isFile()) return null
+            def line = release.readLines().find { it.startsWith('OS_ARCH=') }
+            return line == null ? null
+                    : line.substring('OS_ARCH='.length()).replace('"', '').trim()
+        }
+        def packagingHome = (project.findProperty('packagingJavaHome')
+                ?: project.findProperty('org.gradle.java.home')
+                ?: System.getenv('JAVA_HOME')
+                ?: System.getProperty('java.home')).toString()
+        def arch = archOf(new File(runtimeImageDir, 'release')) ?:
+                archOf(new File(packagingHome, 'release')) ?:
+                        System.getProperty('os.arch')
+        arch = (arch == 'aarch64') ? 'arm64' : (arch == 'x86_64' ? 'x86_64' : arch)
+        def built = dmgDestDir.listFiles()?.findAll {
+            it.name.startsWith('Ramus-') && it.name.endsWith('.dmg') &&
+                    !it.name.contains(arch)
+        }
+        built?.each { file ->
+            def target = new File(dmgDestDir,
+                    file.name.replaceFirst(/\.dmg$/, "-${arch}.dmg"))
+            if (target.exists()) target.delete()
+            if (file.renameTo(target))
+                println "DMG: ${target}"
+            else
+                println "DMG: ${file} (could not add the architecture to the name)"
+        }
+    }
 }
 
 task createMacApp(type: Copy, dependsOn: [shadowJar, makeIcns]) {

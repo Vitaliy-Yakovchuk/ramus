@@ -137,14 +137,44 @@ the recipe, the CI notes and the reasoning behind the Dockerfile are in
 ### macOS application and DMG
 
 ```bash
+./packaging/macos/build-dmg.sh          # one command: checks, builds, reports
+```
+
+The script picks a JDK (21 or newer, `--jdk PATH` overrides it), runs the
+Gradle pipeline, and prints where the image landed and how to install it. It
+refuses to run anywhere but macOS, because `jpackage`, `iconutil` and `sips`
+exist only there.
+
+Under the hood it is still Gradle, and the tasks can be called directly:
+
+```bash
 ./gradlew :local-client:createMacApp     # dev bundle, local-client/build/mac-app/Ramus.app
 ./gradlew :local-client:macDmg           # standalone DMG in dest/macos/
 ```
 
 `macDmg` runs the full pipeline: `.icns` from
-`packaging/macos/AppIcon.appiconset` → optional `jlink` runtime → `jpackage`.
-The resulting DMG bundles a Java runtime, so its users need no Java. If `jlink`
-is unavailable the full JDK is bundled instead — larger, but it works.
+`packaging/macos/AppIcon.appiconset` → `jlink` runtime → `jpackage`. The
+resulting DMG bundles a Java runtime, so its users need no Java. If `jlink` is
+unavailable the full JDK is bundled instead — larger, but it works.
+
+**The DMG is tied to one architecture**, because the runtime inside it is: a
+build made on Apple silicon does not run on an Intel Mac. The architecture is
+part of the file name (`Ramus-2.0.2-arm64.dmg`), and
+[`.github/workflows/macos-dmg.yml`](.github/workflows/macos-dmg.yml) builds
+both on GitHub's runners — on a tag push it attaches them to the release. No
+Mac needed to publish a build.
+
+**Installing.** Open the DMG, drag Ramus into Applications. Nothing else — the
+Java runtime is inside the bundle.
+
+The application is not signed with an Apple Developer ID, so a Mac that
+downloaded it from the internet quarantines it and reports that "Ramus is
+damaged". It is not; macOS says that about everything unsigned. Either open it
+once through the context menu (right-click → Open → Open), or clear the flag:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Ramus.app
+```
 
 Prebuilt DMGs are published under this repository's GitHub Releases.
 
@@ -156,7 +186,13 @@ gitignored).
 packagingJavaHome=/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home
 # packagingUseJlink=false          # bundle the full JDK instead of a jlink image
 # packagingJmodsPath=…/jmods       # explicit module path for jlink
+# packagingLocales=en,uk,ru,pl     # locale data kept in the jlink runtime
 ```
+
+The bundled runtime keeps locale data for English, Ukrainian and Russian only —
+the languages the interface is translated into. Without it dates and Cyrillic
+sorting fall back to the root locale, and with all of it the image grows by
+about ten megabytes; `packagingLocales` is the dial between the two.
 
 ### Windows installer
 

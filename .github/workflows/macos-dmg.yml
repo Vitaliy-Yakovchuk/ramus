@@ -1,0 +1,81 @@
+# Збирає Ramus.dmg для обох архітектур macOS.
+#
+# Потрібен тому, що зібрати образ можна лише на macOS: jpackage, iconutil і
+# sips є тільки там. Раннери GitHub закривають це питання — Mac для випуску
+# збірки не потрібен нікому.
+#
+# Кожен образ несе власний Java-runtime, тож arm64 і x86_64 не взаємозамінні:
+# їх треба зібрати на машинах відповідної архітектури, а не перепакувати.
+name: macOS DMG
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'packaging/macos/**'
+      - 'local-client/build.gradle'
+      - '.github/workflows/macos-dmg.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dmg:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macos-26 — Apple silicon, macos-26-intel — x86_64. Лейбли живуть
+          # кілька років: macos-13 закрито у 2025-му. Якщо раннер зник, GitHub
+          # скаже про це одразу, до збірки.
+          - runner: macos-26
+            arch: arm64
+          - runner: macos-26-intel
+            arch: x86_64
+
+    runs-on: ${{ matrix.runner }}
+    name: ${{ matrix.arch }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Зібрати DMG
+        run: ./packaging/macos/build-dmg.sh --jdk "$JAVA_HOME"
+
+      - name: Перевірити, що образ відкривається і містить застосунок
+        run: |
+          set -euo pipefail
+          dmg=$(ls dest/macos/*-${{ matrix.arch }}.dmg)
+          mount=$(mktemp -d)
+          hdiutil attach "$dmg" -nobrowse -readonly -mountpoint "$mount"
+          test -x "$mount/Ramus.app/Contents/MacOS/Ramus"
+          test -x "$mount/Ramus.app/Contents/runtime/Contents/Home/bin/java"
+          # Архітектура образу має збігатися з раннером, інакше на чужій
+          # машині застосунок або не запуститься, або піде через Rosetta.
+          file "$mount/Ramus.app/Contents/MacOS/Ramus" | tee /dev/stderr |
+            grep -q "${{ matrix.arch }}"
+          hdiutil detach "$mount"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ramus-macos-${{ matrix.arch }}
+          path: dest/macos/*.dmg
+          if-no-files-found: error
+
+      - name: Додати до релізу
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Обидві архітектури збираються паралельно й можуть створювати реліз
+          # одночасно — той, хто прийшов другим, просто доливає свій файл.
+          gh release create "${GITHUB_REF_NAME}" --generate-notes 2>/dev/null || true
+          gh release upload "${GITHUB_REF_NAME}" dest/macos/*.dmg --clobber
