@@ -78,42 +78,45 @@ jobs:
               Write-Host "$ext -> $((Get-ItemProperty $key).'(default)')"
           }
 
-          # Система має бачити це як окремий встановлений продукт — інакше його
-          # не видалити звичайним шляхом. Місце запису залежить від того, чи
-          # установка для користувача, чи для машини, а гілки ARP для
-          # користувача може взагалі не існувати, тому перебираємо всі три.
-          $found = $null
+          # Головна обіцянка інсталятора — що він не потребує прав
+          # адміністратора. Її вирішує не те, куди лягли файли, а тип
+          # установки, який записав Windows Installer: 0 — для користувача,
+          # 1 — для машини. Питаємо саме його, а не здогадуємось по реєстру.
+          $wi = New-Object -ComObject WindowsInstaller.Installer
+          $code = $null
+          foreach ($c in $wi.GetType().InvokeMember('Products', 'GetProperty', $null, $wi, $null)) {
+              try {
+                  $n = $wi.GetType().InvokeMember('ProductInfo', 'GetProperty',
+                      $null, $wi, @($c, 'ProductName'))
+              } catch { continue }
+              if ($n -eq 'Ramus') { $code = $c; break }
+          }
+          if (-not $code) { throw 'Windows Installer не знає продукту Ramus' }
+
+          $assignment = $wi.GetType().InvokeMember('ProductInfo', 'GetProperty',
+              $null, $wi, @($code, 'AssignmentType'))
+          $location = $wi.GetType().InvokeMember('ProductInfo', 'GetProperty',
+              $null, $wi, @($code, 'InstallLocation'))
+          Write-Host "Продукт: $code"
+          Write-Host "AssignmentType: $assignment (0 = для користувача, 1 = для машини)"
+          Write-Host "InstallLocation: $location"
+          if ($assignment -ne '0') {
+              throw "установка не для користувача (AssignmentType=$assignment): знадобляться права адміністратора, а README обіцяє протилежне"
+          }
+
+          # Рядок у «Програмах та засобах» — те, що бачить користувач. Корінь
+          # залежить від типу установки, тому просто показуємо, де він є.
           foreach ($root in @(
                   'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
                   'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
                   'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall')) {
               if (-not (Test-Path $root)) { continue }
-              $found = Get-ChildItem $root |
+              $row = Get-ChildItem $root |
                   ForEach-Object { Get-ItemProperty $_.PSPath } |
                   Where-Object { $_.DisplayName -eq 'Ramus' } |
                   Select-Object -First 1
-              if ($found) {
-                  Write-Host "У списку програм ($root): $($found.DisplayName) $($found.DisplayVersion)"
-                  break
-              }
+              if ($row) { Write-Host "У списку програм ($root): $($row.DisplayName) $($row.DisplayVersion)" }
           }
-          if (-not $found) {
-              # Запис може бути лише в базі Windows Installer, без рядка в ARP.
-              $wi = New-Object -ComObject WindowsInstaller.Installer
-              $codes = $wi.GetType().InvokeMember('Products', 'GetProperty', $null, $wi, $null)
-              foreach ($code in $codes) {
-                  try {
-                      $name = $wi.GetType().InvokeMember('ProductInfo', 'GetProperty',
-                          $null, $wi, @($code, 'ProductName'))
-                  } catch { continue }
-                  if ($name -eq 'Ramus') {
-                      $found = $code
-                      Write-Host "Продукт Windows Installer: $code"
-                      break
-                  }
-              }
-          }
-          if (-not $found) { throw 'система не бачить Ramus як встановлений продукт' }
 
       - name: Запустити встановлену програму
         run: |
