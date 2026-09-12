@@ -1,0 +1,15 @@
+# Усе, що не потрібно build-контексту. Контекст без цього — ~27 МБ замість ~208 МБ.
+.git
+.gradle
+build/
+*/build/
+dest/full/
+dest/macos/
+dest/ramus-2.0/
+dest/ramus-2.0.zip
+gradle-local.properties
+.idea/
+*.iml
+docs/
+*.md
+!README.md

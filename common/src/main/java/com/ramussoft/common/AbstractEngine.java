@@ -298,7 +298,9 @@ public abstract class AbstractEngine implements Engine {
     public void setProperties(String path, Properties properties) {
         OutputStream out = getOutputStream(path);
         try {
-            properties.storeToXML(out, "Path: " + path);
+            // Не storeToXML: той успадковує порядок ключів від Hashtable,
+            // і той самий набір властивостей щоразу лягав би у файл інакше.
+            PropertiesXml.store(properties, out, "Path: " + path);
             out.close();
         } catch (Exception e) {
             throw new RuntimeException(e);

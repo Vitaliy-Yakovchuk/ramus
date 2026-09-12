@@ -5,8 +5,53 @@ apply plugin: 'java'
 
 dependencies {
     implementation project(':core')
+    // Плагіни атрибутів підхоплюються через ServiceLoader, тож потрібні лише
+    // на classpath виконання: без них файли з моделями не відкриваються.
+    runtimeOnly project(':idef0-core')
+    runtimeOnly project(':report-core')
+    runtimeOnly project(':chart-core')
+    runtimeOnly 'com.h2database:h2:1.3.163'
     implementation project(':core-simple-attributes')
     implementation project(':common')
     implementation project(':data-framework-common')
     testImplementation group: 'junit', name: 'junit', version: '4.11'
+}
+
+/**
+ * Зручний запуск конвертера:
+ * ./gradlew :ramus-core-demo:rsfToYaml -Prsf=<файл> -Pout=<каталог>
+ */
+tasks.register('rsfToYaml', JavaExec) {
+    group = 'ramus'
+    description = 'Конвертує .rsf у дерево YAML'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.ramussoft.demo.RsfToYaml'
+    // Шляхи в аргументах зручніше писати відносно кореня репозиторію,
+    // а не каталогу модуля.
+    workingDir = rootProject.projectDir
+    doFirst {
+        if (!project.hasProperty('rsf') || !project.hasProperty('out')) {
+            throw new GradleException(
+                    'Потрібні -Prsf=<файл.rsf> та -Pout=<каталог>')
+        }
+        args = [project.property('rsf'), project.property('out')]
+    }
+}
+
+/**
+ * Зворотний конвертер:
+ * ./gradlew :ramus-core-demo:yamlToRsf -Pin=<каталог> -Prsf=<файл.rsf>
+ */
+tasks.register('yamlToRsf', JavaExec) {
+    group = 'ramus'
+    description = 'Складає .rsf з дерева YAML'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.ramussoft.demo.YamlToRsf'
+    workingDir = rootProject.projectDir
+    doFirst {
+        if (!project.hasProperty('in') || !project.hasProperty('rsf')) {
+            throw new GradleException('Потрібні -Pin=<каталог> та -Prsf=<файл.rsf>')
+        }
+        args = [project.property('in'), project.property('rsf')]
+    }
 }

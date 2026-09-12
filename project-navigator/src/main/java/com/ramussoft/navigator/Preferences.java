@@ -113,18 +113,15 @@ public class Preferences extends JFrame {
 
         @Override
         public boolean accept(File f) {
-            if (f.isFile()) {
-                if (f.getName().toLowerCase().endsWith(getRSF()))
-                    return true;
-                else
-                    return false;
-            }
-            return true;
+            if (f.isDirectory())
+                // Проєкт нового формату — теж каталог.
+                return true;
+            return f.getName().toLowerCase().endsWith(getRSF());
         }
 
         @Override
         public String getDescription() {
-            return "*" + getRSF();
+            return "*.ramus, *" + getRSF();
         }
 
     };

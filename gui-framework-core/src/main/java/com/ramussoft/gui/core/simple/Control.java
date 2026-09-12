@@ -44,6 +44,8 @@ public class Control {
 
     private DFrame active;
 
+    private Hashtable<UniqueDFrame, List<TabPlace>> tabPlaces = new Hashtable<UniqueDFrame, List<TabPlace>>();
+
     public Control(PlugableFrame plugableFrame, SimleGUIPluginFactory factory) {
         this.contentArea = new ContentArea();
         this.frame = plugableFrame;
@@ -96,6 +98,43 @@ public class Control {
                 pane.setSelectedIndex(i);
                 break;
             }
+        }
+    }
+
+    /**
+     * @param frame унікальне вікно.
+     * @return <code>true</code>, якщо вікно зараз показане. Вікна, які займають
+     * головну область, показані завжди.
+     */
+    public boolean isVisible(UniqueDFrame frame) {
+        List<TabPlace> places = tabPlaces.get(frame);
+        if (places == null)
+            return true;
+        for (TabPlace place : places)
+            if (place.pane.indexOfComponent(place.component) >= 0)
+                return true;
+        return false;
+    }
+
+    /**
+     * Показує або ховає вкладку унікального вікна.
+     */
+    public void setVisible(UniqueDFrame frame, boolean visible) {
+        List<TabPlace> places = tabPlaces.get(frame);
+        if (places == null)
+            return;
+        for (TabPlace place : places) {
+            int index = place.pane.indexOfComponent(place.component);
+            if (visible) {
+                if (index < 0) {
+                    int at = Math.min(place.index, place.pane.getTabCount());
+                    place.pane.insertTab(place.title, null, place.component,
+                            null, at);
+                    index = at;
+                }
+                place.pane.setSelectedIndex(index);
+            } else if (index >= 0)
+                place.pane.remove(index);
         }
     }
 
@@ -335,19 +374,54 @@ public class Control {
                 }
                 JTabbedPane pane = new JTabbedPane();
                 for (UniqueDFrame dFrame : list) {
+                    JComponent tab;
                     if (toRemove.indexOf(dFrame) >= 0) {
                         JPanel panel = new JPanel(new BorderLayout());
-                        pane.addTab(dFrame.getTitleText(), panel);
+                        tab = panel;
                         wrappers.put(dFrame, panel);
                     } else
-                        pane.addTab(dFrame.getTitleText(), dFrame);
-
+                        tab = dFrame;
+                    rememberTabPlace(dFrame, pane, tab, pane.getTabCount());
+                    pane.addTab(dFrame.getTitleText(), tab);
                 }
 
                 return pane;
             }
             return null;
         }
+    }
+
+    private void rememberTabPlace(UniqueDFrame frame, JTabbedPane pane,
+                                  JComponent component, int index) {
+        List<TabPlace> places = tabPlaces.get(frame);
+        if (places == null) {
+            places = new ArrayList<TabPlace>(1);
+            tabPlaces.put(frame, places);
+        }
+        places.add(new TabPlace(pane, component, frame.getTitleText(), index));
+    }
+
+    /**
+     * Місце вкладки унікального вікна, щоб повернути її туди після показу.
+     */
+    private static class TabPlace {
+
+        private final JTabbedPane pane;
+
+        private final JComponent component;
+
+        private final String title;
+
+        private final int index;
+
+        public TabPlace(JTabbedPane pane, JComponent component, String title,
+                        int index) {
+            this.pane = pane;
+            this.component = component;
+            this.title = title;
+            this.index = index;
+        }
+
     }
 
     public void focusLost(DFrame dFrame) {

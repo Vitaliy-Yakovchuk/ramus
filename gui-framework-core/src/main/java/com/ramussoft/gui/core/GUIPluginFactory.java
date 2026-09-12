@@ -458,20 +458,19 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
                 list.add((ViewPlugin) plugin);
             }
         }
-        ShowViewPlugin showViewPlugin = new ShowViewPlugin(uniqueViews, this);
-        showViewPlugin.setFramework(framework);
-        list.add(showViewPlugin);
+        LookAndFeelPlugin lookAndFeelPlugin = new LookAndFeelPlugin();
+        lookAndFeelPlugin.setFramework(framework);
+        list.add(lookAndFeelPlugin);
         ShowWorkspacePlugin showWorkspacePlugin = new ShowWorkspacePlugin(this);
         showWorkspacePlugin.setFramework(framework);
         list.add(showWorkspacePlugin);
+        ShowViewPlugin showViewPlugin = new ShowViewPlugin(uniqueViews, this);
+        showViewPlugin.setFramework(framework);
+        list.add(showViewPlugin);
         PreferenciesPlugin preferenciesPlugin = new PreferenciesPlugin(list,
                 engine);
         preferenciesPlugin.setFramework(framework);
         list.add(preferenciesPlugin);
-
-        LookAndFeelPlugin lookAndFeelPlugin = new LookAndFeelPlugin();
-        lookAndFeelPlugin.setFramework(framework);
-        list.add(lookAndFeelPlugin);
 
         engine.setPluginProperty("GUI", "PluginList", plugins);
 
@@ -488,6 +487,8 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
         initContent();
 
         framework.propertyChanged("MainFrameCreated");
+
+        fireUniqueViewsVisibility();
 
         showWorkspacePlugin.createWorkspaceToolBar();
 
@@ -572,6 +573,25 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
         return false;
     }
 
+    /**
+     * Повідомляє про дійсний стан усіх унікальних вікон, щоб пункти меню
+     * відповідали тому, що показано насправді.
+     */
+    protected void fireUniqueViewsVisibility() {
+        for (UniqueView view : uniqueViews)
+            framework.propertyChanged(
+                    ActionEvent.UNIQUE_VIEW_VISIBILITY_CHANGED, view.getId());
+    }
+
+    private void fireUniqueViewVisibilityChanged(CDockable dockable) {
+        if (!(dockable instanceof DefaultSingleCDockable))
+            return;
+        String id = ((DefaultSingleCDockable) dockable).getUniqueId();
+        if (findUniqueView(id) != null)
+            framework.propertyChanged(
+                    ActionEvent.UNIQUE_VIEW_VISIBILITY_CHANGED, id);
+    }
+
     @SuppressWarnings("deprecation")
     private void initContent() {
 
@@ -608,6 +628,28 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
 
             @Override
             public void opened(CControl control, CDockable dockable) {
+            }
+
+            @Override
+            public void removed(CControl control, CDockable dockable) {
+            }
+
+        });
+
+        control.addControlListener(new CControlListener() {
+
+            @Override
+            public void added(CControl control, CDockable dockable) {
+            }
+
+            @Override
+            public void closed(CControl control, CDockable dockable) {
+                fireUniqueViewVisibilityChanged(dockable);
+            }
+
+            @Override
+            public void opened(CControl control, CDockable dockable) {
+                fireUniqueViewVisibilityChanged(dockable);
             }
 
             @Override
@@ -902,6 +944,23 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
         return null;
     }
 
+    @Override
+    public boolean isUniqueViewVisible(String id) {
+        DefaultSingleCDockable dockable = findUniqueDockable(id);
+        return (dockable != null) && dockable.isVisible();
+    }
+
+    @Override
+    public void setUniqueViewVisible(String id, boolean visible) {
+        DefaultSingleCDockable dockable = findUniqueDockable(id);
+        if (dockable == null)
+            return;
+        dockable.setVisible(visible);
+        if (visible)
+            dockable.intern().getController()
+                    .setFocusedDockable(dockable.intern(), false);
+    }
+
     public DefaultSingleCDockable findUniqueDockable(String id) {
         for (DefaultSingleCDockable dockable : uniqueDockables) {
             if (dockable.getUniqueId().equals(id))
@@ -1026,6 +1085,7 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
                 break;
             }
         }
+        fireUniqueViewsVisibility();
     }
 
     private void loadCurrentWorkspase() {

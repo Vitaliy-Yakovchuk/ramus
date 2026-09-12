@@ -1,0 +1,6 @@
+{
+  "proseWrap": "preserve",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "embeddedLanguageFormatting": "off"
+}

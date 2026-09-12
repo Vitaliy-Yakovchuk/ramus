@@ -41,6 +41,7 @@ import com.ramussoft.common.journal.StopUndoPointCommand;
 import com.ramussoft.common.journal.command.Command;
 import com.ramussoft.common.journal.command.EndUserTransactionCommand;
 import com.ramussoft.common.journal.command.StartUserTransactionCommand;
+import com.ramussoft.core.format.ProjectReader;
 import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.core.impl.FileMinimumVersionException;
 import com.ramussoft.database.MemoryDatabase;
@@ -404,6 +405,11 @@ public class Runner implements Commands {
     }
 
     public boolean open(File afile) {
+
+        // З робочого столу приходить опис проєкту, з діалогу — сам каталог.
+        // Далі проєкт скрізь представлений каталогом: саме його ім’я бачить
+        // користувач у заголовку вікна й у переліку останніх файлів.
+        afile = ProjectReader.directoryOf(afile);
 
         JFrame frame = null;
 

@@ -19,6 +19,7 @@ import com.ramussoft.idef0.attribute.SectorPlugin;
 import com.ramussoft.idef0.attribute.SectorPointPlugin;
 import com.ramussoft.idef0.attribute.SectorPropertiesPlugin;
 import com.ramussoft.idef0.attribute.StatusPlugin;
+import com.ramussoft.idef0.attribute.TextLabelPlugin;
 import com.ramussoft.idef0.attribute.VisualDataPlugin;
 
 public class IDEF0PluginProvider extends AttributePluginProvider {
@@ -37,7 +38,8 @@ public class IDEF0PluginProvider extends AttributePluginProvider {
                 new AnyToAnyPlugin(), new SectorPlugin(),
                 new SectorBorderPlugin(), new ProjectPreferencesPlugin(),
                 new DecompositionTypePlugin(), new SectorPointPlugin(),
-                new SectorPropertiesPlugin(), new DFDSNamePlugin()};
+                new SectorPropertiesPlugin(), new DFDSNamePlugin(),
+                new TextLabelPlugin()};
     }
 
     @Override

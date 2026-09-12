@@ -42,7 +42,7 @@ public class LookAndFeelPlugin extends AbstractViewPlugin {
 
             ad.setActionLevel(ActionLevel.GLOBAL);
             ad.setButtonGroup("LookAndFeel");
-            ad.setMenu("Windows/LookAndFeel");
+            ad.setMenu("View/LookAndFeel");
             ad.setSelective(true);
 
             AbstractAction action = new AbstractAction() {

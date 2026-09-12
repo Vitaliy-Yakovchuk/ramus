@@ -208,11 +208,13 @@ public class StandardFilePlugin extends AbstractViewPlugin {
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser chooser = new JFileChooser();
+            // Джерелом імпорту може бути і каталог проєкту, і старий архів.
+            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             chooser.setFileFilter(new FileFilter() {
 
                 @Override
                 public String getDescription() {
-                    return "*.rsf";
+                    return "*.ramus, *.rsf";
                 }
 
                 @Override

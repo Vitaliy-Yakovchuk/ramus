@@ -23,6 +23,7 @@ import com.ramussoft.common.journal.JournalEngineImpl;
 import com.ramussoft.common.journal.JournaledEngine;
 import com.ramussoft.common.journal.SuperEngineFactory;
 import com.ramussoft.core.attribute.simple.SimpleAttributePluginSuit;
+import com.ramussoft.core.format.ProjectReader;
 import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.core.persistent.PersistentFactory;
 import com.ramussoft.jdbc.JDBCTemplate;
@@ -70,8 +71,16 @@ public class MemoryDatabase extends AbstractDatabase {
             persistentFactory.rebuild();
 
             File file = getFile();
-            if (file != null)
-                impl.open(file, isIrnoreUnregisteredPlugins());
+            if (file != null) {
+                // Проєкт нового формату — каталог, старий — архів. Обидва
+                // читаються тут, до створення журнального рушія: плагіни
+                // мають побачити вже готову модель, інакше вони почнуть її
+                // добудовувати й наплодять дублікатів.
+                if (ProjectReader.isProject(file))
+                    impl.openProject(file, isIrnoreUnregisteredPlugins());
+                else
+                    impl.open(file, isIrnoreUnregisteredPlugins());
+            }
 
             String jName = getJournalDirectoryName(impl.getTmpPath());
             File directory = null;

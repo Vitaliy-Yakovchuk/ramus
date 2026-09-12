@@ -110,7 +110,7 @@ public class ShowWorkspacePlugin extends AbstractViewPlugin {
                 action.putValue(Action.SELECTED_KEY, ws.equals(workspace));
 
                 descriptor.setAction(action);
-                descriptor.setMenu("Windows/ShowWorkspace");
+                descriptor.setMenu("View/ShowWorkspace");
             }
 
             int i = actions.length - 2;
@@ -141,7 +141,7 @@ public class ShowWorkspacePlugin extends AbstractViewPlugin {
             action.putValue(Action.SELECTED_KEY, ws.equals("simple"));
 
             descriptor.setAction(action);
-            descriptor.setMenu("Windows/WindowsControl");
+            descriptor.setMenu("View/WindowsControl");
 
             i = actions.length - 1;
             descriptor = new ActionDescriptor();
@@ -173,7 +173,7 @@ public class ShowWorkspacePlugin extends AbstractViewPlugin {
             action.putValue(Action.SELECTED_KEY, ws.equals("classic"));
 
             descriptor.setAction(action);
-            descriptor.setMenu("Windows/WindowsControl");
+            descriptor.setMenu("View/WindowsControl");
 
         }
         return actions;

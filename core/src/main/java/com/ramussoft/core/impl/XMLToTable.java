@@ -37,8 +37,6 @@ public class XMLToTable {
 
     private InputStream stream;
 
-    public static DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance(
-            DateFormat.SHORT, DateFormat.SHORT, Locale.ENGLISH);
 
     private interface Converter {
         void fill(PreparedStatement ps, int column, String value)
@@ -158,9 +156,15 @@ public class XMLToTable {
             else
                 try {
                     ps.setTimestamp(column,
-                            new Timestamp(DATE_FORMAT.parse(value).getTime()));
+                            new Timestamp(XmlDates.parse(value).getTime()));
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    // Раніше параметр лишався невстановленим, і драйвер валив
+                    // уже весь запис таблиці. Ставимо null, щоб втратити одне
+                    // значення, а не всю таблицю, і повідомляємо з контекстом.
+                    System.err.println("Таблиця " + prefix + tableName
+                            + ": не розпізнано дату \"" + value
+                            + "\", збережено як порожнє значення");
+                    ps.setTimestamp(column, null);
                 }
         }
 

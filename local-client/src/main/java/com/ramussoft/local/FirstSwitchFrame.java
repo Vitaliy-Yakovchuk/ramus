@@ -98,6 +98,8 @@ public class FirstSwitchFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser chooser = new JFileChooser();
+            // Проєкт нового формату — каталог, тож вибирати треба вміти і їх.
+            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             chooser.setFileFilter(fileFilter);
             String lastFile = Options.getString("LAST_FILE");
             if (lastFile != null) {
@@ -251,18 +253,14 @@ public class FirstSwitchFrame extends JFrame {
 
         @Override
         public boolean accept(File f) {
-            if (f.isFile()) {
-                if (f.getName().toLowerCase().endsWith(getRSF()))
-                    return true;
-                else
-                    return false;
-            }
-            return true;
+            if (f.isDirectory())
+                return true;
+            return f.getName().toLowerCase().endsWith(getRSF());
         }
 
         @Override
         public String getDescription() {
-            return "*" + getRSF();
+            return "*.ramus, *" + getRSF();
         }
 
     };

@@ -1,0 +1,51 @@
+group 'com.vitalex.ramus'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation project(':common')
+    testImplementation project(':core')
+    testImplementation project(':database-storage')
+    testImplementation project(':core-simple-attributes')
+    testImplementation project(':data-framework-common')
+    // Потрібен на тестовому classpath, щоб ServiceLoader підхопив
+    // IDEF0PluginProvider — без нього файли з моделями не відкриваються.
+    testImplementation project(':idef0-core')
+    // Малювання діаграм для еталонних знімків.
+    testImplementation project(':idef0-common')
+    testImplementation project(':report-core')
+    testImplementation project(':chart-core')
+
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
+    testRuntimeOnly 'com.h2database:h2:1.3.163'
+}
+
+test {
+    // Прокидаємо властивість у JVM тестів: без цього -D осідає на Gradle.
+    ['ramus.dump.target', 'ramus.dump.sample', 'ramus.diagnose', 'ramus.golden.update', 'ramus.schema.target'].each { name ->
+        if (System.getProperty(name)) {
+            systemProperty name, System.getProperty(name)
+        }
+    }
+
+    // Еталонні знімки діаграм прив'язані до шрифтів, встановлених на машині:
+    // Dialog розкладається у різні файли на Fedora й у контейнері, і піксель
+    // у піксель картинки не збігаються. Допуск тут нульовий свідомо, тож у
+    // чужому середовищі (Docker, CI) знімки вимикаються прапорцем.
+    if (project.hasProperty('skipGolden')) {
+        filter {
+            excludeTestsMatching 'com.ramussoft.storage.DiagramGoldenTest'
+        }
+    }
+
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat 'full'
+        showStandardStreams = false
+    }
+}

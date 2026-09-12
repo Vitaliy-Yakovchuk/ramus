@@ -16,6 +16,7 @@ import static com.ramussoft.idef0.IDEF0Plugin.F_SYSTEM_REV_DATE;
 import static com.ramussoft.idef0.IDEF0Plugin.F_TYPE;
 import static com.ramussoft.idef0.IDEF0Plugin.F_VISUAL_DATA;
 import static com.ramussoft.idef0.IDEF0Plugin.F_PAGE_SIZE;
+import static com.ramussoft.idef0.IDEF0Plugin.F_TEXT_LABELS;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -92,12 +93,15 @@ public class NFunction extends NRow implements Function {
 
     private static final int PAGE_SIZE = 14;
 
+    private static final int TEXT_LABELS = 15;
+
     private Vector sectors = null;
 
     public static final String[] PROPERTIES = new String[]{F_VISUAL_DATA,
             F_BACKGROUND, F_FOREGROUND, F_BOUNDS, F_FONT, F_STATUS, F_TYPE,
             F_OUNER_ID, F_DECOMPOSITION_TYPE, F_AUTHOR, F_CREATE_DATE,
-            F_REV_DATE, F_SYSTEM_REV_DATE, F_LINK, F_PAGE_SIZE};
+            F_REV_DATE, F_SYSTEM_REV_DATE, F_LINK, F_PAGE_SIZE,
+            F_TEXT_LABELS};
 
     private Object getObject(int i) {
         return getAttribute(getFunctionAttribute(i));
@@ -418,6 +422,23 @@ public class NFunction extends NRow implements Function {
 
     public void setSectorData(final byte[] data) {
         setObject(VISUAL_DATA, data);
+    }
+
+    @SuppressWarnings("unchecked")
+    public java.util.List<com.ramussoft.idef0.attribute.TextLabelPersistent>
+            getTextLabels() {
+        Object value = getObject(TEXT_LABELS);
+        if (value == null)
+            return new java.util.ArrayList<
+                    com.ramussoft.idef0.attribute.TextLabelPersistent>();
+        return (java.util.List<
+                com.ramussoft.idef0.attribute.TextLabelPersistent>) value;
+    }
+
+    public void setTextLabels(
+            java.util.List<com.ramussoft.idef0.attribute.TextLabelPersistent>
+                    labels) {
+        setObject(TEXT_LABELS, labels);
     }
 
     public Vector getSectors() {

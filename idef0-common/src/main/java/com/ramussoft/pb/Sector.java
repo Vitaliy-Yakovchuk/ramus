@@ -187,6 +187,18 @@ public interface Sector extends Indexed {
     public void setVisualAttributes(byte[] visualData);
 
     /**
+     * Візуальні властивості сектора (обведення, шрифт, колір) у вигляді
+     * іменованих полів.
+     * <p>
+     * Раніше вони пакувались у {@link #getVisualAttributes()} — останнє
+     * двійкове поле в моделі після винесення підписів.
+     */
+    public com.ramussoft.idef0.attribute.SectorPersistent getVisualState();
+
+    public void setVisualState(
+            com.ramussoft.idef0.attribute.SectorPersistent state);
+
+    /**
      * Метод копіює візуальні параментри для до під’єднаних секторів.
      *
      * @param type <ol>

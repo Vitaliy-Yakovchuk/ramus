@@ -32,6 +32,13 @@ public class IDEF0Plugin extends AbstractPlugin {
 
     public static final String F_PAGE_SIZE = "F_PAGE_SIZE";
 
+    /**
+     * Вільні текстові підписи діаграми. Раніше лежали всередині
+     * {@link #F_VISUAL_DATA}; винесені в окрему таблицю, щоб у моделі не
+     * лишалося двійкових полів.
+     */
+    public static final String F_TEXT_LABELS = "F_TEXT_LABELS";
+
     public static final String F_VISUAL_DATA = "F_VISUAL_DATA";
 
     public static final String F_BACKGROUND = "F_BACKGROUND";
@@ -153,6 +160,8 @@ public class IDEF0Plugin extends AbstractPlugin {
                 new AttributeType(IDEF0, "VisualData", false)));
         functionAttributes.add(createAttribute(F_PAGE_SIZE, new AttributeType(
                 "Core", "Text", true)));
+        functionAttributes.add(createAttribute(F_TEXT_LABELS,
+                new AttributeType(IDEF0, "TextLabel", false)));
         functionAttributes.add(createAttribute(F_BACKGROUND, new AttributeType(
                 IDEF0, "Color", false)));
         functionAttributes.add(createAttribute(F_FOREGROUND, new AttributeType(
@@ -472,6 +481,10 @@ public class IDEF0Plugin extends AbstractPlugin {
 
     public static long getNextCrosspointId(Engine engine) {
         return engine.nextValue(CROSSPOINTS_SEQUENCE);
+    }
+
+    public static Attribute getFunctionTextLabelsAttribute(Engine engine) {
+        return (Attribute) engine.getPluginProperty(IDEF0, F_TEXT_LABELS);
     }
 
     public static Attribute getFunctionVisualDataAttribute(Engine engine) {

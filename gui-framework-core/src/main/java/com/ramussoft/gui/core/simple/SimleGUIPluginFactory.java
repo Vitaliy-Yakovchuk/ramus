@@ -393,20 +393,19 @@ public class SimleGUIPluginFactory extends AbstractGUIPluginFactory {
                 list.add((ViewPlugin) plugin);
             }
         }
-        ShowViewPlugin showViewPlugin = new ShowViewPlugin(uniqueViews, this);
-        showViewPlugin.setFramework(framework);
-        list.add(showViewPlugin);
+        LookAndFeelPlugin lookAndFeelPlugin = new LookAndFeelPlugin();
+        lookAndFeelPlugin.setFramework(framework);
+        list.add(lookAndFeelPlugin);
         ShowWorkspacePlugin showWorkspacePlugin = new ShowWorkspacePlugin(this);
         showWorkspacePlugin.setFramework(framework);
         list.add(showWorkspacePlugin);
+        ShowViewPlugin showViewPlugin = new ShowViewPlugin(uniqueViews, this);
+        showViewPlugin.setFramework(framework);
+        list.add(showViewPlugin);
         PreferenciesPlugin preferenciesPlugin = new PreferenciesPlugin(list,
                 engine);
         preferenciesPlugin.setFramework(framework);
         list.add(preferenciesPlugin);
-
-        LookAndFeelPlugin lookAndFeelPlugin = new LookAndFeelPlugin();
-        lookAndFeelPlugin.setFramework(framework);
-        list.add(lookAndFeelPlugin);
 
         engine.setPluginProperty("GUI", "PluginList", plugins);
 
@@ -423,6 +422,8 @@ public class SimleGUIPluginFactory extends AbstractGUIPluginFactory {
         initContent();
 
         framework.propertyChanged("MainFrameCreated");
+
+        fireUniqueViewsVisibility();
 
         showWorkspacePlugin.createWorkspaceToolBar();
 
@@ -702,6 +703,32 @@ public class SimleGUIPluginFactory extends AbstractGUIPluginFactory {
         return null;
     }
 
+    /**
+     * Повідомляє про дійсний стан усіх унікальних вікон, щоб пункти меню
+     * відповідали тому, що показано насправді.
+     */
+    protected void fireUniqueViewsVisibility() {
+        for (UniqueView view : uniqueViews)
+            framework.propertyChanged(
+                    ActionEvent.UNIQUE_VIEW_VISIBILITY_CHANGED, view.getId());
+    }
+
+    @Override
+    public boolean isUniqueViewVisible(String id) {
+        UniqueDFrame dockable = findUniqueDockable(id);
+        return (dockable == null) || control.isVisible(dockable);
+    }
+
+    @Override
+    public void setUniqueViewVisible(String id, boolean visible) {
+        UniqueDFrame dockable = findUniqueDockable(id);
+        if (dockable == null)
+            return;
+        control.setVisible(dockable, visible);
+        if (visible)
+            dockable.requestFocus();
+    }
+
     public UniqueDFrame findUniqueDockable(String id) {
         for (UniqueDFrame dockable : uniqueDockables) {
             if (dockable.getUniqueId().equals(id))
@@ -779,6 +806,7 @@ public class SimleGUIPluginFactory extends AbstractGUIPluginFactory {
                 break;
             }
         }
+        fireUniqueViewsVisibility();
     }
 
     private void loadCurrentWorkspase() {

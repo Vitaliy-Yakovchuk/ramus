@@ -29,4 +29,21 @@ public abstract class AbstractGUIPluginFactory {
 
     public abstract GUIFramework getFramework();
 
+    /**
+     * @param id ідентифікатор унікального вікна.
+     * @return <code>true</code>, якщо вікно зараз показане.
+     */
+    public boolean isUniqueViewVisible(String id) {
+        return true;
+    }
+
+    /**
+     * Показує або ховає унікальне вікно.
+     *
+     * @param id      ідентифікатор унікального вікна.
+     * @param visible <code>true</code>, щоб показати вікно.
+     */
+    public void setUniqueViewVisible(String id, boolean visible) {
+    }
+
 }

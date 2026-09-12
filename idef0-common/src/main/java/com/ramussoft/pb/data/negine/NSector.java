@@ -175,6 +175,33 @@ public class NSector extends AbstractSector {
         return getSp().getVisualAttributes();
     }
 
+    @Override
+    public SectorPersistent getVisualState() {
+        return getSp();
+    }
+
+    @Override
+    public void setVisualState(final SectorPersistent state) {
+        synchronized (dataPlugin) {
+            SectorPersistent sp = getSp();
+            sp.setStrokeKind(state.getStrokeKind());
+            sp.setStrokeWidth(state.getStrokeWidth());
+            sp.setStrokeEndCap(state.getStrokeEndCap());
+            sp.setStrokeLineJoin(state.getStrokeLineJoin());
+            sp.setStrokeDashPhase(state.getStrokeDashPhase());
+            sp.setStrokeMiterLimit(state.getStrokeMiterLimit());
+            sp.setStrokeDash(state.getStrokeDash());
+            sp.setStrokeType(state.getStrokeType());
+            sp.setFontName(state.getFontName());
+            sp.setFontStyle(state.getFontStyle());
+            sp.setFontSize(state.getFontSize());
+            sp.setColor(state.getColor());
+            // Старе двійкове поле більше не потрібне.
+            sp.setVisualAttributes(new byte[]{});
+            setAttribute(dataPlugin.sectorAttribute, sp);
+        }
+    }
+
     public void setVisualAttributes(final byte[] visualData) {
         synchronized (dataPlugin) {
             if (Arrays.equals(getSp().getVisualAttributes(), visualData))

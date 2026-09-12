@@ -185,6 +185,42 @@ public abstract class IEngineImpl extends AbstractIEngine implements IEngine {
         attributesCache.clear();
     }
 
+    /**
+     * Ставить лічильник у задане значення.
+     * <p>
+     * Потрібне при відкритті проєкту: ключі, які роздають лічильники плагінів,
+     * уже зайняті збереженою моделлю, і без цього наступний створений об'єкт
+     * отримав би чужий номер. Лічильники основних таблиць рушій підіймає сам,
+     * звіряючись із максимальним наявним ключем.
+     */
+    public void setSequenceValue(String sequence, long value) {
+        try {
+            template.execute("DROP SEQUENCE " + prefix + sequence + ";");
+        } catch (Exception e) {
+            // Немає — і не треба: створимо нижче.
+        }
+        try {
+            template.execute("CREATE SEQUENCE " + prefix + sequence + " START "
+                    + value + ";");
+        } catch (SQLException e) {
+            throw new RuntimeException("Не вдалося відновити лічильник "
+                    + sequence, e);
+        }
+    }
+
+    /**
+     * Назва елемента в таблиці елементів.
+     * <p>
+     * Рушій сам її не оновлює — показувана назва береться з атрибута-назви, а
+     * цей стовпчик лишається таким, яким його записали при створенні. Проєкт
+     * має відновитися дослівно, тому назву треба вміти виставити.
+     */
+    public void setElementName(long elementId, String name) {
+        template.update("UPDATE " + prefix
+                        + "elements SET ELEMENT_NAME=? WHERE ELEMENT_ID=?",
+                new Object[]{name, elementId}, true);
+    }
+
     private void createSequence(String sequence) {
         try {
             template.execute("CREATE SEQUENCE " + prefix + sequence

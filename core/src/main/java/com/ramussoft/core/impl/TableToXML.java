@@ -8,7 +8,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -88,7 +89,7 @@ public class TableToXML {
 
         @Override
         public String toString(Object object) throws SQLException {
-            return XMLToTable.DATE_FORMAT.format(object);
+            return XmlDates.format(object);
         }
 
     }
@@ -129,8 +130,6 @@ public class TableToXML {
         th.setResult(result);
         th.startDocument();
         attrs.addAttribute("", "", "generate-from-table", "CDATA", tableName);
-        attrs.addAttribute("", "", "generate-time", "CDATA", new Date()
-                .toString());
         attrs.addAttribute("", "", "prefix", "CDATA", prefix);
         startElement("table");
         attrs.clear();
@@ -140,7 +139,7 @@ public class TableToXML {
             public Object execute(Connection connection) throws SQLException {
                 Statement st = connection.createStatement();
                 ResultSet rs = st.executeQuery("SELECT * FROM " + prefix
-                        + tableName);
+                        + tableName + orderBy(connection));
                 ResultSetMetaData meta = rs.getMetaData();
                 startElement("fields");
                 int cc = meta.getColumnCount();
@@ -207,6 +206,67 @@ public class TableToXML {
 
         endElement("table");
         th.endDocument();
+    }
+
+    /**
+     * Будує {@code ORDER BY}, щоб порядок рядків у файлі не залежав від
+     * порядку, у якому їх поверне СУБД. Без цього два збереження однієї моделі
+     * дають різні файли, і git бачить зміну там, де її немає.
+     * <p>
+     * Двійкові колонки в сортування не входять — вони не впорядковувані
+     * переносно. Довгі текстові (CLOB) беруться лише тоді, коли інших колонок
+     * у таблиці немає (як у {@code streams}), і через {@code CAST}, бо пряме
+     * порівняння CLOB підтримується не всюди.
+     *
+     * @return готовий фрагмент SQL або порожній рядок, якщо сортувати нема за чим
+     */
+    private String orderBy(Connection connection) throws SQLException {
+        Statement st = connection.createStatement();
+        try {
+            ResultSet rs = st.executeQuery("SELECT * FROM " + prefix
+                    + tableName + " WHERE 1 = 0");
+            try {
+                ResultSetMetaData meta = rs.getMetaData();
+                List<String> plain = new ArrayList<String>();
+                List<String> text = new ArrayList<String>();
+                for (int i = 1; i <= meta.getColumnCount(); i++) {
+                    String name = meta.getColumnName(i);
+                    int type = meta.getColumnType(i);
+                    String typeName = meta.getColumnTypeName(i);
+                    if (isBinary(type, typeName))
+                        continue;
+                    if (isLongText(type))
+                        text.add("CAST(" + name + " AS VARCHAR)");
+                    else
+                        plain.add(name);
+                }
+                List<String> columns = plain.isEmpty() ? text : plain;
+                if (columns.isEmpty())
+                    return "";
+                StringBuilder sb = new StringBuilder(" ORDER BY ");
+                for (int i = 0; i < columns.size(); i++) {
+                    if (i > 0)
+                        sb.append(", ");
+                    sb.append(columns.get(i));
+                }
+                return sb.toString();
+            } finally {
+                rs.close();
+            }
+        } finally {
+            st.close();
+        }
+    }
+
+    private static boolean isBinary(int type, String typeName) {
+        return type == Types.BLOB || type == Types.VARBINARY
+                || type == Types.BINARY || type == Types.LONGVARBINARY
+                || type == Types.OTHER || "bytea".equalsIgnoreCase(typeName);
+    }
+
+    private static boolean isLongText(int type) {
+        return type == Types.CLOB || type == Types.LONGVARCHAR
+                || type == Types.NCLOB || type == Types.LONGNVARCHAR;
     }
 
     protected boolean resultSetNext(ResultSet rs) throws SQLException {

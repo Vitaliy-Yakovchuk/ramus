@@ -12,6 +12,12 @@ public class ActionEvent implements Serializable {
 
     public static final String OPEN_STATIC_VIEW = "OpenStaticView";
 
+    /**
+     * Подія про те, що унікальне вікно показали або сховали. Значенням події є
+     * ідентифікатор вікна.
+     */
+    public static final String UNIQUE_VIEW_VISIBILITY_CHANGED = "UniqueViewVisibilityChanged";
+
     private String key;
 
     private Object value;

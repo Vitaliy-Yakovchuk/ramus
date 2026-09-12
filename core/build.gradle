@@ -9,5 +9,8 @@ repositories {
 dependencies {
     implementation project(':common')
     implementation project(':database-storage')
+    // YAML 1.2: на відміну від SnakeYAML 1.x, тут `no`/`yes`/`on`/`off`
+    // за специфікацією є рядками, тож Norway problem не виникає взагалі.
+    api 'org.snakeyaml:snakeyaml-engine:2.7'
     testImplementation group: 'junit', name: 'junit', version: '4.11'
 }

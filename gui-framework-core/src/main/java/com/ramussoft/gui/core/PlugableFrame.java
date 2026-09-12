@@ -215,8 +215,7 @@ public class PlugableFrame extends JFrame {
                 GlobalResourcesManager.getString("Menu.Edit"),
                 GlobalResourcesManager.getString("Menu.View")};
 
-        String[] lasts = {GlobalResourcesManager.getString("Menu.Windows"),
-                GlobalResourcesManager.getString("Menu.Tools"),
+        String[] lasts = {GlobalResourcesManager.getString("Menu.Tools"),
                 GlobalResourcesManager.getString("Menu.Help")};
         for (String s : firsts) {
             for (int i = 0; i < menus.size(); i++) {

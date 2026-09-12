@@ -56,6 +56,7 @@ import com.ramussoft.common.event.QualifierListener;
 import com.ramussoft.common.event.StreamListener;
 import com.ramussoft.common.journal.Journaled;
 import com.ramussoft.common.journal.event.JournalListener;
+import com.ramussoft.core.format.ProjectReader;
 import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.gui.common.AbstractViewPlugin;
 import com.ramussoft.gui.common.ActionDescriptor;
@@ -84,6 +85,12 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
     private static final String CHECK_FOR_UPDATES = "CHECK_FOR_UPDATES";
 
     private static final String RSF = ".rsf";
+
+    /**
+     * Розширення каталогу проєкту. Саме в цьому форматі застосунок зберігає
+     * роботу; {@code .rsf} лишається тільки для читання.
+     */
+    private static final String PROJECT = ".ramus";
 
     private static final String LAST_FILE = "LAST_FILE";
 
@@ -149,18 +156,17 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
 
         @Override
         public boolean accept(File f) {
-            if (f.isFile()) {
-                if (f.getName().toLowerCase().endsWith(getRSF()))
-                    return true;
-                else
-                    return false;
-            }
-            return true;
+            if (f.isDirectory())
+                // Каталоги видно завжди: інакше ні до проєкту не дійти, ні
+                // самого проєкту не вибрати — він теж каталог.
+                return true;
+            return ProjectReader.isProject(f)
+                    || f.getName().toLowerCase().endsWith(getRSF());
         }
 
         @Override
         public String getDescription() {
-            return "*" + getRSF();
+            return "*" + PROJECT + ", *" + getRSF();
         }
 
     };
@@ -459,6 +465,7 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
         JPanel contentPane = new JPanel();
         contentPane.setDoubleBuffered(true);
         JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setFileFilter(fileFilter);
         if (FilePlugin.this.getFile() == null) {
             String file = Options.getString(LAST_FILE);
@@ -516,7 +523,10 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
     }
 
     protected boolean saveFile() {
-        if (getFile() == null)
+        // Відкритий .rsf не перезаписуємо: старий формат лишається тільки для
+        // читання, тож перше збереження — це перехід на новий, і користувач
+        // має побачити, куди саме.
+        if (getFile() == null || !isProject(getFile()))
             return saveFileAs();
         else
             try {
@@ -553,21 +563,19 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
                 super.approveSelection();
             }
         };
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setFileFilter(fileFilter);
-        if (FilePlugin.this.getFile() == null) {
+        File current = FilePlugin.this.getFile();
+        if (current == null) {
             String file = Options.getString(LAST_FILE);
-            if (file != null) {
-                chooser.setSelectedFile(new File(file));
-            }
+            if (file != null)
+                chooser.setSelectedFile(projectName(new File(file)));
         } else
-            chooser.setSelectedFile(FilePlugin.this.getFile());
+            chooser.setSelectedFile(projectName(current));
         int r = chooser.showSaveDialog(framework.getMainFrame());
         if (r == JFileChooser.APPROVE_OPTION) {
-            File f = chooser.getSelectedFile();
+            File f = projectName(chooser.getSelectedFile());
             try {
-                if (f.getName().toLowerCase().endsWith(getRSF())) {
-                } else
-                    f = new File(f.getAbsolutePath() + getRSF());
                 saveToFile(f);
                 FilePlugin.this.setFile(f);
                 Options.setString(LAST_FILE, f.getAbsolutePath());
@@ -610,7 +618,7 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
         } finally {
             oos.close();
         }
-        engine.saveToFile(f);
+        engine.saveProject(f);
         Runner.saveFileToHistory(f);
         setChangedFalse();
     }
@@ -836,5 +844,32 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
      */
     public static String getRSF() {
         return System.getProperty("user.ramus.application.extension", RSF);
+    }
+
+    /**
+     * Чи є цей шлях проєктом нового формату — наявним каталогом проєкту або
+     * іменем із відповідним розширенням.
+     */
+    static boolean isProject(File file) {
+        if (file == null)
+            return false;
+        if (ProjectReader.isProject(file))
+            return true;
+        return file.getName().toLowerCase().endsWith(PROJECT);
+    }
+
+    /**
+     * Ім\'я каталогу проєкту, виведене з довільного шляху: {@code модель.rsf}
+     * стає {@code модель.ramus}, шлях без розширення його отримує.
+     */
+    static File projectName(File file) {
+        file = ProjectReader.directoryOf(file);
+        String name = file.getName();
+        if (name.toLowerCase().endsWith(PROJECT))
+            return file;
+        int dot = name.lastIndexOf('.');
+        if (dot > 0)
+            name = name.substring(0, dot);
+        return new File(file.getParentFile(), name + PROJECT);
     }
 }

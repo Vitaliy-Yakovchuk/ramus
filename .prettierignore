@@ -1,0 +1,7 @@
+# Збірка й сторонній вміст — prettier тут нічого не форматує.
+build/
+*/build/
+.gradle/
+dest/
+gradle/
+out/

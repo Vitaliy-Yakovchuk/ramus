@@ -2,6 +2,7 @@ package com.ramussoft.pb.idef.elements;
 
 import static com.ramussoft.pb.data.AbstractSector.equalsStreams;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,6 +23,7 @@ import com.dsoft.pb.types.FloatPoint;
 import com.dsoft.utils.DataLoader;
 import com.dsoft.utils.DataSaver;
 import com.dsoft.utils.Options;
+import com.ramussoft.idef0.attribute.TextLabelPersistent;
 import com.ramussoft.pb.Crosspoint;
 import com.ramussoft.pb.DataPlugin;
 import com.ramussoft.pb.Function;
@@ -52,7 +54,16 @@ public class SectorRefactor {
      * Поточна версія типу даних про сектори відображення.
      */
 
-    public static int BIN_VERSION = 2;
+    /**
+     * Версія двійкового подання діаграми.
+     * <ul>
+     * <li>1 — сектори й підписи всередині блоба;</li>
+     * <li>2 — сектори винесені в таблиці, підписи ще в блобі;</li>
+     * <li>3 — підписи винесені теж; блоб містить лише номер версії.</li>
+     * </ul>
+     * Читання версій 1 і 2 лишається: старі файли мають відкриватися.
+     */
+    public static int BIN_VERSION = 3;
 
     private Function function = null;
 
@@ -707,15 +718,10 @@ public class SectorRefactor {
                 }
             }
 
-            int n = DataLoader.readInteger(in);
-            for (int i = 0; i < n; i++) {
-                final MovingText text = movingArea.createText();
-                text.setFont(DataLoader.readFont(in, memoryData));
-                text.setColor(DataLoader.readColor(in, memoryData));
-                text.setBounds(DataLoader.readFRectangle(in));
-                text.setText(DataLoader.readString(in));
-                texts.add(text);
-            }
+            if (ver >= 3)
+                loadTextsFromAttribute(function);
+            else
+                loadTextsFromStream(in, memoryData);
             in.close();
             HashSet<PaintSector> hashSet = new HashSet<PaintSector>();
             for (int i = 0; i < getSectorsCount(); i++) {
@@ -724,6 +730,76 @@ public class SectorRefactor {
         } catch (final IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Підписи з окремого атрибута (версія 3 і новіші).
+     */
+    private void loadTextsFromAttribute(final Function function) {
+        for (TextLabelPersistent label : function.getTextLabels()) {
+            final MovingText text = movingArea.createText();
+            text.setFont(new Font(label.getFontName(), label.getFontStyle(),
+                    label.getFontSize()));
+            if (label.getColor() != null)
+                text.setColor(new Color(label.getColor().intValue(), true));
+            text.setBounds(new FRectangle(label.getX(), label.getY(),
+                    label.getWidth(), label.getHeight()));
+            text.setText(label.getText());
+            texts.add(text);
+        }
+    }
+
+    /**
+     * Підписи зі старого блоба (версії 1 і 2). Лишається для читання наявних
+     * файлів; при першому ж збереженні вони переїдуть в атрибут.
+     */
+    private void loadTextsFromStream(final ByteArrayInputStream in,
+                                     final DataLoader.MemoryData memoryData)
+            throws IOException {
+        int n = DataLoader.readInteger(in);
+        for (int i = 0; i < n; i++) {
+            final MovingText text = movingArea.createText();
+            text.setFont(DataLoader.readFont(in, memoryData));
+            text.setColor(DataLoader.readColor(in, memoryData));
+            text.setBounds(DataLoader.readFRectangle(in));
+            text.setText(DataLoader.readString(in));
+            texts.add(text);
+        }
+    }
+
+    /**
+     * Записує підписи в атрибут функції.
+     * <p>
+     * Винесено в окремий метод свідомо: перенесення підписів зі старого блоба
+     * не повинно тягнути за собою перезапис геометрії секторів.
+     */
+    public void saveTextLabels(final Function function) {
+        List<TextLabelPersistent> labels =
+                new ArrayList<TextLabelPersistent>(texts.size());
+        for (int i = 0; i < texts.size(); i++) {
+            MovingText text = getText(i);
+            TextLabelPersistent label = new TextLabelPersistent();
+            label.setPosition(i);
+            label.setText(text.getText());
+            FRectangle bounds = text.getBounds();
+            if (bounds != null) {
+                label.setX(bounds.getLeft());
+                label.setY(bounds.getTop());
+                label.setWidth(bounds.getWidth());
+                label.setHeight(bounds.getHeight());
+            }
+            Font font = text.getFont();
+            if (font != null) {
+                label.setFontName(font.getName());
+                label.setFontStyle(font.getStyle());
+                label.setFontSize(font.getSize());
+            }
+            Color color = text.getColor();
+            if (color != null)
+                label.setColor(Integer.valueOf(color.getRGB()));
+            labels.add(label);
+        }
+        function.setTextLabels(labels);
     }
 
     public Function getFunction() {
@@ -755,6 +831,11 @@ public class SectorRefactor {
         }
     }
 
+    /**
+     * З версії 3 блоб містить лише номер версії: сектори й підписи живуть у
+     * таблицях. Метод лишається, бо номер версії досі визначає, як читати
+     * старі файли.
+     */
     public byte[] getSectorData() {
         try {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -765,13 +846,6 @@ public class SectorRefactor {
                 PaintSector.save(sector, memoryData, getDataPlugin()
                         .getEngine());
             }
-            DataSaver.saveInteger(out, texts.size());
-            for (int i = 0; i < texts.size(); i++) {
-                DataSaver.saveFont(out, getText(i).getFont(), memoryData);
-                DataSaver.saveColor(out, getText(i).getColor(), memoryData);
-                DataSaver.saveFRectangle(out, getText(i).getBounds());
-                DataSaver.saveString(out, getText(i).getText());
-            }
             return out.toByteArray();
         } catch (final IOException e) {
             return null;
@@ -781,16 +855,7 @@ public class SectorRefactor {
     public byte[] getLightSectorData() {
         try {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final DataLoader.MemoryData memoryData = new DataLoader.MemoryData();
             DataSaver.saveInteger(out, BIN_VERSION);
-
-            DataSaver.saveInteger(out, texts.size());
-            for (int i = 0; i < texts.size(); i++) {
-                DataSaver.saveFont(out, getText(i).getFont(), memoryData);
-                DataSaver.saveColor(out, getText(i).getColor(), memoryData);
-                DataSaver.saveFRectangle(out, getText(i).getBounds());
-                DataSaver.saveString(out, getText(i).getText());
-            }
             return out.toByteArray();
         } catch (final IOException e) {
             return null;
@@ -804,6 +869,7 @@ public class SectorRefactor {
         byte[] data = getSectorData();
 
         function.setSectorData(data);
+        saveTextLabels(function);
     }
 
     public void lightSaveToFunction(Function function) {
@@ -812,6 +878,7 @@ public class SectorRefactor {
 
         byte[] data = getLightSectorData();
         byte[] bs = function.getSectorData();
+        saveTextLabels(function);
         if (Arrays.equals(bs, data))
             return;
 

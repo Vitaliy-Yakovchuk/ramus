@@ -28,6 +28,34 @@ public class SectorPersistent extends AbstractPersistent {
 
     private int textAligment;
 
+    private String strokeKind;
+
+    /**
+     * Обгорнуті типи, а не примітиви: у наявних файлах цих стовпчиків немає,
+     * і читання віддає {@code null}. Примітивний сеттер на такому падає.
+     */
+    private java.lang.Double strokeWidth;
+
+    private java.lang.Integer strokeEndCap;
+
+    private java.lang.Integer strokeLineJoin;
+
+    private java.lang.Double strokeDashPhase;
+
+    private java.lang.Double strokeMiterLimit;
+
+    private String strokeDash;
+
+    private java.lang.Integer strokeType;
+
+    private String fontName;
+
+    private java.lang.Integer fontStyle;
+
+    private java.lang.Integer fontSize;
+
+    private java.lang.Integer color;
+
     /**
      * @param createState the createState to set
      */
@@ -67,10 +95,138 @@ public class SectorPersistent extends AbstractPersistent {
 
     /**
      * @return the visualAttributes
+     * @deprecated Обведення, шрифт і колір стрілки тепер зберігаються
+     * окремими полями нижче. Поле лишається, щоб читати наявні файли; при
+     * першому збереженні воно очищується.
      */
+    @Deprecated
     @Binary(id = 4)
     public byte[] getVisualAttributes() {
         return visualAttributes;
+    }
+
+    /**
+     * Різновид обведення: {@code basic}, {@code way} чи {@code arrowed}.
+     * {@code null} означає, що вигляд ще не переносився зі старого
+     * двійкового поля.
+     */
+    @Text(id = 8)
+    public String getStrokeKind() {
+        return strokeKind;
+    }
+
+    public void setStrokeKind(String strokeKind) {
+        this.strokeKind = strokeKind;
+    }
+
+    @com.ramussoft.common.persistent.Double(id = 9)
+    public java.lang.Double getStrokeWidth() {
+        return strokeWidth;
+    }
+
+    public void setStrokeWidth(java.lang.Double strokeWidth) {
+        this.strokeWidth = strokeWidth;
+    }
+
+    @Integer(id = 10)
+    public java.lang.Integer getStrokeEndCap() {
+        return strokeEndCap;
+    }
+
+    public void setStrokeEndCap(java.lang.Integer strokeEndCap) {
+        this.strokeEndCap = strokeEndCap;
+    }
+
+    @Integer(id = 11)
+    public java.lang.Integer getStrokeLineJoin() {
+        return strokeLineJoin;
+    }
+
+    public void setStrokeLineJoin(java.lang.Integer strokeLineJoin) {
+        this.strokeLineJoin = strokeLineJoin;
+    }
+
+    @com.ramussoft.common.persistent.Double(id = 12)
+    public java.lang.Double getStrokeDashPhase() {
+        return strokeDashPhase;
+    }
+
+    public void setStrokeDashPhase(java.lang.Double strokeDashPhase) {
+        this.strokeDashPhase = strokeDashPhase;
+    }
+
+    @com.ramussoft.common.persistent.Double(id = 13)
+    public java.lang.Double getStrokeMiterLimit() {
+        return strokeMiterLimit;
+    }
+
+    public void setStrokeMiterLimit(java.lang.Double strokeMiterLimit) {
+        this.strokeMiterLimit = strokeMiterLimit;
+    }
+
+    /**
+     * Штрихування як перелік довжин через кому, наприклад {@code "3.0,3.0"}.
+     * Один рядок замість масиву — щоб не заводити ще одну таблицю заради
+     * двох чисел.
+     */
+    @Text(id = 14)
+    public String getStrokeDash() {
+        return strokeDash;
+    }
+
+    public void setStrokeDash(String strokeDash) {
+        this.strokeDash = strokeDash;
+    }
+
+    /**
+     * Різновид для {@code way} та {@code arrowed}.
+     */
+    @Integer(id = 15)
+    public java.lang.Integer getStrokeType() {
+        return strokeType;
+    }
+
+    public void setStrokeType(java.lang.Integer strokeType) {
+        this.strokeType = strokeType;
+    }
+
+    @Text(id = 16)
+    public String getFontName() {
+        return fontName;
+    }
+
+    public void setFontName(String fontName) {
+        this.fontName = fontName;
+    }
+
+    @Integer(id = 17)
+    public java.lang.Integer getFontStyle() {
+        return fontStyle;
+    }
+
+    public void setFontStyle(java.lang.Integer fontStyle) {
+        this.fontStyle = fontStyle;
+    }
+
+    @Integer(id = 18)
+    public java.lang.Integer getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(java.lang.Integer fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    /**
+     * Колір лінії в ARGB; {@code null} — типовий.
+     */
+    @Integer(id = 19)
+    public java.lang.Integer getColor() {
+        return color;
+    }
+
+    public void setColor(java.lang.Integer color) {
+        this.color = color;
     }
 
     /**

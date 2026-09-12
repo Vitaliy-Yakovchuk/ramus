@@ -32,6 +32,8 @@ import com.ramussoft.common.persistent.Persistent;
 import org.xml.sax.SAXException;
 
 import com.ramussoft.common.attribute.AttributePlugin;
+import com.ramussoft.core.format.ProjectReader;
+import com.ramussoft.core.format.ProjectWriter;
 import com.ramussoft.jdbc.JDBCTemplate;
 import com.ramussoft.jdbc.RowMapper;
 
@@ -52,7 +54,12 @@ public class FileIEngineImpl extends IEngineImpl {
 
     private ZipFile zFile;
 
-    private Hashtable<String, File> extractedFiles = new Hashtable<String, File>();
+    /**
+     * Порядок ітерації визначає порядок записів у ZIP, тому мапа має бути
+     * впорядкованою: {@link Hashtable} давала різний порядок між запусками.
+     */
+    private final SortedMap<String, File> extractedFiles = Collections
+            .synchronizedSortedMap(new TreeMap<String, File>());
 
     private ArrayList<String> deletedPaths = new ArrayList<String>();
 
@@ -182,6 +189,136 @@ public class FileIEngineImpl extends IEngineImpl {
 
         if (metadata != null)
             deleteOrphanFileAttachments(metadata);
+    }
+
+    /**
+     * Відкриває проєкт нового формату — каталог із YAML-файлами.
+     * <p>
+     * Викликається там само, де {@link #open(File, boolean)} для {@code .rsf}:
+     * до того, як почнуть працювати плагіни. Завдяки цьому вони бачать уже
+     * готову модель і нічого не добудовують — так само, як при відкритті
+     * старого формату.
+     */
+    public void openProject(File project, boolean ignoreFileVersion)
+            throws IOException, FileVersionException {
+        if (zFile != null || this.file != null)
+            throw new RuntimeException("Engine has opened file " + this.file);
+        File directory = ProjectReader.directoryOf(project);
+        this.file = directory;
+
+        Map<String, Object> description = ProjectReader.readProject(directory);
+        if (!ignoreFileVersion)
+            checkProjectVersion(description);
+
+        // Знімок вихідного стану для відновлення після збою: журнал сеансу
+        // містить лише зміни, тож без бази, на яку їх накотити, він марний.
+        if (tmpPath != null)
+            copyProject(directory, new File(tmpPath, "source.rms"));
+
+        new ProjectReader(this, factory).read(directory);
+
+        if (oLock != null)
+            writeFileNameToLock(directory);
+    }
+
+    /**
+     * Копіює каталог проєкту.
+     * <p>
+     * {@code .git} свідомо пропускаємо: проєкт зазвичай лежить у сховищі
+     * версій, і тягнути всю його історію в тимчасовий знімок при кожному
+     * відкритті — це хвилини очікування замість секунд.
+     */
+    private void copyProject(File source, File destination)
+            throws IOException {
+        if (source.equals(destination))
+            // Відновлення після збою: рушій відкриває сам знімок, і копіювати
+            // його нікуди не треба. Без цієї перевірки кожен файл знімка
+            // відкривався б на запис перед читанням, тобто обнулявся б, і
+            // відновлення давало б порожній проєкт.
+            return;
+        if (source.isDirectory()) {
+            if (".git".equals(source.getName()))
+                return;
+            if (!destination.isDirectory() && !destination.mkdirs())
+                throw new IOException("Не вдалося створити каталог "
+                        + destination);
+            File[] children = source.listFiles();
+            if (children != null)
+                for (File child : children)
+                    copyProject(child, new File(destination, child.getName()));
+        } else {
+            FileInputStream is = new FileInputStream(source);
+            try {
+                FileOutputStream os = new FileOutputStream(destination);
+                try {
+                    copyStreamA(is, os);
+                } finally {
+                    os.close();
+                }
+            } finally {
+                is.close();
+            }
+        }
+    }
+
+    /**
+     * Перевіряє, що цей застосунок здатен відкрити проєкт.
+     * <p>
+     * Перевірка та сама, що й для {@code .rsf}: проєкт, який посилається на
+     * невідомий плагін, краще не відкривати взагалі, ніж відкрити з мовчазною
+     * втратою тих даних, якими плагін завідував.
+     */
+    @SuppressWarnings("unchecked")
+    private void checkProjectVersion(Map<String, Object> project)
+            throws FileVersionException {
+        Object minimum = project.get("minimum-version");
+        if (minimum != null && isOlderVersion(minimum.toString()))
+            throw new FileMinimumVersionException(minimum.toString());
+
+        Object plugins = project.get("plugins");
+        if (!(plugins instanceof List))
+            return;
+        String[] names = getAllPluginNames(factory.getPlugins());
+        List<String> required = new ArrayList<String>();
+        for (Object plugin : (List<Object>) plugins)
+            required.add(plugin.toString());
+        for (String plugin : required)
+            if (Arrays.asList(names).indexOf(plugin) < 0)
+                throw new FileVersionException(names,
+                        required.toArray(new String[required.size()]), plugin);
+    }
+
+    /**
+     * Зберігає проєкт у каталог нового формату.
+     * <p>
+     * Запис іде на місці, без проміжного каталогу й перейменування: проєкт
+     * зазвичай лежить у сховищі версій, і підміна каталогу знищила б і його
+     * історію, і все, чого формат не знає. Застарілі файли прибирає сам
+     * {@link ProjectWriter}.
+     */
+    public void saveProject(File project) throws IOException {
+        File directory = ProjectReader.directoryOf(project);
+        List<String> sequences = new ArrayList<String>();
+        for (Plugin plugin : factory.getPlugins())
+            for (String sequence : plugin.getSequences())
+                sequences.add(sequence);
+
+        List<String> required = new ArrayList<String>();
+        for (PluginName name : getPluginNames(factory.getPlugins()))
+            if (name.plugin.isCriticatToOpenFile())
+                required.add(name.name);
+
+        new ProjectWriter(this, sequences, required,
+                Metadata.getApplicationName(),
+                Metadata.getApplicationVersion(),
+                Metadata.getFileOpenMinimumVersion()).write(directory);
+
+        this.file = directory;
+        if (oLock != null) {
+            oLock.seek(0);
+            oLock.setLength(0);
+            writeFileNameToLock(directory);
+        }
     }
 
     private void deleteOrphanFileAttachments(FileMetadata metadata) {
@@ -459,15 +596,15 @@ public class FileIEngineImpl extends IEngineImpl {
         ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(
                 stream));
 
-        ZipEntry ze = new ZipEntry(APPLICATION_METADATA);
+        ZipEntry ze = outEntry(APPLICATION_METADATA);
 
         zos.putNextEntry(ze);
 
         Properties ps = createMetadata();
 
-        ps.storeToXML(zos, "Ramus file metadata");
+        PropertiesXml.store(ps, zos, "Ramus file metadata");
 
-        ze = new ZipEntry(SEQUENCES);
+        ze = outEntry(SEQUENCES);
 
         zos.putNextEntry(ze);
 
@@ -477,7 +614,7 @@ public class FileIEngineImpl extends IEngineImpl {
                 ps.setProperty(key, Long.toString(nextValue(key)));
             }
         }
-        ps.storeToXML(zos, "Sequence list file");
+        PropertiesXml.store(ps, zos, "Sequence list file");
 
         saveTable("", "application_preferencies", zos);
         saveTable("", "attributes", zos);
@@ -500,6 +637,7 @@ public class FileIEngineImpl extends IEngineImpl {
 
         savePersistentTables(zos);
 
+        synchronized (extractedFiles) {
         for (Entry<String, File> entry : extractedFiles.entrySet()) {
             String path = entry.getKey();
             if (path.startsWith("/data")) {
@@ -513,6 +651,7 @@ public class FileIEngineImpl extends IEngineImpl {
             copyStreamA(is, zos);
             zos.closeEntry();
             is.close();
+        }
         }
 
         if (zFile != null) {
@@ -528,7 +667,7 @@ public class FileIEngineImpl extends IEngineImpl {
 
                 } else {
                     InputStream is = zFile.getInputStream(e);
-                    zos.putNextEntry(new ZipEntry(e.getName()));
+                    zos.putNextEntry(outEntry(e.getName()));
                     copyStreamA(is, zos);
                     zos.closeEntry();
                     is.close();
@@ -543,9 +682,6 @@ public class FileIEngineImpl extends IEngineImpl {
         PluginName[] plugins = getPluginNames(factory.getPlugins());
         ps.setProperty("ApplicationName", Metadata.getApplicationName());
         ps.setProperty("ApplicationVersion", Metadata.getApplicationVersion());
-        ps.setProperty("CurrentTimeMillis",
-                Long.toString(System.currentTimeMillis()));
-        ps.setProperty("CurrentDateTime", new Date().toString());
         ps.setProperty("FileOpenMinimumVersion",
                 Metadata.getFileOpenMinimumVersion());
         int i = 0;
@@ -561,10 +697,29 @@ public class FileIEngineImpl extends IEngineImpl {
         return ps;
     }
 
+    /**
+     * Мітка часу для всіх записів у ZIP: 1980-06-01T12:00:00Z.
+     * <p>
+     * Реальний час модифікації робив би кожне збереження унікальним на рівні
+     * байтів. Дата навмисно взята в середині 1980 року — так вона лишається в
+     * діапазоні, який формат ZIP кодує без розширених полів, у будь-якому
+     * часовому поясі.
+     */
+    private static final long ZIP_ENTRY_TIME = 328708800000L;
+
+    /**
+     * Створює запис для запису в архів із фіксованою міткою часу.
+     */
+    private static ZipEntry outEntry(String name) {
+        ZipEntry entry = new ZipEntry(name);
+        entry.setTime(ZIP_ENTRY_TIME);
+        return entry;
+    }
+
     private ZipEntry createZipEntry(String path) {
         if (path.startsWith("/"))
-            return new ZipEntry(path.substring(1));
-        return new ZipEntry(path);
+            return outEntry(path.substring(1));
+        return outEntry(path);
     }
 
     public static class PersistentInfo {
@@ -596,7 +751,7 @@ public class FileIEngineImpl extends IEngineImpl {
 
     private void saveTable(String dir, String fileName, ZipOutputStream zos)
             throws IOException {
-        zos.putNextEntry(new ZipEntry("data/" + dir + fileName + ".xml"));
+        zos.putNextEntry(outEntry("data/" + dir + fileName + ".xml"));
         TableToXML toXML = new TableToXML(template, zos, fileName, prefix);
         try {
             toXML.store();
@@ -610,7 +765,7 @@ public class FileIEngineImpl extends IEngineImpl {
 
     private void saveBranches(String dir, String fileName, ZipOutputStream zos)
             throws IOException {
-        zos.putNextEntry(new ZipEntry("data/" + dir + fileName + ".xml"));
+        zos.putNextEntry(outEntry("data/" + dir + fileName + ".xml"));
         TableToXML toXML = new TableToXML(template, zos, fileName, prefix) {
             @Override
             protected boolean resultSetNext(ResultSet rs) throws SQLException {

@@ -35,10 +35,6 @@ public class ShortcutsPatch {
 		File dest = new File(home + "/.local/share/icons/");
 		dest.mkdirs();
 
-		File icon = new File(dest, "x-ramus-extension-rsf.png");
-
-		FileOutputStream fos = new FileOutputStream(icon);
-
 		InputStream is = getClass().getResourceAsStream(
 				"/com/ramussoft/icon.png");
 
@@ -46,10 +42,18 @@ public class ShortcutsPatch {
 
 		is.read(bs);
 
-		fos.write(bs);
-
 		is.close();
-		fos.close();
+
+		// Обидва типи: старий архів і опис проєкту нового формату.
+		for (String name : new String[] { "x-ramus-extension-rsf",
+				"x-ramus-project" }) {
+			FileOutputStream icons = new FileOutputStream(new File(dest, name
+					+ ".png"));
+			icons.write(bs);
+			icons.close();
+		}
+
+		FileOutputStream fos;
 
 		dest = new File(home + "/.local/share/mime/packages");
 		dest.mkdirs();
