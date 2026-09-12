@@ -15,6 +15,12 @@ runs `git blame` on a line years from now: a contributor, a packager, a person
 bisecting a regression. They may share no language with the author, and unlike
 a conversation, they cannot ask.
 
+**Build tooling is English too, and so is everything it prints.** Build and
+packaging scripts, CI workflows, the names of their steps, their error messages
+and their output: an agent writes all of it in English. This text lands in CI
+logs and in the Actions interface, where it is read by whoever opens a failed
+run — not by whoever wrote it.
+
 **Everything else follows the file it is in.** Parts of `docs/` and many code
 comments are Ukrainian. That is deliberate: they are written for the people who
 maintain this fork. Match the language of the file you are editing, and never
@@ -22,6 +28,16 @@ translate an existing file because it is not in English — a translation pass
 nobody asked for buries the real change in the diff.
 
 **Conversation with the user is in whatever language the user writes in.**
+
+## Comments
+
+An agent does not add comments to the code it writes here. Name things so that
+the code reads without them; when something genuinely cannot be inferred, it
+belongs in `docs/` or in the commit message, where it is read on purpose rather
+than skimmed past.
+
+This rule covers what an agent adds. Comments already in the tree stay: removing
+somebody else's explanation is as unwelcome as adding an unasked-for one.
 
 ## Scope
 
