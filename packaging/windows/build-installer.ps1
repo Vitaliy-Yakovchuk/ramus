@@ -101,7 +101,7 @@ Write-Host ''
 Write-Host @'
 To install, double-click it. Java is not needed — it is inside. The application
 installs into the user profile, so no administrator rights are required, a
-shortcut appears in the Start menu, and project files (.ramus and .rsf) open on
+shortcut appears in the Start menu, and project files (.rsf) open on
 double-click.
 
 The next version carrying the same upgrade identifier replaces this one instead

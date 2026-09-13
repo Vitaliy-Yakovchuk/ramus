@@ -70,7 +70,13 @@ without installing anything but Docker itself.
 
 ## Project format
 
-A Ramus project is a **directory of YAML files**, not a binary blob:
+The application reads and writes **`.rsf`** — a ZIP of XML table dumps. It is
+the only format it opens and the only one it saves.
+
+### The YAML project tree
+
+Beside it the tree carries a text format: a project as a **directory of YAML
+files**, made to be read, diffed and edited by hand.
 
 ```
 Model.ramus/
@@ -83,12 +89,12 @@ Model.ramus/
 └── .local/                UI state; excluded from version control
 ```
 
-Three consequences worth knowing:
+Consequences worth knowing:
 
-**It goes into git as it is.** Saving an unchanged model rewrites no file, so
-`git status` stays quiet until the model itself actually changes. There are no
-save timestamps in the files, deliberately — they would make every save look
-like a change.
+**It goes into git as it is.** Writing it is deterministic, so converting an
+unchanged model rewrites no file and `git status` stays quiet until the model
+itself actually changes. There are no timestamps in the files, deliberately —
+they would make every write look like a change.
 
 **It is meant to be edited by hand.** The YAML dialect is restricted on
 purpose: block style, sorted keys, quoted strings, no anchors or aliases, no
@@ -97,26 +103,22 @@ and a diff points at the change rather than the paragraph around it. Editing
 values is safe; inventing identifiers is not — add new elements in the
 application, then edit them in the files.
 
-**`project.ramus` is the entry point.** A desktop can associate a file with an
-application but not a directory, so that file carries the
-`application-version`, `minimum-version` and required `plugins`. The
-application accepts either the directory or this file anywhere a project path
-is expected.
+**`project.ramus` is the entry point.** It carries the schema version, the
+`application-version`, `minimum-version` and the required `plugins`, and its
+presence is what makes a directory a project.
 
-### The older `.rsf` format
-
-`.rsf` — a ZIP of XML table dumps — **opens but is never written back**.
-Saving an opened `.rsf` prompts for a new project name, so the migration is
-explicit and visible.
-
-Batch conversion without launching the application:
+**The application neither opens nor saves it.** A project handed to it — the
+directory or that file — is refused with a message naming it. The tree is
+reached through the converters, which read and write it with the same code the
+application uses for the model itself:
 
 ```bash
 ./gradlew :ramus-core-demo:rsfToYaml -Prsf=<file.rsf> -Pout=<directory>
 ./gradlew :ramus-core-demo:yamlToRsf -Pin=<directory> -Prsf=<file.rsf>
 ```
 
-The reverse converter exists only for exchanging models with older builds.
+So the way to edit a model as text is a round trip: convert it out, edit the
+files, convert it back, open the `.rsf`.
 
 Full reference: **[docs/PROJECT_FORMAT.md](docs/PROJECT_FORMAT.md)**.
 
@@ -229,8 +231,7 @@ release.
 
 - the Java runtime is inside the package, nothing else to install;
 - it installs into the user profile, so no administrator rights are needed;
-- a Start menu shortcut appears, and `.ramus` and `.rsf` files open on
-  double-click;
+- a Start menu shortcut appears, and `.rsf` files open on double-click;
 - the next version replaces this one instead of installing beside it — that is
   what the fixed `winUpgradeUuid` in `local-client/build.gradle` is for, and it
   must never change;

@@ -41,7 +41,6 @@ import com.ramussoft.common.journal.StopUndoPointCommand;
 import com.ramussoft.common.journal.command.Command;
 import com.ramussoft.common.journal.command.EndUserTransactionCommand;
 import com.ramussoft.common.journal.command.StartUserTransactionCommand;
-import com.ramussoft.core.format.ProjectReader;
 import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.core.impl.FileMinimumVersionException;
 import com.ramussoft.database.MemoryDatabase;
@@ -234,8 +233,10 @@ public class Runner implements Commands {
                             File sourceFile = (fileName == null) ? null
                                     : new File(fileName);
                             try {
-                                if (!recoverySession(session.getAbsolutePath(),
-                                        sourceFile))
+                                if (!isProjectSession(session)
+                                        && !recoverySession(
+                                                session.getAbsolutePath(),
+                                                sourceFile))
                                     clear(session);
                             } catch (Exception e) {
                                 clear(session);
@@ -249,6 +250,15 @@ public class Runner implements Commands {
                     e.printStackTrace();
                 }
             }
+    }
+
+    /**
+     * Чи лишив цей сеанс знімок проєкту нового формату. Такий знімок
+     * відновити нічим: застосунок каталогів проєкту не відкриває, тому сеанс
+     * обминаємо, а не видаляємо — сама модель у ньому нікуди не поділася.
+     */
+    private boolean isProjectSession(File session) {
+        return FilePlugin.isProject(new File(session, "source.rms"));
     }
 
     private void clear(File session) {
@@ -406,10 +416,12 @@ public class Runner implements Commands {
 
     public boolean open(File afile) {
 
-        // З робочого столу приходить опис проєкту, з діалогу — сам каталог.
-        // Далі проєкт скрізь представлений каталогом: саме його ім’я бачить
-        // користувач у заголовку вікна й у переліку останніх файлів.
-        afile = ProjectReader.directoryOf(afile);
+        if (FilePlugin.isProject(afile)) {
+            JOptionPane.showMessageDialog(null, MessageFormat.format(
+                    GlobalResourcesManager.getString("File.ProjectNotOpened"),
+                    afile.getName()));
+            return false;
+        }
 
         JFrame frame = null;
 

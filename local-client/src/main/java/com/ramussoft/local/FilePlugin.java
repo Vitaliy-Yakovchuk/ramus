@@ -87,8 +87,8 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
     private static final String RSF = ".rsf";
 
     /**
-     * Розширення каталогу проєкту. Саме в цьому форматі застосунок зберігає
-     * роботу; {@code .rsf} лишається тільки для читання.
+     * Розширення каталогу проєкту. Застосунок такі проєкти не відкриває й не
+     * зберігає: його формат — {@code .rsf}.
      */
     private static final String PROJECT = ".ramus";
 
@@ -156,17 +156,18 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
 
         @Override
         public boolean accept(File f) {
-            if (f.isDirectory())
-                // Каталоги видно завжди: інакше ні до проєкту не дійти, ні
-                // самого проєкту не вибрати — він теж каталог.
-                return true;
-            return ProjectReader.isProject(f)
-                    || f.getName().toLowerCase().endsWith(getRSF());
+            if (f.isFile()) {
+                if (f.getName().toLowerCase().endsWith(getRSF()))
+                    return true;
+                else
+                    return false;
+            }
+            return true;
         }
 
         @Override
         public String getDescription() {
-            return "*" + PROJECT + ", *" + getRSF();
+            return "*" + getRSF();
         }
 
     };
@@ -465,7 +466,6 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
         JPanel contentPane = new JPanel();
         contentPane.setDoubleBuffered(true);
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setFileFilter(fileFilter);
         if (FilePlugin.this.getFile() == null) {
             String file = Options.getString(LAST_FILE);
@@ -523,10 +523,7 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
     }
 
     protected boolean saveFile() {
-        // Відкритий .rsf не перезаписуємо: старий формат лишається тільки для
-        // читання, тож перше збереження — це перехід на новий, і користувач
-        // має побачити, куди саме.
-        if (getFile() == null || !isProject(getFile()))
+        if (getFile() == null)
             return saveFileAs();
         else
             try {
@@ -563,19 +560,23 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
                 super.approveSelection();
             }
         };
-        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setFileFilter(fileFilter);
-        File current = FilePlugin.this.getFile();
-        if (current == null) {
+        if (FilePlugin.this.getFile() == null) {
             String file = Options.getString(LAST_FILE);
-            if (file != null)
-                chooser.setSelectedFile(projectName(new File(file)));
+            if (file != null) {
+                chooser.setSelectedFile(new File(file));
+            }
         } else
-            chooser.setSelectedFile(projectName(current));
-        int r = chooser.showSaveDialog(framework.getMainFrame());
+            chooser.setSelectedFile(FilePlugin.this.getFile());
+        chooser.setDialogTitle(getString("FileSaveAs"));
+        int r = chooser.showDialog(framework.getMainFrame(),
+                getString("FileSave"));
         if (r == JFileChooser.APPROVE_OPTION) {
-            File f = projectName(chooser.getSelectedFile());
+            File f = chooser.getSelectedFile();
             try {
+                if (f.getName().toLowerCase().endsWith(getRSF())) {
+                } else
+                    f = new File(f.getAbsolutePath() + getRSF());
                 saveToFile(f);
                 FilePlugin.this.setFile(f);
                 Options.setString(LAST_FILE, f.getAbsolutePath());
@@ -618,7 +619,7 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
         } finally {
             oos.close();
         }
-        engine.saveProject(f);
+        engine.saveToFile(f);
         Runner.saveFileToHistory(f);
         setChangedFalse();
     }
