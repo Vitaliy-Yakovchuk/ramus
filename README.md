@@ -8,8 +8,7 @@ and DFD notations, keep them in git, and edit them by hand.
 <img width="1792" alt="Another view of the Ramus application window" src="https://user-images.githubusercontent.com/2261228/69039723-27f18a80-09f5-11ea-9a8d-508069ce7bbd.png">
 
 Original project by Vitaliy Yakovchuk and Oleksiy Chizhevskiy. This repository
-is a **modified fork** of it — see [Changes in this fork](#changes-in-this-fork)
-and [License](#license).
+is a **modified fork** of it — see [License](#license).
 
 ---
 
@@ -19,8 +18,9 @@ and [License](#license).
 - [Quick start](#quick-start)
 - [Project format](#project-format)
 - [Building](#building)
+  - [macOS application and DMG](#macos-application-and-dmg)
+  - [Windows installer](#windows-installer)
 - [Documentation](#documentation)
-- [Changes in this fork](#changes-in-this-fork)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -257,29 +257,6 @@ The design documents under `docs/` are written in Ukrainian.
 | [docs/FORMAT_MIGRATION_PLAN.md](docs/FORMAT_MIGRATION_PLAN.md) | Why the format changed and how the migration was carried out, stage by stage                                                 |
 | [docs/START_REVIEW.md](docs/START_REVIEW.md)                   | The storage subsystem as it stood before that work — the baseline for comparison                                             |
 | [docs/DOCKER.md](docs/DOCKER.md)                               | Containerised builds, running the GUI from a container, CI notes                                                             |
-
----
-
-## Changes in this fork
-
-Modifications to the original Ramus, as required by section 5 of the GPL:
-
-**2026 — text project format.** Projects are saved as directories of YAML
-instead of the binary `.rsf`; `.rsf` became read-only. Rendering is
-deterministic, identifiers are stable, and diagram layout was separated from
-the visual blob. See
-[docs/FORMAT_MIGRATION_PLAN.md](docs/FORMAT_MIGRATION_PLAN.md).
-
-**2026 — containerised build.** Multi-stage `Dockerfile` for building,
-testing and running without a host JDK.
-
-**2.0.2 — macOS support** (by [Vladislav Pavlik](https://github.com/Inv1x/)).
-App bundle and DMG packaging through Gradle and `jpackage`; native Dock icon
-and `Info.plist`; the macOS system menu bar; ⌘-based keyboard shortcuts; a
-bundled Java runtime, minimised with `jlink` where available.
-
-**Modernised toolchain.** Gradle 8.x and a current JDK, where upstream targeted
-Java 8.
 
 ---
 
