@@ -7,8 +7,8 @@ and DFD notations, keep them in git, and edit them by hand.
 
 <img width="1792" alt="Another view of the Ramus application window" src="https://user-images.githubusercontent.com/2261228/69039723-27f18a80-09f5-11ea-9a8d-508069ce7bbd.png">
 
-Original project by Vitaliy Yakovchuk and Oleksiy Chizhevskiy. This repository
-is a **modified fork** of it — see [License](#license).
+Original project by Vitaliy Yakovchuk. This repository is a **modified fork**
+of it — see [License](#license).
 
 ---
 
@@ -272,7 +272,7 @@ open an issue or a pull request.
 **GNU General Public License, version 3.** The full text is in
 [LICENSE](https://github.com/Vitaliy-Yakovchuk/ramus/blob/master/LICENSE).
 
-Original copyright © 2005–2025 Vitaliy Yakovchuk, Oleksiy Chizhevskiy.
+Copyright © 2005–2026 Vitaliy Yakovchuk.
 Modifications in this fork are released under the same license.
 
 Ramus is free software: you may redistribute it and modify it under the terms
