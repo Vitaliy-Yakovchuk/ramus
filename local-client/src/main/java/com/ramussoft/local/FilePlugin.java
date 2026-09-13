@@ -568,7 +568,9 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
             }
         } else
             chooser.setSelectedFile(FilePlugin.this.getFile());
-        int r = chooser.showSaveDialog(framework.getMainFrame());
+        chooser.setDialogTitle(getString("FileSaveAs"));
+        int r = chooser.showDialog(framework.getMainFrame(),
+                getString("FileSave"));
         if (r == JFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();
             try {
