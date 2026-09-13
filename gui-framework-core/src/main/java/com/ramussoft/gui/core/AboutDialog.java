@@ -251,9 +251,7 @@ public class AboutDialog extends JDialog {
         sb.append(Metadata.getApplicationVersion());
         sb.append("<br><br>");
 
-        sb.append("Copyright &copy; 2005 - 2026 Vitaliy Yakovchuk, Oleksiy Chizhevskiy.<br><br>"
-                + "macOS support by <a href=\"https://github.com/Inv1x/\">Vladislav Pavlik</a>.<br><br>"
-                + "This is a modified version of Ramus, last modified in 2026.<br><br>"
+        sb.append("Copyright &copy; 2005 - 2026 Vitaliy Yakovchuk.<br><br>"
                 + "Ramus is free software: you may redistribute it and modify it under the "
                 + "terms of the <a href=\"https://www.gnu.org/licenses/gpl-3.0.en.html\">GNU General Public License, version 3</a>. "
                 + "It comes with ABSOLUTELY NO WARRANTY, to the extent permitted by law - "
