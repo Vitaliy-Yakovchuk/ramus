@@ -8,9 +8,8 @@ and DFD notations, keep them in git, and edit them by hand.
 <img width="1792" alt="Another view of the Ramus application window" src="https://user-images.githubusercontent.com/2261228/69039723-27f18a80-09f5-11ea-9a8d-508069ce7bbd.png">
 
 Original project by Vitaliy Yakovchuk and Oleksiy Chizhevskiy. This repository
-is a **modified fork** of it, and the source of the site at
-<https://ramussoftware.com/> — see
-[Changes in this fork](#changes-in-this-fork) and [License](#license).
+is a **modified fork** of it — see [Changes in this fork](#changes-in-this-fork)
+and [License](#license).
 
 ---
 
@@ -30,17 +29,10 @@ is a **modified fork** of it, and the source of the site at
 ## Download
 
 Packaged builds are on the
-[Releases page](https://github.com/Vitaliy-Yakovchuk/ramus/releases). The newest
-one is 2.0.2, from 2023: a single Windows installer, `ramus-2.0.2-setup.exe`,
-produced by the old NSIS path. It predates the text project format and looks
-for a system Java 6 while installing.
-
-Nothing is published for macOS yet. Both the DMG and the current Windows
-installer are built by CI and attached to the release of the `v*` tag that
-triggered it, so until the next such tag they have to be built from source —
-one command each, see [macOS application and DMG](#macos-application-and-dmg)
-and [Windows installer](#windows-installer). To run the application rather than
-package it, start at [Quick start](#quick-start).
+[Releases page](https://github.com/Vitaliy-Yakovchuk/ramus/releases): the macOS
+DMG and the Windows installer are built by CI and attached to the release of a
+`v*` tag. To build them yourself, see [Building](#building); to run the
+application from source, see [Quick start](#quick-start).
 
 ---
 
@@ -195,8 +187,6 @@ once through the context menu (right-click → Open → Open), or clear the flag
 xattr -dr com.apple.quarantine /Applications/Ramus.app
 ```
 
-See [Download](#download) for what is published today.
-
 Pointing packaging at a specific JDK, without touching your shell's
 `JAVA_HOME`: create `gradle-local.properties` in the repository root (it is
 gitignored).
@@ -208,13 +198,10 @@ packagingJavaHome=/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home
 # packagingLocales=en,uk,ru,pl     # locale data kept in the jlink runtime
 ```
 
-The bundled runtime keeps locale data for English, Ukrainian and Russian only —
-the three the interface is translated into in full. A German translation is
-almost complete and an Albanian one covers a couple of bundles; add `de` or
-`sq` to `packagingLocales` when packaging for them. Without the locale data,
-dates and Cyrillic sorting fall back to the root locale, and with all of it the
-image grows by about ten megabytes; `packagingLocales` is the dial between the
-two.
+The bundled runtime keeps locale data for English, Ukrainian and Russian only.
+Without it dates and Cyrillic sorting fall back to the root locale, and with
+all of it the image grows by about ten megabytes; `packagingLocales` is the
+dial between the two.
 
 ### Windows installer
 
@@ -300,10 +287,6 @@ Java 8.
 
 Bug reports, fixes, documentation and packaging improvements are all welcome —
 open an issue or a pull request.
-
-Commit messages and pull requests are in English. The rest of what an AI agent
-working in this repository is expected to follow is in
-[AGENTS.md](https://github.com/Vitaliy-Yakovchuk/ramus/blob/master/AGENTS.md).
 
 ---
 

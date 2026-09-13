@@ -1,3 +1,3 @@
 theme: jekyll-theme-cayman
 title: Ramus
-description: Java-based IDEF0 and DFD modeller. Models are directories of YAML, so they go into git and can be edited by hand.
+description: Java-based IDEF0 and DFD modeller.
