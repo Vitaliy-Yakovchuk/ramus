@@ -11,15 +11,8 @@ import org.junit.Test;
 
 import com.ramussoft.core.format.StableIds;
 
-/**
- * Властивості стабільних ідентифікаторів, на яких тримається формат.
- */
 public class StableIdsTest {
 
-    /**
-     * Без оборотності імпорт роздав би нові числові ключі, і повторний експорт
-     * дав би інші id — формат перестав би бути стабільним між циклами.
-     */
     @Test
     public void idIsReversible() {
         for (long id = 0; id < 5000; id++) {
@@ -44,14 +37,10 @@ public class StableIdsTest {
     public void idsAreUniqueWithinKind() {
         Set<String> seen = new HashSet<String>();
         for (long id = 0; id < 20000; id++)
-            assertTrue("повтор ідентифікатора для " + id,
+            assertTrue("identifier repeated for " + id,
                     seen.add(StableIds.of("element", id)));
     }
 
-    /**
-     * Елемент і класифікатор з однаковим номером не мають ділити ідентифікатор:
-     * інакше посилання між файлами стали б неоднозначними.
-     */
     @Test
     public void kindsDoNotCollide() {
         int collisions = 0;
@@ -62,9 +51,6 @@ public class StableIdsTest {
         assertEquals(0, collisions);
     }
 
-    /**
-     * Сусідні ключі мають давати несхожі рядки — у файлі вони стоять поруч.
-     */
     @Test
     public void neighbouringIdsLookDifferent() {
         String a = StableIds.of("element", 767);
@@ -73,7 +59,7 @@ public class StableIdsTest {
         for (int i = 0; i < a.length(); i++)
             if (a.charAt(i) == b.charAt(i))
                 same++;
-        assertTrue("надто схожі: " + a + " і " + b, same <= 2);
+        assertTrue("too similar: " + a + " and " + b, same <= 2);
     }
 
     @Test

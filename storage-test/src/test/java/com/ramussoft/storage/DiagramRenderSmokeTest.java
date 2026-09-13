@@ -15,9 +15,6 @@ import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 
-/**
- * Чи вдається взагалі відмалювати діаграми без екрана.
- */
 public class DiagramRenderSmokeTest {
 
     @Rule
@@ -28,10 +25,6 @@ public class DiagramRenderSmokeTest {
         RsfFixture.isolateHome(folder.newFolder("home"));
     }
 
-    /**
-     * Поріг еталонного тесту має бути значно меншим за різницю між справді
-     * різними діаграмами, інакше той тест ніколи не спрацює.
-     */
     @Test
     public void signaturesDistinguishDifferentDiagrams() throws Exception {
         File sample = new File(RsfFixture.projectRoot(),
@@ -51,7 +44,7 @@ public class DiagramRenderSmokeTest {
                         signatures.get(0), signatures.get(i)));
 
             org.junit.Assert.assertTrue(
-                    "різні діаграми надто схожі за відбитком: " + worst,
+                    "different diagrams have too similar fingerprints: " + worst,
                     worst > 5.0);
             ((FileIEngineImpl) engine.getDeligate()).close();
         } finally {
@@ -69,11 +62,11 @@ public class DiagramRenderSmokeTest {
             Engine engine = database.getEngine(null);
             Map<String, String> images = DiagramRenderer.render(engine,
                     database.getAccessRules(null));
-            System.out.println("Відмальовано діаграм: " + images.size());
+            System.out.println("Diagrams rendered: " + images.size());
             for (Map.Entry<String, String> e : images.entrySet())
                 System.out.println("  " + e.getValue().substring(0, 12) + "  "
                         + e.getKey());
-            assertFalse("не відмальовано жодної діаграми", images.isEmpty());
+            assertFalse("no diagram was rendered", images.isEmpty());
             ((FileIEngineImpl) engine.getDeligate()).close();
         } finally {
             database.close();

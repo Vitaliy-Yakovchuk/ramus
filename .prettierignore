@@ -1,4 +1,4 @@
-# Збірка й сторонній вміст — prettier тут нічого не форматує.
+# Build output and third-party content: prettier formats nothing here.
 build/
 */build/
 .gradle/

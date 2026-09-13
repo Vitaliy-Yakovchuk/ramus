@@ -191,18 +191,6 @@ public class PIDEF0painter {
         ImageIO.write(createImage(null), format, stream);
     }
 
-    /**
-     * Малює діаграму в зображення.
-     * <p>
-     * Виділено з запису у файл, щоб діаграму можна було отримати як картинку —
-     * наприклад, порівняти з еталоном у тесті — не проходячи через формат
-     * файлу.
-     *
-     * @param defaultFont шрифт, з якого починається малювання: від нього
-     *                    відштовхуються написи рамки, які не мають власного
-     *                    шрифту. {@code null} лишає типовий шрифт
-     *                    {@link Graphics2D}, тобто поведінку експорту
-     */
     public BufferedImage createImage(final Font defaultFont) {
         final int y1 = movingArea.getIntOrdinate(movingArea.TOP_PART_A);
 

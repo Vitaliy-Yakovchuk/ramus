@@ -24,36 +24,10 @@ import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 
-/**
- * Еталонні знімки діаграм.
- * <p>
- * Зміни у відображенні IDEF0 (винесення блоба з {@code F_VISUAL_DATA},
- * розділення семантики й розкладки) інакше можна перевірити лише очима. Тут
- * кожна діаграма кожного зразка малюється в зображення, і порівнюється
- * відбиток. Якщо картинка змінилась — тест назве конкретну діаграму.
- * <p>
- * Щоб еталон означав саме зміну коду, {@link DiagramRenderer} прибирає з
- * малюнка все, що залежить від машини й дня: дати в рамці замінюються сталою,
- * а шрифти — вбудованим {@link TestFonts}.
- * <p>
- * Оновити еталон свідомо:
- * {@code ./gradlew :storage-test:test -Dramus.golden.update=1}
- */
 public class DiagramGoldenTest {
 
     private static final String RESOURCE = "/diagram-golden.properties";
 
-    /**
-     * Нуль: відмальовування детерміноване, тож відбиток має збігатися точно.
-     * Раніше тут був допуск — сектор, який лишає собі підпис, обирався за
-     * порядком обходу {@link java.util.HashSet}, і та сама модель малювалася
-     * по-різному між запусками. Причину усунуто, отже й допуск не потрібен.
-     * <p>
-     * Ціною нуля є те, що еталон не пробачає жодної сторонньої залежності:
-     * дата в рамці чи системний шрифт ламали б його щодня й на кожній машині.
-     * Тому їх зафіксовано в {@link DiagramRenderer}, а не сховано під допуск —
-     * допуск, достатній для іншого шрифту, пропустив би й зсув блоку.
-     */
     static final double TOLERANCE = 0.0;
 
     private static final List<String> KNOWN_UNOPENABLE = Arrays
@@ -92,29 +66,29 @@ public class DiagramGoldenTest {
 
         Properties golden = readGolden();
         if (golden.isEmpty())
-            fail("Немає еталона " + RESOURCE + "; створіть його запуском із"
+            fail("No golden file " + RESOURCE + "; create it by running with"
                     + " -Dramus.golden.update=1");
 
         List<String> problems = new ArrayList<String>();
         for (Map.Entry<String, String> entry : actual.entrySet()) {
             String expected = golden.getProperty(entry.getKey());
             if (expected == null)
-                problems.add("нова діаграма: " + entry.getKey());
+                problems.add("new diagram: " + entry.getKey());
             else {
                 double difference = DiagramRenderer.difference(expected,
                         entry.getValue());
                 if (difference > TOLERANCE)
                     problems.add(String.format(
-                            "змінилося зображення (різниця %.2f): %s",
+                            "image changed (difference %.2f): %s",
                             Double.valueOf(difference), entry.getKey()));
             }
         }
         for (Object key : golden.keySet())
             if (!actual.containsKey(key.toString()))
-                problems.add("зникла діаграма: " + key);
+                problems.add("diagram gone: " + key);
 
         if (!problems.isEmpty())
-            fail("Відображення діаграм змінилося:\n  "
+            fail("Diagram rendering changed:\n  "
                     + String.join("\n  ", problems));
     }
 
@@ -131,9 +105,6 @@ public class DiagramGoldenTest {
         return properties;
     }
 
-    /**
-     * Пише еталон у джерела, а не в {@code build}: він має потрапити в git.
-     */
     private static void writeGolden(Map<String, String> values)
             throws Exception {
         File target = new File(RsfFixture.projectRoot(),
@@ -142,9 +113,9 @@ public class DiagramGoldenTest {
         Writer writer = new OutputStreamWriter(new FileOutputStream(target),
                 "UTF-8");
         try {
-            writer.write("# Відбитки відмальованих діаграм.\n");
-            writer.write("# Оновлювати лише свідомо: розбіжність означає, що\n");
-            writer.write("# зміна коду вплинула на вигляд моделі.\n");
+            writer.write("# Fingerprints of the rendered diagrams.\n");
+            writer.write("# Update deliberately only: a mismatch means a code change\n");
+            writer.write("# has altered how the model looks.\n");
             List<String> keys = new ArrayList<String>(values.keySet());
             java.util.Collections.sort(keys);
             for (String key : keys)
@@ -152,13 +123,9 @@ public class DiagramGoldenTest {
         } finally {
             writer.close();
         }
-        System.out.println("Еталон оновлено: " + target);
+        System.out.println("Golden file updated: " + target);
     }
 
-    /**
-     * Назви елементів бувають із переносом рядка — у зразках такі є. Без
-     * екранування ключ розривався б на два рядки, і файл ставав непридатним.
-     */
     private static String escape(String key) {
         return key.replace("\\", "\\\\").replace("\n", "\\n")
                 .replace("\r", "\\r").replace(" ", "\\ ")

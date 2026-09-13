@@ -16,13 +16,6 @@ import com.ramussoft.core.format.PersistentCodec;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 
-/**
- * Службовий дамп схеми типів атрибутів — для звірки документації з кодом.
- *
- * <pre>
- * ./gradlew :storage-test:test --tests '*DumpSchemaTest*' -Dramus.schema.target=/tmp/schema.txt
- * </pre>
- */
 public class DumpSchemaTest {
 
     @Test
@@ -47,10 +40,10 @@ public class DumpSchemaTest {
                 StringBuilder sb = new StringBuilder();
                 sb.append(plugin.getName()).append('.')
                         .append(plugin.getTypeName());
-                sb.append(plugin.isSystem() ? "  [системний]" : "");
-                describe(sb, "значення", plugin.getAttributePersistents(),
+                sb.append(plugin.isSystem() ? "  [system]" : "");
+                describe(sb, "values", plugin.getAttributePersistents(),
                         codec);
-                describe(sb, "властивості",
+                describe(sb, "properties",
                         plugin.getAttributePropertyPersistents(), codec);
                 lines.add(sb.toString());
             }
@@ -73,7 +66,7 @@ public class DumpSchemaTest {
             sb.append("\n    ").append(clazz.getSimpleName());
             String single = codec.singleField(clazz);
             if (single != null)
-                sb.append("  (згортається до скаляра: ").append(single)
+                sb.append("  (collapses to a scalar: ").append(single)
                         .append(')');
             for (String field : codec.wrapper(clazz).getFields()) {
                 if ("elementId".equals(field) || "attributeId".equals(field)

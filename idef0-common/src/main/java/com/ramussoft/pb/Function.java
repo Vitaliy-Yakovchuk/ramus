@@ -166,12 +166,6 @@ public interface Function extends Row {
 
     public void setSectorData(byte[] data);
 
-    /**
-     * Вільні текстові підписи діаграми.
-     * <p>
-     * До версії 3 вони зберігалися всередині {@link #getSectorData()}; тепер це
-     * окремий атрибут, щоб у моделі не лишалося двійкових полів.
-     */
     public java.util.List<com.ramussoft.idef0.attribute.TextLabelPersistent>
             getTextLabels();
 

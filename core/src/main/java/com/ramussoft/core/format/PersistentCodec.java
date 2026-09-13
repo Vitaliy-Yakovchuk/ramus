@@ -13,18 +13,6 @@ import com.ramussoft.common.persistent.PersistentField;
 import com.ramussoft.common.persistent.PersistentWrapper;
 import com.ramussoft.core.impl.XmlDates;
 
-/**
- * Перетворення {@link Persistent} на мапу простих значень і назад.
- * <p>
- * Схема береться з анотацій самого класу через {@link PersistentWrapper}, тому
- * новий тип атрибута не потребує правок тут: достатньо оголосити персистент.
- * Порядок полів у {@link PersistentWrapper#getFields()} відсортований, отже
- * і мапа виходить детермінованою.
- * <p>
- * Поля {@code elementId} та {@code attributeId} свідомо не потрапляють у мапу:
- * вони задаються контекстом, у якому значення записане, і дублювати їх у файлі
- * означало б дві копії однієї істини.
- */
 public final class PersistentCodec {
 
     public static final String ELEMENT = "element";
@@ -33,15 +21,6 @@ public final class PersistentCodec {
 
     public static final String ATTRIBUTE = "attribute";
 
-    /**
-     * Поля, оголошені як {@code @Long}, які насправді посилаються на інші
-     * сутності.
-     * <p>
-     * Правильним рішенням було б виправити анотації в самих персистентах, але
-     * тип анотації впливає не лише на серіалізацію, тож така зміна потребує
-     * окремої перевірки. Доки цього не зроблено, перелік тримається тут —
-     * інакше після імпорту такі посилання вказували б на випадкові елементи.
-     */
     private static final Map<String, String> REFERENCE_EXCEPTIONS =
             new LinkedHashMap<String, String>();
 
@@ -51,11 +30,8 @@ public final class PersistentCodec {
                 + "#parentElementId", ELEMENT);
         REFERENCE_EXCEPTIONS.put(simple + "HierarchicalPersistent"
                 + "#previousElementId", ELEMENT);
-        // Ціле призначення типу Core.OtherElement — послатися на елемент.
         REFERENCE_EXCEPTIONS.put(simple + "OtherElementPersistent"
                 + "#otherElement", ELEMENT);
-        // Кінець стрілки, прикріплений до функційного блоку: тут лежить ключ
-        // елемента функції (див. NSectorBorder.setFunction).
         REFERENCE_EXCEPTIONS.put("com.ramussoft.idef0.attribute"
                 + ".SectorBorderPersistent#function", ELEMENT);
         REFERENCE_EXCEPTIONS.put("com.ramussoft.idef0.attribute"
@@ -75,14 +51,6 @@ public final class PersistentCodec {
     private final Map<Class<?>, PersistentWrapper> wrappers =
             new LinkedHashMap<Class<?>, PersistentWrapper>();
 
-    /**
-     * Потрібен, щоб не записувати обірваних посилань. Такі в даних трапляються:
-     * старий формат зберігав числовий ключ видаленого елемента, і це ніяк не
-     * проявлялося. Посилання на неіснуючу сутність означає «посилання немає».
-     * <p>
-     * {@code null} вимикає і перевірку існування, і заміну ключів на
-     * ідентифікатори: у такому режимі кодек працює як звичайний мапер полів.
-     */
     private final IEngine engine;
 
     private final Map<String, Boolean> exists = new HashMap<String, Boolean>();
@@ -104,10 +72,6 @@ public final class PersistentCodec {
         return wrapper;
     }
 
-    /**
-     * @return мапа «поле → просте значення», без полів, що дорівнюють
-     * {@code null}; порядок ключів детермінований
-     */
     public Map<String, Object> toMap(Persistent persistent) {
         PersistentWrapper wrapper = wrapper(persistent.getClass());
         Map<String, Object> result = new LinkedHashMap<String, Object>();
@@ -128,16 +92,6 @@ public final class PersistentCodec {
         return result;
     }
 
-    /**
-     * Значення персистента у формі, найкоротшій із можливих.
-     * <p>
-     * Більшість типів атрибутів мають рівно одне змістове поле
-     * ({@code value} у тексту, {@code data} у двійкових). Для них зайвий рівень
-     * вкладеності {@code {value: 'Назва'}} — це шум, який агенту доводиться
-     * обходити при кожній правці, тому таке значення згортається до скаляра.
-     *
-     * @return скаляр для однополевих типів, інакше мапа полів
-     */
     public Object toValue(Persistent persistent) {
         Map<String, Object> map = toMap(persistent);
         String single = singleField(persistent.getClass());
@@ -146,25 +100,19 @@ public final class PersistentCodec {
         return map;
     }
 
-    /**
-     * Розгортає значення, згорнуте {@link #toValue}.
-     */
     @SuppressWarnings("unchecked")
     public Persistent fromValue(Class<? extends Persistent> clazz, Object value) {
         if (value instanceof Map)
             return fromMap(clazz, (Map<String, Object>) value);
         String single = singleField(clazz);
         if (single == null)
-            throw new IllegalArgumentException("Тип " + clazz.getName()
-                    + " має кілька полів, очікувалась мапа, а не " + value);
+            throw new IllegalArgumentException("Type " + clazz.getName()
+                    + " has several fields, expected a map, not " + value);
         Map<String, Object> map = new LinkedHashMap<String, Object>(1);
         map.put(single, value);
         return fromMap(clazz, map);
     }
 
-    /**
-     * @return назва єдиного змістового поля або {@code null}, якщо їх кілька
-     */
     public String singleField(Class<?> clazz) {
         String found = null;
         for (String field : wrapper(clazz).getFields()) {
@@ -184,9 +132,9 @@ public final class PersistentCodec {
         try {
             persistent = clazz.newInstance();
         } catch (Exception e) {
-            throw new IllegalStateException("Не вдалося створити "
-                    + clazz.getName() + "; потрібен публічний конструктор"
-                    + " без аргументів", e);
+            throw new IllegalStateException("Can not create "
+                    + clazz.getName() + "; a public constructor without"
+                    + " arguments is required", e);
         }
         for (String field : wrapper.getFields()) {
             if (isContextual(field))
@@ -195,10 +143,6 @@ public final class PersistentCodec {
             Class<?> target = setter.getParameterTypes()[0];
             Object raw = values.get(field);
             if (raw == null) {
-                // Записувач пропускає порожні поля, тож відсутність у файлі
-                // означає саме порожнє значення. Без цього рядка спрацював би
-                // типовий стан класу (наприклад, порожній рядок замість
-                // невизначеного), і перше ж збереження змінило б файл.
                 if (!target.isPrimitive())
                     wrapper.setField(persistent, field, null);
                 continue;
@@ -213,10 +157,6 @@ public final class PersistentCodec {
         return persistent;
     }
 
-    /**
-     * @return вид сутності, на яку посилається поле, або {@code null}, якщо це
-     * звичайне значення
-     */
     private String referenceKind(Class<?> clazz, String field,
                                  int annotationType) {
         if (engine == null)
@@ -233,10 +173,6 @@ public final class PersistentCodec {
         }
     }
 
-    /**
-     * Від'ємне значення означає «посилання немає» і лишається числом: воно не
-     * є ключем жодної сутності.
-     */
     private Object encodeReference(String kind, Object value) {
         long numericId = ((Number) value).longValue();
         if (numericId < 0 || !exists(kind, numericId))
@@ -269,8 +205,6 @@ public final class PersistentCodec {
         if (raw instanceof Number)
             numericId = ((Number) raw).longValue();
         else
-            // Ідентифікатор оборотний, тому ключ відновлюється з нього самого:
-            // ні реєстру, ні порядку читання файлів це не потребує.
             numericId = StableIds.toNumericId(kind, raw.toString());
         return decode(target, Long.valueOf(numericId));
     }
@@ -301,11 +235,9 @@ public final class PersistentCodec {
             try {
                 parsed = XmlDates.parse(raw.toString());
             } catch (ParseException e) {
-                throw new IllegalArgumentException("Не розпізнано дату: "
+                throw new IllegalArgumentException("Unparsable date: "
                         + raw, e);
             }
-            // Персистенти оголошують поля як java.sql.Timestamp, тож
-            // java.util.Date сюди не підійде.
             if (target == java.sql.Timestamp.class)
                 return new java.sql.Timestamp(parsed.getTime());
             if (target == java.sql.Date.class)

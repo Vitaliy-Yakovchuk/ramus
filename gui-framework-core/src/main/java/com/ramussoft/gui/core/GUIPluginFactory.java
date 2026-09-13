@@ -573,10 +573,6 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
         return false;
     }
 
-    /**
-     * Повідомляє про дійсний стан усіх унікальних вікон, щоб пункти меню
-     * відповідали тому, що показано насправді.
-     */
     protected void fireUniqueViewsVisibility() {
         for (UniqueView view : uniqueViews)
             framework.propertyChanged(

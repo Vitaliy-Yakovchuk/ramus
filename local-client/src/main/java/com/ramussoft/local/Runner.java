@@ -252,11 +252,6 @@ public class Runner implements Commands {
             }
     }
 
-    /**
-     * Чи лишив цей сеанс знімок проєкту нового формату. Такий знімок
-     * відновити нічим: застосунок каталогів проєкту не відкриває, тому сеанс
-     * обминаємо, а не видаляємо — сама модель у ньому нікуди не поділася.
-     */
     private boolean isProjectSession(File session) {
         return FilePlugin.isProject(new File(session, "source.rms"));
     }

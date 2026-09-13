@@ -48,9 +48,6 @@ public class ShowViewPlugin extends AbstractViewPlugin {
                         });
     }
 
-    /**
-     * Приводить стан пункту меню до дійсного стану вікна.
-     */
     private void updateAction(Object viewId) {
         Action action = viewActions.get(viewId);
         if (action != null)

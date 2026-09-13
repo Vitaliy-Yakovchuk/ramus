@@ -25,17 +25,6 @@ import com.ramussoft.common.persistent.Transaction;
 import com.ramussoft.core.format.yaml.YamlFormat;
 import com.ramussoft.core.impl.IEngineImpl;
 
-/**
- * Читає проєкт із дерева YAML-файлів у порожній рушій.
- * <p>
- * Симетричний до {@link ProjectWriter} і працює на тому самому рівні —
- * {@link IEngineImpl}, тобто нижче плагінів. Це принципово: плагіни реагують на
- * зміни моделі власною добудовою (створюють базові функції, доповнюють
- * ієрархію), і читання через прикладний API давало б то дублікати, то
- * пропуски. Тут же сутності відновлюються з тими самими числовими ключами, що
- * й були, а плагіни вмикаються вже над готовою моделлю — точно як при
- * відкритті {@code .rsf}.
- */
 public class ProjectReader {
 
     private final IEngineImpl engine;
@@ -44,28 +33,12 @@ public class ProjectReader {
 
     private final PluginFactory factory;
 
-    /**
-     * Посилання з файлу → атрибут. Заповнюється з {@code attributes.yaml} за
-     * тим самим правилом, за яким записувач будував посилання, тому розбирати
-     * рядок не доводиться.
-     */
     private final Map<String, Attribute> attributes =
             new HashMap<String, Attribute>();
 
-    /**
-     * Властивості атрибутів, відкладені до створення класифікаторів: вони на
-     * них посилаються.
-     */
     private final Map<String, Object> deferredProperties =
             new LinkedHashMap<String, Object>();
 
-    /**
-     * Уже записані зв'язки {@code Core.ElementList}.
-     * <p>
-     * Такий зв'язок належить двом елементам одночасно, тому у файлі він
-     * трапляється двічі — у значеннях обох кінців. Запис іде прямими вставками,
-     * без звіряння з наявним, тож повтор дав би дубльований рядок у таблиці.
-     */
     private final Set<String> links = new HashSet<String>();
 
     public ProjectReader(IEngineImpl engine, PluginFactory factory) {
@@ -74,31 +47,18 @@ public class ProjectReader {
         this.codec = new PersistentCodec(engine);
     }
 
-    /**
-     * @return вміст опису проєкту
-     */
     public static Map<String, Object> readProject(File directory)
             throws IOException {
         return readDocument(new File(directoryOf(directory),
                 ProjectWriter.PROJECT_FILE));
     }
 
-    /**
-     * @return {@code true}, якщо шлях указує на проєкт нового формату — сам
-     * каталог або його опис
-     */
     public static boolean isProject(File file) {
         File directory = directoryOf(file);
         return directory != null && directory.isDirectory()
                 && new File(directory, ProjectWriter.PROJECT_FILE).isFile();
     }
 
-    /**
-     * Каталог проєкту.
-     * <p>
-     * Приймає і сам каталог, і його опис: із робочого столу приходить файл,
-     * із діалогу вибору — каталог, і жодна зі сторін не має про це знати.
-     */
     public static File directoryOf(File file) {
         if (file == null)
             return null;
@@ -114,25 +74,16 @@ public class ProjectReader {
 
         readAttributes(directory);
 
-        // Два проходи. Значення атрибутів посилаються на елементи інших
-        // класифікаторів, тому спершу створюємо всі сутності, і лише потім
-        // записуємо значення — інакше посилання вперед указувало б у порожнечу.
         List<DeferredValues> deferred = new ArrayList<DeferredValues>();
         File qualifiers = new File(directory, ProjectWriter.QUALIFIERS_DIR);
         File[] files = qualifiers.listFiles();
         if (files != null) {
-            // Порядок читання на результат не впливає, але сортуємо, щоб
-            // повідомлення про помилки були відтворюваними.
             Arrays.sort(files);
             for (File file : files)
                 if (file.getName().endsWith(".yaml"))
                     deferred.add(readQualifier(file));
         }
 
-        // Властивості атрибутів посилаються на класифікатори, а значення
-        // елементів вимагають уже налаштованих властивостей (Core.ElementList
-        // без них не знає, до яких класифікаторів належать кінці зв'язку).
-        // Звідси порядок: сутності → властивості → значення.
         for (Map.Entry<String, Object> entry : deferredProperties.entrySet())
             applyProperty(entry.getKey(), entry.getValue());
 
@@ -147,19 +98,16 @@ public class ProjectReader {
     private void checkSchema(Map<String, Object> project) throws IOException {
         Object schema = project.get("schema");
         if (!(schema instanceof Number))
-            throw new IOException("У " + ProjectWriter.PROJECT_FILE
-                    + " немає поля schema");
+            throw new IOException("No schema field in "
+                    + ProjectWriter.PROJECT_FILE
+                    );
         int version = ((Number) schema).intValue();
         if (version != ProjectWriter.SCHEMA_VERSION)
-            throw new IOException("Версія формату " + version
-                    + " не підтримується, очікувалась "
+            throw new IOException("Format version " + version
+                    + " is not supported, expected "
                     + ProjectWriter.SCHEMA_VERSION);
     }
 
-    /**
-     * Відновлює лічильники плагінів. Без цього наступний створений об'єкт
-     * отримав би ключ, уже зайнятий у моделі.
-     */
     @SuppressWarnings("unchecked")
     private void readSequences(Map<String, Object> project) {
         Object sequences = project.get("sequences");
@@ -255,9 +203,6 @@ public class ProjectReader {
         return deferred;
     }
 
-    /**
-     * Значення елементів одного класифікатора, відкладені до другого проходу.
-     */
     private final class DeferredValues {
 
         private final List<Element> elements = new ArrayList<Element>();
@@ -279,9 +224,6 @@ public class ProjectReader {
         }
     }
 
-    /**
-     * Записує конфігурацію плагіна атрибута (значення з {@code elementId = -1}).
-     */
     private void applyProperty(String ref, Object value) {
         Attribute attribute = attributes.get(ref);
         if (attribute == null)
@@ -296,8 +238,8 @@ public class ProjectReader {
     private void applyValue(Element element, String ref, Object value) {
         Attribute attribute = attributes.get(ref);
         if (attribute == null) {
-            System.err.println("Пропущено значення невідомого атрибута «" + ref
-                    + "» елемента " + element.getId());
+            System.err.println("Skipped a value of the unknown attribute \"" + ref
+                    + "\" of element " + element.getId());
             return;
         }
         AttributePlugin plugin = factory.getAttributePlugin(
@@ -329,10 +271,10 @@ public class ProjectReader {
                 try {
                     persistent = codec.fromValue(classes[i], row);
                 } catch (RuntimeException e) {
-                    throw new IllegalStateException("Атрибут «"
-                            + attribute.getName() + "» типу "
-                            + attribute.getAttributeType() + " (таблиця "
-                            + (i + 1) + " з " + classes.length + "): "
+                    throw new IllegalStateException("Attribute \""
+                            + attribute.getName() + "\" of type "
+                            + attribute.getAttributeType() + " (table "
+                            + (i + 1) + " of " + classes.length + "): "
                             + e.getMessage(), e);
                 }
                 persistent.setValueBranchId(0L);
@@ -346,9 +288,6 @@ public class ProjectReader {
         }
     }
 
-    /**
-     * @return {@code false}, якщо такий зв'язок уже записано з іншого кінця
-     */
     private boolean isNewLink(Attribute attribute, Persistent persistent) {
         Object first = codec.wrapper(persistent.getClass())
                 .getField(persistent, "element1Id");
@@ -357,10 +296,6 @@ public class ProjectReader {
         return links.add(attribute.getId() + ":" + first + ":" + second);
     }
 
-    /**
-     * Розгортає скорочення, які застосував {@link ProjectWriter}: одну таблицю
-     * з одним рядком він пише як саме значення, а не як список списків.
-     */
     @SuppressWarnings("unchecked")
     private static List<Object> asTables(Object value, int tableCount) {
         List<Object> tables = new ArrayList<Object>(tableCount);
@@ -390,18 +325,12 @@ public class ProjectReader {
             if (attribute != null)
                 result.add(attribute);
             else
-                System.err.println("Не знайдено атрибута «" + ref
-                        + "», згаданого класифікатором");
+                System.err.println("No attribute \"" + ref
+                        + "\", mentioned by a qualifier");
         }
         return result;
     }
 
-    /**
-     * Відновлює потоки за їхнім описом.
-     * <p>
-     * Опис зберігає початковий шлях, тому вкладення знаходять своє місце
-     * незалежно від того, як їх назвали у файловій системі.
-     */
     @SuppressWarnings("unchecked")
     private void readStreams(File directory, String manifestPath)
             throws IOException {
@@ -467,8 +396,8 @@ public class ProjectReader {
             throws IOException {
         int dot = value == null ? -1 : value.indexOf('.');
         if (dot <= 0)
-            throw new IOException("Очікувався тип у вигляді «Плагін.Тип»,"
-                    + " а не «" + value + "»");
+            throw new IOException("Expected a type spelled \"Plugin.Type\","
+                    + " not \"" + value + "\"");
         return new AttributeType(value.substring(0, dot),
                 value.substring(dot + 1), comparable);
     }
@@ -481,7 +410,7 @@ public class ProjectReader {
     private static Map<String, Object> readDocument(File file)
             throws IOException {
         if (!file.isFile())
-            throw new IOException("Не знайдено " + file);
+            throw new IOException("Not found: " + file);
         InputStream in = new FileInputStream(file);
         try {
             return YamlFormat.read(in);

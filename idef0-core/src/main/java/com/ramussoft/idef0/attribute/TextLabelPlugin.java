@@ -9,11 +9,6 @@ import com.ramussoft.common.attribute.AbstractAttributePlugin;
 import com.ramussoft.common.attribute.AttributeConverter;
 import com.ramussoft.common.persistent.Persistent;
 
-/**
- * Атрибут зі списком вільних текстових підписів діаграми.
- *
- * @see TextLabelPersistent
- */
 public class TextLabelPlugin extends AbstractAttributePlugin {
 
     @Override
@@ -41,7 +36,6 @@ public class TextLabelPlugin extends AbstractAttributePlugin {
                                                    long attributeId,
                                                    IEngine engine) {
                 List<TextLabelPersistent> list = (List) object;
-                // Порядок задаємо тут, щоб він не залежав від СУБД.
                 for (int i = 0; i < list.size(); i++)
                     list.get(i).setPosition(i);
                 return new List[]{list};

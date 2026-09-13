@@ -19,14 +19,6 @@ import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 
-/**
- * Відновлення після збою.
- * <p>
- * Рушій кладе знімок відкритого проєкту в сеансовий каталог, а при аварійному
- * завершенні відкриває **цей самий знімок** і накочує на нього журнал. Тобто
- * джерело й призначення копіювання збігаються — випадок, у якому наївне
- * копіювання відкриває файл на запис перед читанням і обнуляє його.
- */
 public class ProjectRecoveryTest {
 
     @Rule
@@ -39,25 +31,21 @@ public class ProjectRecoveryTest {
 
     @Test
     public void snapshotIsMadeOnOpen() throws Exception {
-        File project = new File(folder.newFolder("work"), "Модель.ramus");
+        File project = new File(folder.newFolder("work"), "Model.ramus");
         RsfFixture.exportProject(RsfFixture.sampleFiles().get(0), project);
 
         final File session = folder.newFolder("session");
         openWithSession(project, session);
 
         File snapshot = new File(session, "source.rms");
-        assertTrue("знімок не створено", snapshot.isDirectory());
-        assertTrue("у знімку немає опису проєкту",
+        assertTrue("no snapshot was made", snapshot.isDirectory());
+        assertTrue("the snapshot has no project description",
                 new File(snapshot, "project.ramus").isFile());
     }
 
-    /**
-     * Повторюємо форму, у якій рушій запускається під час відновлення:
-     * відкривається сам знімок, що лежить у сеансовому каталозі.
-     */
     @Test
     public void openingTheSnapshotItselfDoesNotEmptyIt() throws Exception {
-        File project = new File(folder.newFolder("work"), "Модель.ramus");
+        File project = new File(folder.newFolder("work"), "Model.ramus");
         RsfFixture.exportProject(RsfFixture.sampleFiles().get(0), project);
 
         File session = folder.newFolder("session");
@@ -65,18 +53,15 @@ public class ProjectRecoveryTest {
 
         File snapshot = new File(session, "source.rms");
         long size = new File(snapshot, "project.ramus").length();
-        assertTrue("порожній опис проєкту у знімку", size > 0);
+        assertTrue("the project description in the snapshot is empty", size > 0);
 
         int qualifiers = openWithSession(snapshot, session);
 
-        assertTrue("відкриття знімка не дало класифікаторів", qualifiers > 0);
-        assertEquals("відкриття знімка обнулило його файли", size,
+        assertTrue("opening the snapshot gave no qualifiers", qualifiers > 0);
+        assertEquals("opening the snapshot emptied its files", size,
                 new File(snapshot, "project.ramus").length());
     }
 
-    /**
-     * @return кількість класифікаторів у відкритому проєкті
-     */
     private int openWithSession(final File project, final File session)
             throws Exception {
         MemoryDatabase database = new MemoryDatabase() {

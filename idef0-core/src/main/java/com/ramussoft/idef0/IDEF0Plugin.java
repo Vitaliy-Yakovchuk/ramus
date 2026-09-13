@@ -32,11 +32,6 @@ public class IDEF0Plugin extends AbstractPlugin {
 
     public static final String F_PAGE_SIZE = "F_PAGE_SIZE";
 
-    /**
-     * Вільні текстові підписи діаграми. Раніше лежали всередині
-     * {@link #F_VISUAL_DATA}; винесені в окрему таблицю, щоб у моделі не
-     * лишалося двійкових полів.
-     */
     public static final String F_TEXT_LABELS = "F_TEXT_LABELS";
 
     public static final String F_VISUAL_DATA = "F_VISUAL_DATA";

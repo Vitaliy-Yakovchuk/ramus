@@ -11,14 +11,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * Запис {@link Properties} у XML з детермінованим порядком ключів.
- * <p>
- * Штатний {@link Properties#storeToXML} успадковує порядок від
- * {@link java.util.Hashtable}, тож той самий набір властивостей щоразу
- * потрапляє у файл в іншій послідовності. Формат тут той самий, тому файли
- * читаються звичайним {@link Properties#loadFromXML}.
- */
 public final class PropertiesXml {
 
     private static final String DOCTYPE = "<!DOCTYPE properties SYSTEM "
@@ -50,8 +42,6 @@ public final class PropertiesXml {
         }
         writer.write("</properties>\n");
 
-        // Потік належить викликачу (це запис у ZipOutputStream), тому
-        // скидаємо буфер, але не закриваємо.
         writer.flush();
     }
 
@@ -84,16 +74,10 @@ public final class PropertiesXml {
                     writer.write("&apos;");
                     break;
                 default:
-                    // XML 1.0 забороняє керівні символи нижче 0x20 (крім tab,
-                    // \n, \r) навіть у вигляді числового character reference —
-                    // &#11; так само недійсний, як і сам символ. Представити
-                    // таке значення в XML нема як, тож краще явно провалити
-                    // збереження, ніж мовчки записати файл, який не прочитає
-                    // жоден XML-парсер, включно зі штатним loadFromXML.
                     if (c < 0x20 && c != '\t' && c != '\n' && c != '\r')
-                        throw new IOException("Значення містить символ 0x"
+                        throw new IOException("Value contains character 0x"
                                 + Integer.toHexString(c)
-                                + ", який заборонено в XML 1.0");
+                                + ", which XML 1.0 forbids");
                     writer.write(c);
             }
         }

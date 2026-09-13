@@ -14,15 +14,8 @@ import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-/**
- * Читання ZIP-архіву у мапу «шлях → байти» та порівняння двох архівів
- * з діагностикою, придатною для читання людиною.
- */
 public final class ZipArchives {
 
-    /**
-     * Максимум рядків розбіжностей на один запис, щоб звіт лишався оглядним.
-     */
     private static final int MAX_REPORTED_LINES = 6;
 
     private ZipArchives() {
@@ -50,10 +43,6 @@ public final class ZipArchives {
         return result;
     }
 
-    /**
-     * Порядок записів у архіві. На відміну від {@link #read}, зберігає
-     * послідовність — саме вона плаває при недетермінованому записі.
-     */
     public static List<String> entryOrder(File file) throws IOException {
         List<String> order = new ArrayList<String>();
         ZipFile zip = new ZipFile(file);
@@ -79,11 +68,6 @@ public final class ZipArchives {
         return out.toByteArray();
     }
 
-    /**
-     * Порівнює вміст двох архівів, ігноруючи порядок записів і мітки часу ZIP.
-     *
-     * @return порожній рядок, якщо вміст збігається; інакше — звіт про різницю.
-     */
     public static String diff(File expected, File actual) throws IOException {
         TreeMap<String, byte[]> a = read(expected);
         TreeMap<String, byte[]> b = read(actual);
@@ -96,9 +80,9 @@ public final class ZipArchives {
         onlyInB.removeAll(a.keySet());
 
         for (String name : onlyInA)
-            report.append("  лише в першому:  ").append(name).append('\n');
+            report.append("  only in the first:  ").append(name).append('\n');
         for (String name : onlyInB)
-            report.append("  лише в другому:  ").append(name).append('\n');
+            report.append("  only in the second: ").append(name).append('\n');
 
         for (String name : a.keySet()) {
             byte[] left = a.get(name);
@@ -107,9 +91,9 @@ public final class ZipArchives {
                 continue;
             if (java.util.Arrays.equals(left, right))
                 continue;
-            report.append("  різний вміст:    ").append(name).append(" (")
+            report.append("  different content:  ").append(name).append(" (")
                     .append(left.length).append(" vs ").append(right.length)
-                    .append(" байт)\n");
+                    .append(" bytes)\n");
             appendTextDiff(report, left, right);
         }
 
@@ -125,11 +109,11 @@ public final class ZipArchives {
         int reported = 0;
         int max = Math.max(leftLines.length, rightLines.length);
         for (int i = 0; i < max && reported < MAX_REPORTED_LINES; i++) {
-            String l = i < leftLines.length ? leftLines[i] : "<немає рядка>";
-            String r = i < rightLines.length ? rightLines[i] : "<немає рядка>";
+            String l = i < leftLines.length ? leftLines[i] : "<no line>";
+            String r = i < rightLines.length ? rightLines[i] : "<no line>";
             if (l.equals(r))
                 continue;
-            report.append("      рядок ").append(i + 1).append(":\n");
+            report.append("      line ").append(i + 1).append(":\n");
             report.append("        1: ").append(abbreviate(l)).append('\n');
             report.append("        2: ").append(abbreviate(r)).append('\n');
             reported++;

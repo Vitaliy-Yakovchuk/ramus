@@ -196,7 +196,6 @@ public class NSector extends AbstractSector {
             sp.setFontStyle(state.getFontStyle());
             sp.setFontSize(state.getFontSize());
             sp.setColor(state.getColor());
-            // Старе двійкове поле більше не потрібне.
             sp.setVisualAttributes(new byte[]{});
             setAttribute(dataPlugin.sectorAttribute, sp);
         }

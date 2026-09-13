@@ -25,32 +25,13 @@ import com.ramussoft.pb.idef.visual.MovingArea;
 import com.ramussoft.pb.idef.visual.MovingText;
 import com.ramussoft.pb.print.PIDEF0painter;
 
-/**
- * Малює діаграми моделі в PNG без екрана.
- * <p>
- * Потрібен, щоб зміни в коді відображення (винесення блоба, розділення
- * семантики й розкладки) можна було перевіряти автоматично: якщо картинка
- * змінилась — тест це побачить, а не людина під час клікання.
- * <p>
- * Перед малюванням модель приводиться до вигляду, що не залежить від машини:
- * дати замінюються сталою ({@link RsfFixture#freezeDates}), а всі шрифти —
- * вбудованим ({@link TestFonts}). Без цього знімок ловив би не зміну коду, а
- * сьогоднішнє число в рамці та набір шрифтів, який стоїть у системі.
- */
 public final class DiagramRenderer {
 
-    /**
-     * Розмір навмисно фіксований: масштаб рахується від нього, і будь-яка
-     * залежність від розміру вікна зробила б знімки невідтворюваними.
-     */
     private static final Dimension SIZE = new Dimension(1200, 900);
 
     private DiagramRenderer() {
     }
 
-    /**
-     * @return «шлях діаграми → відбиток зображення», відсортовано за шляхом
-     */
     public static Map<String, String> render(Engine engine, AccessRules rules)
             throws IOException {
         Map<String, String> result = new LinkedHashMap<String, String>();
@@ -76,20 +57,11 @@ public final class DiagramRenderer {
         return result;
     }
 
-    /**
-     * Прибирає з моделі все, що зробило б знімок залежним від машини й дня.
-     */
     static void prepare(Function base) {
         RsfFixture.freezeDates(base);
         useTestFont(base);
     }
 
-    /**
-     * Замінює шрифти функцій вбудованим, зберігаючи накреслення й розмір.
-     * <p>
-     * Функція без власного шрифту лишається без нього: тоді напис малюється
-     * шрифтом, який заданий на {@link Graphics2D}, а він теж наш.
-     */
     private static void useTestFont(Function function) {
         Font font = function.getFont();
         if (font != null)
@@ -98,13 +70,6 @@ public final class DiagramRenderer {
             useTestFont((Function) function.getChildAt(i));
     }
 
-    /**
-     * Те саме для стрілок і написів.
-     * <p>
-     * Вони живуть не в моделі, а у візуальному шарі, і з'являються аж під час
-     * підготовки діаграми, тому замінювати доводиться після створення
-     * {@link PIDEF0painter}, а не разом із функціями.
-     */
     private static void useTestFont(MovingArea area) {
         SectorRefactor refactor = area.getRefactor();
         for (int i = 0; i < refactor.getSectorsCount(); i++) {
@@ -130,16 +95,6 @@ public final class DiagramRenderer {
         }
     }
 
-    /**
-     * Стиснутий відбиток зображення: сірий {@value #SIGNATURE_SIDE}×{@value
-     * #SIGNATURE_SIDE}.
-     * <p>
-     * Точний хеш зображення для еталона не годиться: відмальовування має
-     * ділянки, що залежать від порядку обходу множин, і одна діаграма зі
-     * зразків між запусками JVM дає різні байти при однаковій картинці.
-     * Стиснутий відбиток такі дрібниці поглинає, але зсув блоку чи зникнення
-     * стрілки — ні.
-     */
     private static String fingerprint(DataPlugin plugin, Function function)
             throws IOException {
         PIDEF0painter painter = new PIDEF0painter(function, SIZE, plugin);
@@ -148,20 +103,8 @@ public final class DiagramRenderer {
                 TestFonts.of(Font.PLAIN, DEFAULT_FONT_SIZE)));
     }
 
-    /**
-     * Розмір типового шрифта {@link Graphics2D}. Написи рамки виводяться саме
-     * від нього, тож заміна родини має лишити розмір таким, як у застосунку.
-     */
     private static final int DEFAULT_FONT_SIZE = 12;
 
-    /**
-     * Усі шрифти, якими малюється діаграма.
-     * <p>
-     * Потрібні тесту, який стежить, щоб жоден напис не лишився на системному
-     * шрифті: підміна робиться поелементно, і новий вид елемента легко
-     * забути. Повертається стан після підготовки діаграми — тобто те, чим
-     * малювання справді скористається.
-     */
     static List<Font> paintedFonts(DataPlugin plugin, Function function) {
         List<Font> fonts = new ArrayList<Font>();
         fonts.add(TestFonts.of(Font.PLAIN, DEFAULT_FONT_SIZE));
@@ -210,9 +153,6 @@ public final class DiagramRenderer {
         return sb.toString();
     }
 
-    /**
-     * Середня різниця яскравості між двома відбитками, 0..255.
-     */
     public static double difference(String a, String b) {
         if (a.length() != b.length())
             return 255.0;

@@ -72,10 +72,6 @@ public class MemoryDatabase extends AbstractDatabase {
 
             File file = getFile();
             if (file != null) {
-                // Проєкт нового формату — каталог, старий — архів. Обидва
-                // читаються тут, до створення журнального рушія: плагіни
-                // мають побачити вже готову модель, інакше вони почнуть її
-                // добудовувати й наплодять дублікатів.
                 if (ProjectReader.isProject(file))
                     impl.openProject(file, isIrnoreUnregisteredPlugins());
                 else

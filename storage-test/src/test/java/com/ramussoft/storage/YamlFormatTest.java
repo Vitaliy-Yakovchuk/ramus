@@ -15,17 +15,8 @@ import org.junit.Test;
 
 import com.ramussoft.core.format.yaml.YamlFormat;
 
-/**
- * Перевіряє правила запису YAML, на які спирається формат. Це не тест
- * бібліотеки, а фіксація саме тих гарантій, без яких формат перестає бути
- * придатним для git та для агентного редагування.
- */
 public class YamlFormatTest {
 
-    /**
-     * Головна причина обрати YAML 1.2 замість 1.1: {@code no} лишається
-     * рядком, а не перетворюється на {@code false}.
-     */
     @Test
     public void norwayProblemDoesNotExist() throws Exception {
         Map<String, Object> loaded = read("country: no\nswitch: on\nanswer: yes\n");
@@ -45,20 +36,16 @@ public class YamlFormatTest {
 
         String text = write(document);
 
-        assertTrue("рядок має бути в лапках:\n" + text,
+        assertTrue("the string must be quoted:\n" + text,
                 text.contains("name: 'Виготовлення продукції'"));
-        assertFalse("ключі не мають братися в лапки:\n" + text,
+        assertFalse("keys must not be quoted:\n" + text,
                 text.contains("'name'"));
-        assertTrue("число не має бути в лапках:\n" + text,
+        assertTrue("the number must not be quoted:\n" + text,
                 text.contains("order: 2"));
         assertTrue(text.contains("x: 120.5"));
         assertTrue(text.contains("tunnel: false"));
     }
 
-    /**
-     * Типи мають пережити цикл запису й читання — інакше {@code 2} після
-     * збереження стало б рядком {@code '2'}.
-     */
     @Test
     public void typesSurviveRoundTrip() throws Exception {
         Map<String, Object> document = new LinkedHashMap<String, Object>();
@@ -73,40 +60,32 @@ public class YamlFormatTest {
         assertEquals(Boolean.TRUE, loaded.get("flag"));
     }
 
-    /**
-     * Автоперенесення довгих рядків дало б різні файли для тих самих даних.
-     */
     @Test
     public void longValuesAreNotWrapped() throws Exception {
         StringBuilder longValue = new StringBuilder();
         for (int i = 0; i < 40; i++)
-            longValue.append("дуже довга назва функції ");
+            longValue.append("a very long function name ");
 
         Map<String, Object> document = new LinkedHashMap<String, Object>();
         document.put("name", longValue.toString());
 
         String text = write(document);
 
-        assertEquals("значення має лишитись одним рядком:\n" + text,
+        assertEquals("the value must stay on one line:\n" + text,
                 1, text.split("\n").length);
     }
 
     @Test
     public void multilineTextUsesLiteralBlock() throws Exception {
         Map<String, Object> document = new LinkedHashMap<String, Object>();
-        document.put("note", "перший рядок\nдругий рядок");
+        document.put("note", "first line\nsecond line");
 
         String text = write(document);
 
-        assertTrue("очікувався літеральний блок:\n" + text,
+        assertTrue("a literal block was expected:\n" + text,
                 text.contains("note: |-") || text.contains("note: |"));
     }
 
-    /**
-     * Один і той самий об'єкт, використаний двічі, не має перетворюватись на
-     * anchor/alias: інакше diff показує посилання замість даних, а агент не
-     * бачить справжнього значення.
-     */
     @Test
     public void repeatedValuesDoNotBecomeAliases() throws Exception {
         Map<String, Object> shared = new LinkedHashMap<String, Object>();
@@ -121,15 +100,15 @@ public class YamlFormatTest {
 
         String text = write(document);
 
-        assertFalse("знайдено anchor:\n" + text, text.contains("&id"));
-        assertFalse("знайдено alias:\n" + text, text.contains("*id"));
+        assertFalse("anchor found:\n" + text, text.contains("&id"));
+        assertFalse("alias found:\n" + text, text.contains("*id"));
     }
 
     @Test
     public void writingIsDeterministic() throws Exception {
         Map<String, Object> document = new LinkedHashMap<String, Object>();
-        document.put("b", "друге");
-        document.put("a", "перше");
+        document.put("b", "second");
+        document.put("a", "first");
 
         assertEquals(write(document), write(document));
     }

@@ -30,10 +30,6 @@ public class SectorPersistent extends AbstractPersistent {
 
     private String strokeKind;
 
-    /**
-     * Обгорнуті типи, а не примітиви: у наявних файлах цих стовпчиків немає,
-     * і читання віддає {@code null}. Примітивний сеттер на такому падає.
-     */
     private java.lang.Double strokeWidth;
 
     private java.lang.Integer strokeEndCap;
@@ -93,23 +89,12 @@ public class SectorPersistent extends AbstractPersistent {
         this.visualAttributes = visualAttributes;
     }
 
-    /**
-     * @return the visualAttributes
-     * @deprecated Обведення, шрифт і колір стрілки тепер зберігаються
-     * окремими полями нижче. Поле лишається, щоб читати наявні файли; при
-     * першому збереженні воно очищується.
-     */
     @Deprecated
     @Binary(id = 4)
     public byte[] getVisualAttributes() {
         return visualAttributes;
     }
 
-    /**
-     * Різновид обведення: {@code basic}, {@code way} чи {@code arrowed}.
-     * {@code null} означає, що вигляд ще не переносився зі старого
-     * двійкового поля.
-     */
     @Text(id = 8)
     public String getStrokeKind() {
         return strokeKind;
@@ -164,11 +149,6 @@ public class SectorPersistent extends AbstractPersistent {
         this.strokeMiterLimit = strokeMiterLimit;
     }
 
-    /**
-     * Штрихування як перелік довжин через кому, наприклад {@code "3.0,3.0"}.
-     * Один рядок замість масиву — щоб не заводити ще одну таблицю заради
-     * двох чисел.
-     */
     @Text(id = 14)
     public String getStrokeDash() {
         return strokeDash;
@@ -178,9 +158,6 @@ public class SectorPersistent extends AbstractPersistent {
         this.strokeDash = strokeDash;
     }
 
-    /**
-     * Різновид для {@code way} та {@code arrowed}.
-     */
     @Integer(id = 15)
     public java.lang.Integer getStrokeType() {
         return strokeType;
@@ -217,9 +194,6 @@ public class SectorPersistent extends AbstractPersistent {
         this.fontSize = fontSize;
     }
 
-    /**
-     * Колір лінії в ARGB; {@code null} — типовий.
-     */
     @Integer(id = 19)
     public java.lang.Integer getColor() {
         return color;

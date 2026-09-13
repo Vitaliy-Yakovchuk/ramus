@@ -54,15 +54,6 @@ public class SectorRefactor {
      * Поточна версія типу даних про сектори відображення.
      */
 
-    /**
-     * Версія двійкового подання діаграми.
-     * <ul>
-     * <li>1 — сектори й підписи всередині блоба;</li>
-     * <li>2 — сектори винесені в таблиці, підписи ще в блобі;</li>
-     * <li>3 — підписи винесені теж; блоб містить лише номер версії.</li>
-     * </ul>
-     * Читання версій 1 і 2 лишається: старі файли мають відкриватися.
-     */
     public static int BIN_VERSION = 3;
 
     private Function function = null;
@@ -732,9 +723,6 @@ public class SectorRefactor {
         }
     }
 
-    /**
-     * Підписи з окремого атрибута (версія 3 і новіші).
-     */
     private void loadTextsFromAttribute(final Function function) {
         for (TextLabelPersistent label : function.getTextLabels()) {
             final MovingText text = movingArea.createText();
@@ -749,10 +737,6 @@ public class SectorRefactor {
         }
     }
 
-    /**
-     * Підписи зі старого блоба (версії 1 і 2). Лишається для читання наявних
-     * файлів; при першому ж збереженні вони переїдуть в атрибут.
-     */
     private void loadTextsFromStream(final ByteArrayInputStream in,
                                      final DataLoader.MemoryData memoryData)
             throws IOException {
@@ -767,12 +751,6 @@ public class SectorRefactor {
         }
     }
 
-    /**
-     * Записує підписи в атрибут функції.
-     * <p>
-     * Винесено в окремий метод свідомо: перенесення підписів зі старого блоба
-     * не повинно тягнути за собою перезапис геометрії секторів.
-     */
     public void saveTextLabels(final Function function) {
         List<TextLabelPersistent> labels =
                 new ArrayList<TextLabelPersistent>(texts.size());
@@ -831,11 +809,6 @@ public class SectorRefactor {
         }
     }
 
-    /**
-     * З версії 3 блоб містить лише номер версії: сектори й підписи живуть у
-     * таблицях. Метод лишається, бо номер версії досі визначає, як читати
-     * старі файли.
-     */
     public byte[] getSectorData() {
         try {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();

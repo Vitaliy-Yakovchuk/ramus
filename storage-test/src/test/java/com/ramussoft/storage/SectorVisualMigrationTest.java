@@ -31,13 +31,6 @@ import com.ramussoft.pb.idef.elements.SectorRefactor;
 import com.ramussoft.pb.idef.visual.MovingArea;
 import com.ramussoft.pb.print.PIDEF0painter;
 
-/**
- * Перенесення вигляду стрілок (обведення, шрифт, колір) із двійкового поля
- * {@code SectorPersistent.visualAttributes} в іменовані поля.
- * <p>
- * Перевіряємо саме те, що має значення: після перенесення двійкове поле
- * порожнє, а діаграми виглядають так само.
- */
 public class SectorVisualMigrationTest {
 
     private static final Dimension SIZE = new Dimension(1200, 900);
@@ -78,7 +71,7 @@ public class SectorVisualMigrationTest {
             }
 
             assertTrue(sample.getName()
-                    + ": у зразку немає стрілок із власним виглядом",
+                    + ": the sample has no arrows with a look of their own",
                     migrated_count > 0);
 
             MemoryDatabase reopened = (MemoryDatabase) FileDatabaseFactory
@@ -86,7 +79,7 @@ public class SectorVisualMigrationTest {
             try {
                 Engine engine = reopened.getEngine(null);
                 assertEquals(sample.getName()
-                                + ": у секторах лишилися двійкові дані", 0,
+                                + ": binary data is left in the sectors", 0,
                         countBlobs(engine, reopened.getAccessRules(null)));
 
                 Map<String, String> after = DiagramRenderer.render(engine,
@@ -98,11 +91,11 @@ public class SectorVisualMigrationTest {
                             : DiagramRenderer.difference(entry.getValue(),
                                     other);
                     if (difference > 1.0)
-                        changed.add(String.format("%s (різниця %.2f)",
+                        changed.add(String.format("%s (difference %.2f)",
                                 entry.getKey(), Double.valueOf(difference)));
                 }
                 if (!changed.isEmpty())
-                    fail(sample.getName() + ": змінився вигляд діаграм:\n  "
+                    fail(sample.getName() + ": the diagrams look different:\n  "
                             + String.join("\n  ", changed));
                 ((FileIEngineImpl) engine.getDeligate()).close();
             } finally {
@@ -111,9 +104,6 @@ public class SectorVisualMigrationTest {
         }
     }
 
-    /**
-     * @return скільки секторів мали вигляд у двійковому полі
-     */
     private static int migrateVisuals(Engine engine, AccessRules rules) {
         int count = 0;
         for (Qualifier model : IDEF0Plugin.getBaseQualifiers(engine)) {
@@ -158,10 +148,6 @@ public class SectorVisualMigrationTest {
         return blobs;
     }
 
-    /**
-     * Рахує так само, як переносить: по секторах, що справді з'являються на
-     * діаграмах. Інакше порівнювалися б різні множини.
-     */
     private static int count(DataPlugin plugin, Function function) {
         MovingArea area = PIDEF0painter.createMovingArea(SIZE, plugin,
                 function);

@@ -10,17 +10,12 @@ import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 
-/**
- * Ручний прогін: експортує зразок у каталог, заданий системною властивістю
- * {@code ramus.dump.target}. Без неї тест пропускається, тож у звичайній
- * збірці нічого не робить.
- */
 public class DumpSampleTest {
 
     @Test
     public void dump() throws Exception {
         String target = System.getProperty("ramus.dump.target");
-        Assume.assumeTrue("не задано ramus.dump.target", target != null);
+        Assume.assumeTrue("ramus.dump.target is not set", target != null);
 
         File home = new File(target, "home");
         RsfFixture.isolateHome(home);

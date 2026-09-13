@@ -28,14 +28,6 @@ import com.ramussoft.pb.Function;
 import com.ramussoft.pb.idef.visual.MovingArea;
 import com.ramussoft.pb.print.PIDEF0painter;
 
-/**
- * Перенесення текстових підписів із двійкового поля {@code F_VISUAL_DATA} в
- * окрему таблицю.
- * <p>
- * Зразки збережені у версії 1, де підписи лежать усередині блоба. Тест
- * перезберігає кожну діаграму (що переводить її у версію 3), відкриває файл
- * заново й перевіряє, що вигляд не змінився й підписи на місці.
- */
 public class BlobMigrationTest {
 
     private static final Dimension SIZE = new Dimension(1200, 900);
@@ -77,8 +69,8 @@ public class BlobMigrationTest {
             }
 
             assertTrue(sample.getName()
-                    + ": у зразку немає жодного підпису — тест нічого не"
-                    + " перевіряє", labelsBefore > 0);
+                    + ": the sample has no labels, the test checks"
+                    + " nothing", labelsBefore > 0);
 
             MemoryDatabase reopened = (MemoryDatabase) FileDatabaseFactory
                     .createDatabase(migrated);
@@ -89,9 +81,9 @@ public class BlobMigrationTest {
                 int labelsAfter = countLabels(engine,
                         reopened.getAccessRules(null));
 
-                assertEquals(sample.getName() + ": зникли підписи",
+                assertEquals(sample.getName() + ": labels disappeared",
                         labelsBefore, labelsAfter);
-                assertEquals(sample.getName() + ": різний набір діаграм",
+                assertEquals(sample.getName() + ": a different set of diagrams",
                         before.keySet(), after.keySet());
 
                 List<String> changed = new ArrayList<String>();
@@ -99,12 +91,12 @@ public class BlobMigrationTest {
                     double difference = DiagramRenderer.difference(
                             entry.getValue(), after.get(entry.getKey()));
                     if (difference > 1.0)
-                        changed.add(String.format("%s (різниця %.2f)",
+                        changed.add(String.format("%s (difference %.2f)",
                                 entry.getKey(), Double.valueOf(difference)));
                 }
                 if (!changed.isEmpty())
                     fail(sample.getName()
-                            + ": після перенесення підписів змінився вигляд:\n  "
+                            + ": moving the labels changed how it looks:\n  "
                             + String.join("\n  ", changed));
                 ((FileIEngineImpl) engine.getDeligate()).close();
             } finally {
@@ -113,11 +105,6 @@ public class BlobMigrationTest {
         }
     }
 
-    /**
-     * Проходить усі діаграми й перезберігає їх, що переводить блоб у версію 3.
-     *
-     * @return скільки підписів було в моделі до перенесення
-     */
     private static int migrateAll(Engine engine,
                                   com.ramussoft.common.AccessRules rules) {
         int labels = 0;
@@ -136,9 +123,6 @@ public class BlobMigrationTest {
                 function);
         area.setActiveFunction(function);
         int labels = area.getRefactor().getTexts().size();
-        // Саме перенесення підписів, без перезапису геометрії: повний
-        // saveToFunction на файлі версії 1 псує кореневу діаграму, і це
-        // окрема, давніша вада (див. документ).
         area.getRefactor().saveTextLabels(function);
 
         for (int i = 0; i < function.getChildCount(); i++)

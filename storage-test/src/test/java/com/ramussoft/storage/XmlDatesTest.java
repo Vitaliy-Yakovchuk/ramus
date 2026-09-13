@@ -11,13 +11,6 @@ import org.junit.Test;
 
 import com.ramussoft.core.impl.XmlDates;
 
-/**
- * Формат дат у файлі проєкту.
- * <p>
- * Старий формат обрізав час до хвилин і не фіксував часовий пояс, тому дати
- * зсувалися при кожному збереженні й залежали від машини. Новий формат ISO
- * має зберігати секунди, а читання — розуміти обидва.
- */
 public class XmlDatesTest {
 
     @Test
@@ -43,10 +36,6 @@ public class XmlDatesTest {
                 XmlDates.format(calendar.getTime()));
     }
 
-    /**
-     * Формат, яким писалися файли до переходу JDK на CLDR: без коми.
-     * Саме на ньому спотикалося читання зразків із {@code dest/doc}.
-     */
     @Test
     public void legacyFormatWithoutCommaIsRead() throws Exception {
         Date parsed = XmlDates.parse("9/3/09 5:23 PM");
@@ -60,10 +49,6 @@ public class XmlDatesTest {
         assertEquals(23, calendar.get(Calendar.MINUTE));
     }
 
-    /**
-     * Той самий момент часу, записаний на машині в іншому поясі, має
-     * прочитатися однаково.
-     */
     @Test
     public void isoIsTimeZoneIndependent() throws Exception {
         TimeZone original = TimeZone.getDefault();

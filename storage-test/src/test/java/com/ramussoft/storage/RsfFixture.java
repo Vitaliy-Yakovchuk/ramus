@@ -20,19 +20,11 @@ import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 import com.ramussoft.pb.Function;
 
-/**
- * Допоміжні засоби для тестів формату: пошук зразків, відкриття та перезапис
- * {@code .rsf} без GUI.
- */
 public final class RsfFixture {
 
     private RsfFixture() {
     }
 
-    /**
-     * Ізолює тест від домашнього каталогу користувача: сесії та тимчасові файли
-     * рушія підуть у {@code target}, а не в {@code ~/.ramus}.
-     */
     public static void isolateHome(File target) {
         target.mkdirs();
         System.setProperty("user.home", target.getAbsolutePath());
@@ -40,10 +32,6 @@ public final class RsfFixture {
         System.setProperty("java.awt.headless", "true");
     }
 
-    /**
-     * Усі зразкові {@code .rsf} з {@code dest/doc}, відсортовані за шляхом,
-     * щоб порядок тестів був відтворюваним.
-     */
     public static List<File> sampleFiles() {
         File docs = new File(projectRoot(), "dest/doc");
         List<File> result = new ArrayList<File>();
@@ -69,25 +57,17 @@ public final class RsfFixture {
         }
     }
 
-    /**
-     * Корінь репозиторію. Gradle запускає тести з каталогу модуля, тож
-     * піднімаємось, доки не побачимо {@code settings.gradle}.
-     */
     public static File projectRoot() {
         File dir = new File(System.getProperty("user.dir")).getAbsoluteFile();
         while (dir != null && !new File(dir, "settings.gradle").isFile())
             dir = dir.getParentFile();
         if (dir == null)
             throw new IllegalStateException(
-                    "Не знайдено корінь проєкту (settings.gradle) від "
+                    "No project root (settings.gradle) found from "
                             + System.getProperty("user.dir"));
         return dir;
     }
 
-    /**
-     * Відкриває {@code in}, зберігає під іменем {@code out} і закриває рушій.
-     * Модель при цьому не змінюється — це чистий цикл читання/запису.
-     */
     public static void resave(File in, File out) throws IOException {
         MemoryDatabase database = (MemoryDatabase) FileDatabaseFactory
                 .createDatabase(in);
@@ -101,9 +81,6 @@ public final class RsfFixture {
         }
     }
 
-    /**
-     * Відкриває {@code .rsf} і записує його як проєкт нового формату.
-     */
     public static void exportProject(File rsf, File directory)
             throws IOException {
         MemoryDatabase database = (MemoryDatabase) FileDatabaseFactory
@@ -118,9 +95,6 @@ public final class RsfFixture {
         }
     }
 
-    /**
-     * Відкриває проєкт нового формату і зберігає його як {@code .rsf}.
-     */
     public static void importProject(File directory, File rsf)
             throws IOException {
         MemoryDatabase database = (MemoryDatabase) FileDatabaseFactory
@@ -135,10 +109,6 @@ public final class RsfFixture {
         }
     }
 
-    /**
-     * Відкриває проєкт нового формату і зберігає його назад у каталог —
-     * цикл читання/запису без проміжного {@code .rsf}.
-     */
     public static void resaveProject(File source, File target)
             throws IOException {
         MemoryDatabase database = (MemoryDatabase) FileDatabaseFactory
@@ -153,12 +123,6 @@ public final class RsfFixture {
         }
     }
 
-    /**
-     * Чи здатна поточна версія відкрити файл. Зразки, збережені старшими
-     * версіями, можуть посилатися на плагіни, яких у коді вже немає.
-     *
-     * @return {@code null}, якщо файл відкривається; інакше — причина відмови.
-     */
     public static String openFailure(File file) {
         MemoryDatabase database = null;
         try {
@@ -177,23 +141,10 @@ public final class RsfFixture {
                 try {
                     database.close();
                 } catch (Exception ignore) {
-                    // з'єднання вже могло не відкритись
                 }
         }
     }
 
-    /**
-     * Дата, яку тести підставляють у моделі.
-     * <p>
-     * Рамка діаграми показує дати створення й перегляду функції. Зразки їх
-     * здебільшого не зберігають, і тоді модель повертає
-     * {@code new Timestamp(System.currentTimeMillis())} — тобто сьогоднішнє
-     * число. Еталонний знімок від цього застаріває наступного ж дня, тому
-     * перед відмальовуванням дати замінюються сталою.
-     * <p>
-     * Полудень, а не північ: рядок форматується в часовому поясі машини, і
-     * значення посеред доби дає те саме число в будь-якому поясі.
-     */
     public static final Date FIXED_DATE = fixedDate();
 
     private static Date fixedDate() {
@@ -203,12 +154,6 @@ public final class RsfFixture {
         return calendar.getTime();
     }
 
-    /**
-     * Проставляє {@link #FIXED_DATE} усім функціям піддерева.
-     * <p>
-     * Саме всім: функція без власної дати бере її в батька, а корінь — з
-     * налаштувань моделі, тож жодна гілка не має лишитися з порожнім полем.
-     */
     public static void freezeDates(Function function) {
         function.setCreateDate(FIXED_DATE);
         function.setRevDate(FIXED_DATE);

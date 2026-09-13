@@ -23,36 +23,10 @@ import com.ramussoft.common.Qualifier;
 import com.ramussoft.common.persistent.Persistent;
 import com.ramussoft.core.format.yaml.YamlFormat;
 
-/**
- * Записує проєкт у дерево YAML-файлів.
- * <p>
- * На відміну від {@code .rsf}, який є дампом таблиць БД, тут у файл потрапляють
- * класифікатори, елементи та значення атрибутів, а не рядки
- * {@code <f id="3">38</f>}. Числові ключі замінюються оборотними
- * ідентифікаторами {@link StableIds}, а атрибути адресуються за іменем, тож
- * файл читається без словника.
- * <p>
- * Обхід іде через {@link IEngine} — рівень, на якому плагіни ще не втручаються.
- * Завдяки цьому в файл потрапляє все, що є в моделі, разом із системними
- * класифікаторами, і жодна сутність не «добудовується» під час запису.
- * <p>
- * Запис детермінований: усе впорядковано за ключем, міток часу немає.
- */
 public class ProjectWriter {
 
-    /**
-     * Версія розкладки файлів. Зростає, коли змінюється структура, а не вміст.
-     */
     public static final int SCHEMA_VERSION = 4;
 
-    /**
-     * Опис проєкту — файл, за яким проєкт упізнають і система, і застосунок.
-     * <p>
-     * Розширення власне, а не {@code .yaml}: каталог сам по собі неможливо
-     * пов'язати з програмою засобами робочого столу, а файл — можна, тож саме
-     * він і є тим, що відкривають подвійним клацанням. Вміст при цьому
-     * звичайний YAML.
-     */
     public static final String PROJECT_FILE = "project.ramus";
 
     static final String ATTRIBUTES_FILE = "attributes.yaml";
@@ -67,11 +41,6 @@ public class ProjectWriter {
 
     static final String OTHER_DIR = "streams";
 
-    /**
-     * Каталог для стану, який не належить моделі: розкладка вікон, останні
-     * відкриті вкладки. Він персональний, тому лежить окремо і потрапляє
-     * до {@code .gitignore}.
-     */
     static final String LOCAL_DIR = ".local";
 
     static final String PROPERTIES_PREFIX = "/properties/";
@@ -84,28 +53,12 @@ public class ProjectWriter {
 
     private final PersistentCodec codec;
 
-    /**
-     * Посилання на атрибут за його числовим ключем. Будується один раз: воно
-     * потрібне і для ключів у значеннях, і для списків класифікатора.
-     */
     private final Map<Long, String> attributeRefs = new HashMap<Long, String>();
 
-    /**
-     * Файли, які цей запис створив. Усе інше в керованих підкаталогах — сміття
-     * від попереднього збереження, і його треба прибрати, інакше видалений
-     * класифікатор жив би у проєкті вічно.
-     */
     private final Set<String> written = new HashSet<String>();
 
-    /**
-     * Назви послідовностей плагінів. Порожній список припустимий: без нього
-     * лічильники почнуться з нуля й видадуть чужі ключі.
-     */
     private final List<String> sequences;
 
-    /**
-     * Плагіни, без яких файл не відкрити.
-     */
     private final List<String> requiredPlugins;
 
     private final String applicationName;
@@ -145,15 +98,6 @@ public class ProjectWriter {
         removeStaleFiles(directory);
     }
 
-    /**
-     * Будує посилання на атрибути.
-     * <p>
-     * Атрибут адресується власним іменем: {@code F_BOUNDS} у файлі значно
-     * зрозуміліше за {@code vakjk8}, а перейменування атрибута — рідкісна й
-     * помітна подія, на відміну від зміни числового ключа. Якщо ім'я в проєкті
-     * не одне, до нього додається ідентифікатор — інакше два атрибути
-     * боролися б за один ключ у мапі значень.
-     */
     private void buildAttributeRefs() {
         Map<String, List<Attribute>> byName =
                 new HashMap<String, List<Attribute>>();
@@ -203,8 +147,6 @@ public class ProjectWriter {
         Map<String, Object> document = new LinkedHashMap<String, Object>();
         document.put("schema", Integer.valueOf(SCHEMA_VERSION));
         document.put("application", applicationName);
-        // Версія застосунку, який записав проєкт. Мітки часу навмисно немає:
-        // вона робила б кожне збереження унікальним.
         document.put("application-version", applicationVersion);
         if (minimumVersion != null)
             document.put("minimum-version", minimumVersion);
@@ -215,9 +157,6 @@ public class ProjectWriter {
             document.put("plugins", plugins);
         }
 
-        // Лічильники плагінів. Ключі основних таблиць рушій відновлює сам,
-        // піднімаючи послідовність над максимальним наявним, а от лічильники
-        // плагінів (наприклад, номери перетинів стрілок) знати нізвідки.
         Map<String, Object> values = new TreeMap<String, Object>();
         for (String sequence : sequences)
             values.put(sequence, Long.valueOf(engine.nextValue(sequence)));
@@ -239,9 +178,6 @@ public class ProjectWriter {
                 row.put("comparable", Boolean.TRUE);
             if (attribute.isSystem())
                 row.put("system", Boolean.TRUE);
-            // Властивості атрибута — це конфігурація його плагіна (для
-            // Core.ElementList, наприклад, пов'язані класифікатори). Без них
-            // значення елементів не відновлюються.
             Object properties = value(-1L, attribute.getId());
             if (properties != null)
                 row.put("properties", properties);
@@ -270,14 +206,8 @@ public class ProjectWriter {
                 document.put("name-attribute", attributeRef(forName));
         }
 
-        // Порядок списку — це порядок стовпчиків у таблиці класифікатора,
-        // тому його не сортуємо.
         document.put("attributes", refs(qualifier.getAttributes()));
 
-        // Системні атрибути тримають, зокрема, всю геометрію IDEF0
-        // (F_VISUAL_DATA, F_BOUNDS, сектори). Без них експорт був би
-        // не моделлю, а лише її назвами. Порядок тут задають плагіни, він
-        // несуттєвий і між запусками різний, тож сортуємо.
         List<Object> system = refs(qualifier.getSystemAttributes());
         Collections.sort((List) system);
         if (!system.isEmpty())
@@ -324,8 +254,6 @@ public class ProjectWriter {
 
     private Map<String, Object> values(Element element,
                                        List<Attribute> attributes) {
-        // Ключі — імена атрибутів, тож порядок алфавітний і не залежить від
-        // того, які номери роздав конкретний рушій.
         Map<String, Object> values = new TreeMap<String, Object>();
         for (Attribute attribute : attributes) {
             Object value = value(element.getId(), attribute.getId());
@@ -343,25 +271,13 @@ public class ProjectWriter {
         return all;
     }
 
-    /**
-     * Значення атрибута у вигляді, придатному для YAML.
-     * <p>
-     * Плагін атрибута може зберігати значення в кількох таблицях, тому
-     * загальна форма — список списків рядків. Найпоширеніший випадок (одна
-     * таблиця, один рядок) згортається до самої мапи полів, інакше файл
-     * потонув би у вкладеності там, де насправді одне значення.
-     *
-     * @return {@code null}, якщо значення не задано
-     */
     private Object value(long elementId, long attributeId) {
         List<Persistent>[] lists;
         try {
             lists = engine.getBinaryAttribute(elementId, attributeId);
         } catch (RuntimeException e) {
-            // Читання одного значення не має валити запис цілого проєкту:
-            // краще втратити поле й повідомити, ніж не отримати файлу взагалі.
-            System.err.println("Не вдалося прочитати атрибут " + attributeId
-                    + " елемента " + elementId + ": " + e);
+            System.err.println("Can not read attribute " + attributeId
+                    + " of element " + elementId + ": " + e);
             return null;
         }
         if (lists == null || lists.length == 0)
@@ -390,13 +306,6 @@ public class ProjectWriter {
         return tables;
     }
 
-    /**
-     * Усі класифікатори, разом із системними.
-     * <p>
-     * Системні — не службовий шум: у них лежать базові функції моделей IDEF0
-     * та звіти. Без них імпортована модель не має кореневої функції, і
-     * діаграма не будується.
-     */
     private List<Qualifier> sortedQualifiers() {
         List<Qualifier> all = new ArrayList<Qualifier>(engine.getQualifiers());
         all.addAll(engine.getSystemQualifiers());
@@ -409,20 +318,6 @@ public class ProjectWriter {
         return all;
     }
 
-    /**
-     * Записує потоки проєкту — дані, що живуть поза таблицями.
-     * <p>
-     * Вони розпадаються на шари, і формат розводить їх навмисно:
-     * <ul>
-     * <li>{@code /properties/*} — налаштування моделі, лягають окремими
-     * файлами під {@code properties/} і версіонуються;</li>
-     * <li>{@code /elements/<елемент>/<атрибут>/*} — вкладення користувача
-     * (звіти, файли); числові ключі в шляху замінюються посиланнями, інакше
-     * після редагування вкладення прив'язалося б до іншого елемента;</li>
-     * <li>{@code /user/*} — стан інтерфейсу; лягає в {@code .local/}, який не
-     * потрапляє до git: він персональний і змінюється від кожного кліку.</li>
-     * </ul>
-     */
     private void writeStreams(File directory) throws IOException {
         List<Object> properties = new ArrayList<Object>();
         List<Object> attachments = new ArrayList<Object>();
@@ -456,9 +351,6 @@ public class ProjectWriter {
             } else {
                 Map<String, Object> row = attachmentRow(name);
                 if (row != null) {
-                    // Ім'я файлу виводиться з самого вкладення, а не з
-                    // лічильника: інакше додавання одного вкладення зсуває всі
-                    // наступні, і git показує зміну там, де її немає.
                     String file = ATTACHMENTS_DIR + "/" + row.get("element")
                             + "/" + safeSegment(row.get("attribute").toString())
                             + "/" + safeSegment(row.get("name").toString());
@@ -494,10 +386,6 @@ public class ProjectWriter {
                 localDocument);
     }
 
-    /**
-     * @return опис вкладення з посиланнями або {@code null}, якщо шлях не має
-     * вигляду {@code /elements/<елемент>/<атрибут>/<ім'я>}
-     */
     private Map<String, Object> attachmentRow(String name) {
         if (!name.startsWith(ELEMENTS_PREFIX))
             return null;
@@ -528,12 +416,6 @@ public class ProjectWriter {
         return row;
     }
 
-    /**
-     * Пояснює git, що каталог зі станом інтерфейсу версіонувати не треба.
-     * <p>
-     * Наявний файл не перезаписується, а доповнюється: це файл користувача, і
-     * його власні правила мають пережити збереження проєкту.
-     */
     private void writeGitignore(File directory) throws IOException {
         File file = new File(directory, ".gitignore");
         String rule = LOCAL_DIR + "/";
@@ -566,12 +448,6 @@ public class ProjectWriter {
         }
     }
 
-    /**
-     * Прибирає файли, що лишилися від попереднього збереження.
-     * <p>
-     * Без цього видалений класифікатор жив би у проєкті вічно, і наступне
-     * читання відновило б його разом з усіма елементами.
-     */
     private void removeStaleFiles(File directory) {
         String[] managed = {QUALIFIERS_DIR, PROPERTIES_DIR, ATTACHMENTS_DIR,
                 OTHER_DIR, LOCAL_DIR};
@@ -593,10 +469,6 @@ public class ProjectWriter {
         }
     }
 
-    /**
-     * Робить із назви безпечний сегмент шляху: символи, неприйнятні в іменах
-     * файлів, замінюються дефісом.
-     */
     static String safeSegment(String value) {
         StringBuilder sb = new StringBuilder(value.length());
         for (int i = 0; i < value.length(); i++) {
@@ -607,11 +479,6 @@ public class ProjectWriter {
         return sb.length() == 0 ? "unnamed" : sb.toString();
     }
 
-    /**
-     * Те саме для шляху з кількох сегментів: роздільники зберігаються, решта
-     * очищається. Порожні сегменти й {@code ..} відкидаються, щоб запис не
-     * вийшов за межі каталогу проєкту.
-     */
     static String safePath(String value) {
         StringBuilder sb = new StringBuilder(value.length());
         for (String segment : value.split("/")) {
@@ -655,6 +522,6 @@ public class ProjectWriter {
     private static void mkdirs(File directory) throws IOException {
         if (directory != null && !directory.isDirectory()
                 && !directory.mkdirs())
-            throw new IOException("Не вдалося створити каталог " + directory);
+            throw new IOException("Can not create directory " + directory);
     }
 }

@@ -13,10 +13,7 @@ dependencies {
     testImplementation project(':database-storage')
     testImplementation project(':core-simple-attributes')
     testImplementation project(':data-framework-common')
-    // Потрібен на тестовому classpath, щоб ServiceLoader підхопив
-    // IDEF0PluginProvider — без нього файли з моделями не відкриваються.
     testImplementation project(':idef0-core')
-    // Малювання діаграм для еталонних знімків.
     testImplementation project(':idef0-common')
     testImplementation project(':report-core')
     testImplementation project(':chart-core')
@@ -26,7 +23,6 @@ dependencies {
 }
 
 test {
-    // Прокидаємо властивість у JVM тестів: без цього -D осідає на Gradle.
     ['ramus.dump.target', 'ramus.dump.sample', 'ramus.diagnose', 'ramus.golden.update', 'ramus.schema.target'].each { name ->
         if (System.getProperty(name)) {
             systemProperty name, System.getProperty(name)

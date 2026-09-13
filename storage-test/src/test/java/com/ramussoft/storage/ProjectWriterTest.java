@@ -23,11 +23,6 @@ import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 
-/**
- * Експорт реальної моделі в дерево YAML: перевіряємо, що воно взагалі
- * будується, що результат детермінований і що у файлах немає слідів
- * позиційного дампу таблиць.
- */
 public class ProjectWriterTest {
 
     private static final List<String> KNOWN_UNOPENABLE = Arrays
@@ -47,23 +42,20 @@ public class ProjectWriterTest {
             File out = folder.newFolder(safeName(sample) + "-yaml");
             export(sample, out);
 
-            assertTrue("немає опису проєкту для " + sample.getName(),
+            assertTrue("no project description for " + sample.getName(),
                     new File(out, ProjectWriter.PROJECT_FILE).isFile());
-            assertTrue("немає attributes.yaml для " + sample.getName(),
+            assertTrue("no attributes.yaml for " + sample.getName(),
                     new File(out, "attributes.yaml").isFile());
 
             File qualifiers = new File(out, "qualifiers");
-            assertTrue("немає каталогу qualifiers для " + sample.getName(),
+            assertTrue("no qualifiers directory for " + sample.getName(),
                     qualifiers.isDirectory());
-            assertTrue("не експортовано жодного класифікатора для "
+            assertTrue("no qualifier was exported for "
                             + sample.getName(),
                     qualifiers.list().length > 0);
         }
     }
 
-    /**
-     * Головна вимога до формату: той самий проєкт має давати той самий текст.
-     */
     @Test
     public void exportIsDeterministic() throws Exception {
         for (File sample : openableSamples()) {
@@ -75,19 +67,16 @@ public class ProjectWriterTest {
 
             List<String> namesA = listRelative(first);
             List<String> namesB = listRelative(second);
-            assertEquals("набір файлів відрізняється для " + sample.getName(),
+            assertEquals("the set of files differs for " + sample.getName(),
                     namesA, namesB);
 
             for (String name : namesA)
-                assertEquals("вміст " + name + " відрізняється для "
+                assertEquals("the content of " + name + " differs for "
                                 + sample.getName(),
                         read(new File(first, name)), read(new File(second, name)));
         }
     }
 
-    /**
-     * Імена файлів мають бути читабельними: {@code <slug>--<id>.yaml}.
-     */
     @Test
     public void qualifierFilesAreNamedReadably() throws Exception {
         File sample = openableSamples().get(0);
@@ -97,16 +86,12 @@ public class ProjectWriterTest {
         String[] names = new File(out, "qualifiers").list();
         Arrays.sort(names);
         for (String name : names) {
-            assertTrue("ім'я без розділювача slug/id: " + name,
+            assertTrue("name without the slug/id separator: " + name,
                     name.contains("--"));
-            assertTrue("не .yaml: " + name, name.endsWith(".yaml"));
+            assertTrue("not .yaml: " + name, name.endsWith(".yaml"));
         }
     }
 
-    /**
-     * У новому форматі не має лишатися ані позиційних полів старого XML,
-     * ані hex-кодованих двійкових блобів.
-     */
     @Test
     public void exportHasNoPositionalFields() throws Exception {
         File sample = openableSamples().get(0);
@@ -115,9 +100,9 @@ public class ProjectWriterTest {
 
         for (String name : listRelative(out)) {
             String text = read(new File(out, name));
-            assertFalse(name + " містить позиційне поле старого формату",
+            assertFalse(name + " carries a positional field of the old format",
                     text.contains("<f id="));
-            assertFalse(name + " містить назву таблиці БД",
+            assertFalse(name + " carries a database table name",
                     text.contains("generate-from-table"));
         }
     }

@@ -25,14 +25,6 @@ import com.ramussoft.idef0.NDataPluginFactory;
 import com.ramussoft.pb.DataPlugin;
 import com.ramussoft.pb.Function;
 
-/**
- * Чи не залежить відмальована діаграма від машини й дня.
- * <p>
- * {@link DiagramGoldenTest} звіряє знімки з нульовим допуском, тому будь-яка
- * така залежність ламає його на чужому комп'ютері або наступного ранку — і
- * ламає незрозуміло, різницею зображень. Цей тест перевіряє причину, а не
- * наслідок: шрифт кожного напису й дату кожної функції.
- */
 public class DiagramDeterminismTest {
 
     @Rule
@@ -43,14 +35,6 @@ public class DiagramDeterminismTest {
         RsfFixture.isolateHome(folder.newFolder("home"));
     }
 
-    /**
-     * Жоден напис не малюється системним шрифтом.
-     * <p>
-     * Підміна йде поелементно — функції, стрілки, написи, типовий шрифт
-     * полотна, — тож новий вид елемента легко проґавити. Тоді еталон знову
-     * почне залежати від того, який фізичний шрифт система підставляє під
-     * логічний {@code Dialog}.
-     */
     @Test
     public void everyPaintedFontIsTheBundledOne() throws Exception {
         List<Font> fonts = new ArrayList<Font>();
@@ -61,33 +45,28 @@ public class DiagramDeterminismTest {
             }
         });
 
-        assertFalse("не знайдено жодного шрифту", fonts.isEmpty());
+        assertFalse("no font found", fonts.isEmpty());
         for (Font font : fonts)
-            assertEquals("напис малюється не вбудованим шрифтом",
+            assertEquals("text is drawn with a font other than the bundled one",
                     TestFonts.FAMILY, font.getFamily(Locale.ROOT));
     }
 
-    /**
-     * Дати в рамці не залежать від дня запуску.
-     */
     @Test
     public void datesAreFixed() throws Exception {
         final int[] checked = new int[1];
-        // Перевіряємо на відкритій базі: функція читає поля крізь рушій, і
-        // після закриття з'єднання дати вже не дістати.
         withSample(new Visitor() {
             @Override
             public void visit(DataPlugin plugin, Function base) {
                 checked[0] += checkDates(base);
             }
         });
-        assertTrue("не знайдено жодної функції", checked[0] > 0);
+        assertTrue("no function found", checked[0] > 0);
     }
 
     private static int checkDates(Function function) {
-        assertEquals("дата створення лишилась поточною", RsfFixture.FIXED_DATE,
+        assertEquals("the creation date stayed at today", RsfFixture.FIXED_DATE,
                 function.getCreateDate());
-        assertEquals("дата перегляду лишилась поточною", RsfFixture.FIXED_DATE,
+        assertEquals("the review date stayed at today", RsfFixture.FIXED_DATE,
                 function.getRevDate());
         int count = 1;
         for (int i = 0; i < function.getChildCount(); i++)
@@ -95,9 +74,6 @@ public class DiagramDeterminismTest {
         return count;
     }
 
-    /**
-     * Два відмальовування того самого файлу дають той самий відбиток.
-     */
     @Test
     public void renderingRepeatsItself() throws Exception {
         assertEquals(render(), render());
@@ -109,7 +85,7 @@ public class DiagramDeterminismTest {
             Engine engine = database.getEngine(null);
             java.util.Map<String, String> result = DiagramRenderer.render(
                     engine, database.getAccessRules(null));
-            assertTrue("не відмальовано жодної діаграми", result.size() > 0);
+            assertTrue("no diagram was rendered", result.size() > 0);
             ((FileIEngineImpl) engine.getDeligate()).close();
             return result;
         } finally {
@@ -121,10 +97,6 @@ public class DiagramDeterminismTest {
         void visit(DataPlugin plugin, Function base);
     }
 
-    /**
-     * Відкриває зразок і проходить його моделі так само, як це робить
-     * {@link DiagramRenderer}: із заміною шрифтів і дат.
-     */
     private void withSample(Visitor visitor) throws Exception {
         MemoryDatabase database = open();
         try {

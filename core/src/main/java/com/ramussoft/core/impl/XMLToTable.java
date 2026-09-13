@@ -37,7 +37,6 @@ public class XMLToTable {
 
     private InputStream stream;
 
-
     private interface Converter {
         void fill(PreparedStatement ps, int column, String value)
                 throws SQLException;
@@ -158,12 +157,9 @@ public class XMLToTable {
                     ps.setTimestamp(column,
                             new Timestamp(XmlDates.parse(value).getTime()));
                 } catch (ParseException e) {
-                    // Раніше параметр лишався невстановленим, і драйвер валив
-                    // уже весь запис таблиці. Ставимо null, щоб втратити одне
-                    // значення, а не всю таблицю, і повідомляємо з контекстом.
-                    System.err.println("Таблиця " + prefix + tableName
-                            + ": не розпізнано дату \"" + value
-                            + "\", збережено як порожнє значення");
+                    System.err.println("Table " + prefix + tableName
+                            + ": unparsable date \"" + value
+                            + "\", stored as an empty value");
                     ps.setTimestamp(column, null);
                 }
         }

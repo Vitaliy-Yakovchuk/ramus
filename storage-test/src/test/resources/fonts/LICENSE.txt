@@ -1,13 +1,14 @@
-Шрифт RamusGoldenSans.ttf — це Liberation Sans Regular (Copyright (c) 2012
-Red Hat, Inc.), у якому змінено лише таблицю імен: родина названа
-«Ramus Golden Sans».
+RamusGoldenSans.ttf is Liberation Sans Regular (Copyright (c) 2012 Red Hat,
+Inc.) with one change: the name table, so that the family reads
+"Ramus Golden Sans".
 
-Перейменування обов'язкове: OFL забороняє похідним шрифтам уживати зарезервовану
-назву «Liberation», а тестам потрібна родина, якої напевно немає в системі — інакше
-системний шрифт із тією ж назвою переважив би вбудований, і еталон знову залежав би
-від машини.
+The renaming is required. The OFL forbids a derivative from using the reserved
+name "Liberation", and the tests need a family that is certainly absent from
+the system: otherwise a system font of the same name would win over the
+bundled one, and the golden images would depend on the machine again.
 
-Шрифт використовується лише в тестах (storage-test) і не входить до збірки програми.
+The font is used by the tests (storage-test) only and is not part of the
+application build.
 
 --------------------------------------------------------------------------------
 

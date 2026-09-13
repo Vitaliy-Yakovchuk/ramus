@@ -19,23 +19,6 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.Tag;
 import org.snakeyaml.engine.v2.representer.StandardRepresenter;
 
-/**
- * Канонічні налаштування YAML для файлів проєкту.
- * <p>
- * Формат мусить бути детермінованим і дружнім до {@code git diff}, тому тут
- * зібрані всі правила запису в одному місці:
- * <ul>
- * <li>YAML 1.2 (snakeyaml-engine) — {@code no}/{@code yes}/{@code on}/{@code off}
- * лишаються рядками, Norway problem не виникає;</li>
- * <li>рядки завжди в лапках, багаторядкові — літеральним блоком {@code |},
- * щоб один стиль замінив п'ять;</li>
- * <li>рядки ніколи не переносяться: автоперенесення давало б різні файли для
- * тих самих даних;</li>
- * <li>anchors/aliases не емітуються — інакше diff показує посилання замість
- * даних;</li>
- * <li>читання безпечне: жодного інстанціювання довільних Java-класів.</li>
- * </ul>
- */
 public final class YamlFormat {
 
     private YamlFormat() {
@@ -45,8 +28,6 @@ public final class YamlFormat {
         DumpSettings settings = DumpSettings.builder()
                 .setDefaultFlowStyle(FlowStyle.BLOCK)
                 .setIndent(2)
-                // Ширина «нескінченна» + вимкнене розбиття рядків: емітер не
-                // має права самовільно переносити довгі значення.
                 .setWidth(Integer.MAX_VALUE)
                 .setSplitLines(false)
                 .setMultiLineFlow(false)
@@ -55,11 +36,6 @@ public final class YamlFormat {
         return new Dump(settings, new QuotingRepresenter(settings));
     }
 
-    /**
-     * Безпечне читання: {@link Load} з snakeyaml-engine не вміє створювати
-     * довільні Java-об'єкти, тому шлях {@code !!javax…} тут відсутній як клас
-     * проблеми.
-     */
     public static Load load() {
         LoadSettings settings = LoadSettings.builder()
                 .setAllowDuplicateKeys(false)
@@ -75,14 +51,6 @@ public final class YamlFormat {
         writer.flush();
     }
 
-    /**
-     * Копія дерева, у якій жодне значення не є спільним екземпляром.
-     * <p>
-     * Емітер перетворює повторно використаний об'єкт на anchor/alias. У файлі
-     * це означало б посилання замість даних: git показував би незрозумілий
-     * diff, а агент — не бачив справжнього значення. Дешевше скопіювати дерево,
-     * ніж покладатися на те, що викликач ніде не переуживає екземпляр.
-     */
     @SuppressWarnings("unchecked")
     static Object deepCopy(Object value) {
         if (value instanceof Map) {
@@ -116,16 +84,11 @@ public final class YamlFormat {
         if (value == null)
             return new java.util.LinkedHashMap<String, Object>();
         if (!(value instanceof Map))
-            throw new IOException("Очікувалась мапа на верхньому рівні, а не "
+            throw new IOException("Expected a map at the top level, not "
                     + value.getClass().getName());
         return (Map<String, Object>) value;
     }
 
-    /**
-     * Рядки виводяться в одинарних лапках, а багаторядкові — літеральним
-     * блоком. Числа й булеві лишаються без лапок, інакше при читанні вони
-     * перетворилися б на рядки.
-     */
     private static final class QuotingRepresenter extends StandardRepresenter {
 
         QuotingRepresenter(DumpSettings settings) {
@@ -139,12 +102,6 @@ public final class YamlFormat {
             });
         }
 
-        /**
-         * Ключі пишуться без лапок, значення — у лапках. Ключі в цьому форматі
-         * походять зі схеми, а не з даних користувача, тож вони безпечні;
-         * лапки на кожному ключі лише зашумили б файл. Ключ, який у plain-стилі
-         * прочитався б як число чи булеве, усе одно береться в лапки.
-         */
         @Override
         protected NodeTuple representMappingEntry(Map.Entry<?, ?> entry) {
             Object key = entry.getKey();

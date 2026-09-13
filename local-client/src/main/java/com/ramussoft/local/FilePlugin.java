@@ -86,10 +86,6 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
 
     private static final String RSF = ".rsf";
 
-    /**
-     * Розширення каталогу проєкту. Застосунок такі проєкти не відкриває й не
-     * зберігає: його формат — {@code .rsf}.
-     */
     private static final String PROJECT = ".ramus";
 
     private static final String LAST_FILE = "LAST_FILE";
@@ -813,7 +809,6 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
         }};
     }
 
-
     final ResourceBundle langs = ResourceBundle
             .getBundle("com.ramussoft.gui.spell.languages");
 
@@ -847,10 +842,6 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
         return System.getProperty("user.ramus.application.extension", RSF);
     }
 
-    /**
-     * Чи є цей шлях проєктом нового формату — наявним каталогом проєкту або
-     * іменем із відповідним розширенням.
-     */
     static boolean isProject(File file) {
         if (file == null)
             return false;
@@ -859,10 +850,6 @@ public class FilePlugin extends AbstractViewPlugin implements Commands {
         return file.getName().toLowerCase().endsWith(PROJECT);
     }
 
-    /**
-     * Ім\'я каталогу проєкту, виведене з довільного шляху: {@code модель.rsf}
-     * стає {@code модель.ramus}, шлях без розширення його отримує.
-     */
     static File projectName(File file) {
         file = ProjectReader.directoryOf(file);
         String name = file.getName();

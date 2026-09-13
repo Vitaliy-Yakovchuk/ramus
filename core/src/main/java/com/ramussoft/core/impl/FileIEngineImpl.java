@@ -54,10 +54,6 @@ public class FileIEngineImpl extends IEngineImpl {
 
     private ZipFile zFile;
 
-    /**
-     * Порядок ітерації визначає порядок записів у ZIP, тому мапа має бути
-     * впорядкованою: {@link Hashtable} давала різний порядок між запусками.
-     */
     private final SortedMap<String, File> extractedFiles = Collections
             .synchronizedSortedMap(new TreeMap<String, File>());
 
@@ -191,14 +187,6 @@ public class FileIEngineImpl extends IEngineImpl {
             deleteOrphanFileAttachments(metadata);
     }
 
-    /**
-     * Відкриває проєкт нового формату — каталог із YAML-файлами.
-     * <p>
-     * Викликається там само, де {@link #open(File, boolean)} для {@code .rsf}:
-     * до того, як почнуть працювати плагіни. Завдяки цьому вони бачать уже
-     * готову модель і нічого не добудовують — так само, як при відкритті
-     * старого формату.
-     */
     public void openProject(File project, boolean ignoreFileVersion)
             throws IOException, FileVersionException {
         if (zFile != null || this.file != null)
@@ -210,8 +198,6 @@ public class FileIEngineImpl extends IEngineImpl {
         if (!ignoreFileVersion)
             checkProjectVersion(description);
 
-        // Знімок вихідного стану для відновлення після збою: журнал сеансу
-        // містить лише зміни, тож без бази, на яку їх накотити, він марний.
         if (tmpPath != null)
             copyProject(directory, new File(tmpPath, "source.rms"));
 
@@ -221,26 +207,15 @@ public class FileIEngineImpl extends IEngineImpl {
             writeFileNameToLock(directory);
     }
 
-    /**
-     * Копіює каталог проєкту.
-     * <p>
-     * {@code .git} свідомо пропускаємо: проєкт зазвичай лежить у сховищі
-     * версій, і тягнути всю його історію в тимчасовий знімок при кожному
-     * відкритті — це хвилини очікування замість секунд.
-     */
     private void copyProject(File source, File destination)
             throws IOException {
         if (source.equals(destination))
-            // Відновлення після збою: рушій відкриває сам знімок, і копіювати
-            // його нікуди не треба. Без цієї перевірки кожен файл знімка
-            // відкривався б на запис перед читанням, тобто обнулявся б, і
-            // відновлення давало б порожній проєкт.
             return;
         if (source.isDirectory()) {
             if (".git".equals(source.getName()))
                 return;
             if (!destination.isDirectory() && !destination.mkdirs())
-                throw new IOException("Не вдалося створити каталог "
+                throw new IOException("Can not create directory "
                         + destination);
             File[] children = source.listFiles();
             if (children != null)
@@ -261,13 +236,6 @@ public class FileIEngineImpl extends IEngineImpl {
         }
     }
 
-    /**
-     * Перевіряє, що цей застосунок здатен відкрити проєкт.
-     * <p>
-     * Перевірка та сама, що й для {@code .rsf}: проєкт, який посилається на
-     * невідомий плагін, краще не відкривати взагалі, ніж відкрити з мовчазною
-     * втратою тих даних, якими плагін завідував.
-     */
     @SuppressWarnings("unchecked")
     private void checkProjectVersion(Map<String, Object> project)
             throws FileVersionException {
@@ -288,14 +256,6 @@ public class FileIEngineImpl extends IEngineImpl {
                         required.toArray(new String[required.size()]), plugin);
     }
 
-    /**
-     * Зберігає проєкт у каталог нового формату.
-     * <p>
-     * Запис іде на місці, без проміжного каталогу й перейменування: проєкт
-     * зазвичай лежить у сховищі версій, і підміна каталогу знищила б і його
-     * історію, і все, чого формат не знає. Застарілі файли прибирає сам
-     * {@link ProjectWriter}.
-     */
     public void saveProject(File project) throws IOException {
         File directory = ProjectReader.directoryOf(project);
         List<String> sequences = new ArrayList<String>();
@@ -697,19 +657,8 @@ public class FileIEngineImpl extends IEngineImpl {
         return ps;
     }
 
-    /**
-     * Мітка часу для всіх записів у ZIP: 1980-06-01T12:00:00Z.
-     * <p>
-     * Реальний час модифікації робив би кожне збереження унікальним на рівні
-     * байтів. Дата навмисно взята в середині 1980 року — так вона лишається в
-     * діапазоні, який формат ZIP кодує без розширених полів, у будь-якому
-     * часовому поясі.
-     */
     private static final long ZIP_ENTRY_TIME = 328708800000L;
 
-    /**
-     * Створює запис для запису в архів із фіксованою міткою часу.
-     */
     private static ZipEntry outEntry(String name) {
         ZipEntry entry = new ZipEntry(name);
         entry.setTime(ZIP_ENTRY_TIME);

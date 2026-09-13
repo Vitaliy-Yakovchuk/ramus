@@ -7,17 +7,6 @@ import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 
-/**
- * Складає {@code .rsf} з проєкту нового формату — зворотний бік
- * {@link RsfToYaml}.
- * <p>
- * Потрібен лише для сумісності зі старими збірками: сам застосунок працює з
- * каталогом проєкту напряму.
- *
- * <pre>
- * java -cp ... com.ramussoft.demo.YamlToRsf каталог проєкт.rsf
- * </pre>
- */
 public final class YamlToRsf {
 
     private YamlToRsf() {
@@ -25,14 +14,14 @@ public final class YamlToRsf {
 
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
-            System.err.println("Використання: YamlToRsf <каталог> <файл.rsf>");
+            System.err.println("Usage: YamlToRsf <directory> <file.rsf>");
             System.exit(2);
             return;
         }
 
         File source = new File(args[0]);
         if (!source.isDirectory()) {
-            System.err.println("Не знайдено каталог: " + source);
+            System.err.println("Directory not found: " + source);
             System.exit(2);
             return;
         }
@@ -47,6 +36,6 @@ public final class YamlToRsf {
             database.close();
         }
 
-        System.out.println("Записано " + target.getAbsolutePath());
+        System.out.println("Written " + target.getAbsolutePath());
     }
 }

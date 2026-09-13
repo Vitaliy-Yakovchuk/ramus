@@ -1087,8 +1087,6 @@ public class PaintSector {
             return;
         }
 
-        // Старий шлях: вигляд запакований у двійкове поле. Лишається для
-        // читання наявних файлів; при першому ж збереженні переїде в поля.
         final byte[] bs = sector.getVisualAttributes();
         if (bs.length == 0) {
             stroke = Options.getStroke("DEFAULT_ARROW_STROKE", stroke);
@@ -1142,9 +1140,6 @@ public class PaintSector {
         return value == null ? fallback : value.intValue();
     }
 
-    /**
-     * @return довжини штрихів або {@code null}, якщо лінія суцільна
-     */
     private static float[] parseDash(final String value) {
         if (value == null || value.length() == 0)
             return null;
@@ -2393,16 +2388,6 @@ public class PaintSector {
         movingArea = area;
     }
 
-    /**
-     * Множина в упорядкованому вигляді.
-     * <p>
-     * Порядок тут не косметика: обидва місця, куди йде цей масив, за ним
-     * вирішують, котрий із з'єднаних секторів залишить собі підпис. Порядок
-     * обходу {@link HashSet} визначається адресами об'єктів, тобто змінюється
-     * від запуску до запуску — і та сама модель малювалася по-різному.
-     * Сортуємо за ключем сектора: він сталий і не залежить від того, як лягла
-     * пам'ять.
-     */
     public static PaintSector[] toArray(final HashSet v) {
         PaintSector[] result = ((HashSet<PaintSector>) v)
                 .toArray(new PaintSector[v.size()]);

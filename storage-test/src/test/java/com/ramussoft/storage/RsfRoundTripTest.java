@@ -14,24 +14,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-/**
- * Перевіряє, що збереження {@code .rsf} детерміноване: два послідовні
- * перезаписи однієї моделі мають давати ідентичний файл.
- * <p>
- * Порівнювати вихідний файл із перезбереженим не можна — зразки в
- * {@code dest/doc} створені старою версією застосунку. Значущим є саме
- * порівняння другого перезапису з третім.
- */
 public class RsfRoundTripTest {
 
-    /**
-     * Зразки, які поточна версія свідомо не відкриває. Тримаємо список явно,
-     * щоб нова непрацездатність одразу впадала в очі, а не ховалась у skip.
-     *
-     * @see #knownUnopenableSamplesAreStillUnopenable()
-     */
     private static final List<String> KNOWN_UNOPENABLE = Arrays.asList(
-            // Посилається на плагін "Attribute.Doc.Way", якого в коді немає.
             "Пример модели.rsf");
 
     @Rule
@@ -45,15 +30,10 @@ public class RsfRoundTripTest {
     @Test
     public void samplesArePresent() {
         assertFalse(
-                "У dest/doc не знайдено жодного .rsf — тест не має що перевіряти",
+                "No .rsf found in dest/doc, the test has nothing to check",
                 RsfFixture.sampleFiles().isEmpty());
     }
 
-    /**
-     * Список непрацездатних зразків має лишатись рівно таким, як записано.
-     * Якщо файл раптом почав відкриватись — приберіть його з
-     * {@link #KNOWN_UNOPENABLE}. Якщо перестав — це регресія.
-     */
     @Test
     public void knownUnopenableSamplesAreStillUnopenable() {
         List<String> unexpectedlyBroken = new ArrayList<String>();
@@ -69,9 +49,9 @@ public class RsfRoundTripTest {
         }
 
         if (!unexpectedlyBroken.isEmpty() || !unexpectedlyFixed.isEmpty())
-            fail("Змінився перелік зразків, які відкриваються."
-                    + "\n  перестали відкриватись: " + unexpectedlyBroken
-                    + "\n  почали відкриватись:    " + unexpectedlyFixed);
+            fail("The set of samples that open has changed."
+                    + "\n  stopped opening: " + unexpectedlyBroken
+                    + "\n  started opening: " + unexpectedlyFixed);
     }
 
     @Test
@@ -84,8 +64,6 @@ public class RsfRoundTripTest {
             File source = new File(work, "source.rsf");
             RsfFixture.copy(sample, source);
 
-            // Перше збереження нормалізує файл під поточну версію формату;
-            // значущим є порівняння другого з третім.
             File first = new File(work, "first.rsf");
             File second = new File(work, "second.rsf");
             File third = new File(work, "third.rsf");
@@ -97,26 +75,22 @@ public class RsfRoundTripTest {
             String diff = ZipArchives.diff(second, third);
             if (diff.length() > 0)
                 failures.append('\n').append(sample.getName())
-                        .append(" — вміст архіву змінюється між збереженнями:\n")
+                        .append(" - the archive content changes between saves:\n")
                         .append(diff);
 
             List<String> orderA = ZipArchives.entryOrder(second);
             List<String> orderB = ZipArchives.entryOrder(third);
             if (!orderA.equals(orderB))
                 failures.append('\n').append(sample.getName())
-                        .append(" — порядок записів у ZIP не стабільний:\n")
+                        .append(" - the order of ZIP entries is not stable:\n")
                         .append("  2: ").append(orderA).append('\n')
                         .append("  3: ").append(orderB).append('\n');
         }
 
         if (failures.length() > 0)
-            fail("Збереження .rsf недетерміноване:" + failures);
+            fail("Saving an .rsf is not deterministic:" + failures);
     }
 
-    /**
-     * Найстрогіша форма вимоги: повторне збереження без змін має давати
-     * побайтово той самий файл, інакше git бачить зміну там, де її немає.
-     */
     @Test
     public void resaveIsByteIdentical() throws Exception {
         StringBuilder failures = new StringBuilder();
@@ -138,14 +112,14 @@ public class RsfRoundTripTest {
             byte[] b = readAll(third);
             if (!Arrays.equals(a, b))
                 failures.append('\n').append(sample.getName())
-                        .append(" — файли відрізняються побайтово (")
+                        .append(" - the files differ byte for byte (")
                         .append(a.length).append(" vs ").append(b.length)
-                        .append(" байт), хоча вміст записів збігається;")
-                        .append(" перевірте метадані ZIP.");
+                        .append(" bytes), though the entries match;")
+                        .append(" check the ZIP metadata.");
         }
 
         if (failures.length() > 0)
-            fail("Збереження .rsf не побайтово стабільне:" + failures);
+            fail("Saving an .rsf is not byte-stable:" + failures);
     }
 
     private static byte[] readAll(File file) throws Exception {
@@ -171,7 +145,7 @@ public class RsfRoundTripTest {
             RsfFixture.copy(sample, source);
             RsfFixture.resave(source, saved);
 
-            assertTrue(sample.getName() + ": перезбережений файл порожній",
+            assertTrue(sample.getName() + ": the resaved file is empty",
                     ZipArchives.read(saved).size() > 0);
         }
     }

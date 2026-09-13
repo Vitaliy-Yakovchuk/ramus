@@ -23,13 +23,6 @@ import com.ramussoft.core.impl.FileIEngineImpl;
 import com.ramussoft.database.FileDatabaseFactory;
 import com.ramussoft.database.MemoryDatabase;
 
-/**
- * Проєкт треба не лише прочитати, а й продовжити редагувати.
- * <p>
- * Ключі роздають лічильники, і після відкриття вони мають стояти за
- * найбільшим уже зайнятим значенням — інакше перший же створений елемент
- * дістав би чужий номер і затер сусіда.
- */
 public class ProjectEditingTest {
 
     @Rule
@@ -60,7 +53,7 @@ public class ProjectEditingTest {
 
             Element element = engine.createElement(qualifier.getId());
             created = element.getId();
-            assertFalse("новий елемент дістав уже зайнятий ключ " + created,
+            assertFalse("the new element took an already used key " + created,
                     before.contains(Long.valueOf(created)));
 
             FileIEngineImpl impl = (FileIEngineImpl) engine.getDeligate();
@@ -70,8 +63,6 @@ public class ProjectEditingTest {
             database.close();
         }
 
-        // Після повторного відкриття доданий елемент має бути на місці, а
-        // решта — незмінною.
         database = (MemoryDatabase) FileDatabaseFactory
                 .createDatabase(project);
         try {
@@ -81,20 +72,16 @@ public class ProjectEditingTest {
             for (Element element : engine.getElements(qualifier.getId()))
                 after.add(Long.valueOf(element.getId()));
 
-            assertTrue("доданий елемент зник після збереження",
+            assertTrue("the added element did not survive saving",
                     after.contains(Long.valueOf(created)));
             after.remove(Long.valueOf(created));
-            assertEquals("змінився склад решти елементів", before, after);
+            assertEquals("the remaining elements changed", before, after);
             ((FileIEngineImpl) engine.getDeligate()).close();
         } finally {
             database.close();
         }
     }
 
-    /**
-     * Значення атрибута має переживати збереження й відкриття — це найкоротший
-     * шлях перевірити весь ланцюг «рушій → файл → рушій».
-     */
     @Test
     public void editedValueSurvivesSaveAndReopen() throws Exception {
         long elementId;
@@ -106,13 +93,13 @@ public class ProjectEditingTest {
             Engine engine = database.getEngine(null);
             Qualifier qualifier = biggest(engine);
             Attribute attribute = text(engine, qualifier);
-            assertNotNull("у класифікаторі немає текстового атрибута",
+            assertNotNull("the qualifier has no text attribute",
                     attribute);
             Element element = engine.getElements(qualifier.getId()).get(0);
             elementId = element.getId();
             attributeId = attribute.getId();
 
-            engine.setAttribute(element, attribute, "Перевірка збереження");
+            engine.setAttribute(element, attribute, "Saved text");
 
             FileIEngineImpl impl = (FileIEngineImpl) engine.getDeligate();
             impl.saveProject(project);
@@ -127,23 +114,16 @@ public class ProjectEditingTest {
             Engine engine = database.getEngine(null);
             Object value = engine.getAttribute(engine.getElement(elementId),
                     engine.getAttribute(attributeId));
-            assertEquals("Перевірка збереження", value);
+            assertEquals("Saved text", value);
             ((FileIEngineImpl) engine.getDeligate()).close();
         } finally {
             database.close();
         }
     }
 
-    /**
-     * Порожній проєкт — те, що отримує користувач після «Створити».
-     * <p>
-     * Тут немає жодного файлу, з якого можна було б щось успадкувати, тож
-     * увесь вміст мають дати плагіни; якщо збереження такого проєкту не
-     * читається назад, новий документ неможливо створити взагалі.
-     */
     @Test
     public void freshProjectSavesAndOpens() throws Exception {
-        File fresh = new File(folder.newFolder("fresh"), "Новий.ramus");
+        File fresh = new File(folder.newFolder("fresh"), "New.ramus");
 
         MemoryDatabase database = (MemoryDatabase) FileDatabaseFactory
                 .createDatabase();
@@ -151,7 +131,7 @@ public class ProjectEditingTest {
         try {
             Engine engine = database.getEngine(null);
             Qualifier qualifier = engine.createQualifier();
-            qualifier.setName("Довідник");
+            qualifier.setName("Reference");
             engine.updateQualifier(qualifier);
             qualifierId = qualifier.getId();
 
@@ -166,8 +146,8 @@ public class ProjectEditingTest {
         try {
             Engine engine = database.getEngine(null);
             Qualifier qualifier = engine.getQualifier(qualifierId);
-            assertNotNull("класифікатор не пережив збереження", qualifier);
-            assertEquals("Довідник", qualifier.getName());
+            assertNotNull("the qualifier did not survive saving", qualifier);
+            assertEquals("Reference", qualifier.getName());
             ((FileIEngineImpl) engine.getDeligate()).close();
         } finally {
             database.close();
@@ -184,7 +164,7 @@ public class ProjectEditingTest {
                 result = qualifier;
             }
         }
-        assertNotNull("у проєкті немає класифікаторів", result);
+        assertNotNull("the project has no qualifiers", result);
         return result;
     }
 

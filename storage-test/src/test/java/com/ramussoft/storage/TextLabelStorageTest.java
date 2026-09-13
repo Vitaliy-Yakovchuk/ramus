@@ -32,18 +32,11 @@ import com.ramussoft.pb.idef.visual.MovingArea;
 import com.ramussoft.pb.idef.visual.MovingText;
 import com.ramussoft.pb.print.PIDEF0painter;
 
-/**
- * Підписи діаграми в новій, не двійковій формі.
- * <p>
- * Модель створюється з нуля, тож одразу має версію подання 3. Перевіряємо, що
- * підпис переживає збереження й читання, що він лежить в атрибуті, а не в
- * двійковому полі, і що двійкове поле стало вироджено малим.
- */
 public class TextLabelStorageTest {
 
     private static final Dimension SIZE = new Dimension(1200, 900);
 
-    private static final String TEXT = "Примітка до діаграми";
+    private static final String TEXT = "Diagram note";
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -79,7 +72,7 @@ public class TextLabelStorageTest {
             area.getRefactor().saveToFunction(base);
 
             blob = base.getSectorData();
-            assertEquals("підпис не потрапив в атрибут", 1,
+            assertEquals("the label did not reach the attribute", 1,
                     base.getTextLabels().size());
 
             ((FileIEngineImpl) engine.getDeligate()).saveToFile(file);
@@ -87,11 +80,10 @@ public class TextLabelStorageTest {
             database.close();
         }
 
-        // Двійкове поле тепер містить лише номер версії.
-        assertTrue("двійкове поле досі велике: " + blob.length,
+        assertTrue("the binary field is still big: " + blob.length,
                 blob.length <= 8);
-        assertFalse("текст підпису лишився у двійковому полі",
-                new String(blob, "UTF-8").contains("Примітка"));
+        assertFalse("the label text stayed in the binary field",
+                new String(blob, "UTF-8").contains("Diagram note"));
 
         MemoryDatabase reopened = (MemoryDatabase) FileDatabaseFactory
                 .createDatabase(file);
@@ -102,7 +94,7 @@ public class TextLabelStorageTest {
                     reopened.getAccessRules(null));
             Function base = plugin.getBaseFunction();
 
-            assertEquals("підпис не збережено", 1,
+            assertEquals("the label was not saved", 1,
                     base.getTextLabels().size());
             TextLabelPersistent label = base.getTextLabels().get(0);
             assertEquals(TEXT, label.getText());
@@ -112,11 +104,10 @@ public class TextLabelStorageTest {
             assertEquals(Font.BOLD, label.getFontStyle());
             assertEquals(Color.RED.getRGB(), label.getColor().intValue());
 
-            // І він справді потрапляє на діаграму.
             MovingArea area = PIDEF0painter.createMovingArea(SIZE, plugin,
                     base);
             area.setActiveFunction(base);
-            assertEquals("підпис не відновився на діаграмі", 1,
+            assertEquals("the label did not come back on the diagram", 1,
                     area.getRefactor().getTexts().size());
             assertEquals(TEXT, area.getRefactor().getTexts().get(0).getText());
 
@@ -129,11 +120,11 @@ public class TextLabelStorageTest {
     private static DataPlugin createModel(Engine engine, AccessRules rules) {
         Attribute name = engine.createAttribute(
                 new AttributeType("Core", "Text", true));
-        name.setName("Назва");
+        name.setName("Name");
         engine.updateAttribute(name);
 
         Qualifier qualifier = engine.createQualifier();
-        qualifier.setName("Тестова модель");
+        qualifier.setName("Test model");
         qualifier.getAttributes().add(name);
         qualifier.setAttributeForName(name.getId());
         engine.updateQualifier(qualifier);

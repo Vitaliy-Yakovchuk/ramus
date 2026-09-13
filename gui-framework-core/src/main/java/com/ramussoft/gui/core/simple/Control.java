@@ -101,11 +101,6 @@ public class Control {
         }
     }
 
-    /**
-     * @param frame унікальне вікно.
-     * @return <code>true</code>, якщо вікно зараз показане. Вікна, які займають
-     * головну область, показані завжди.
-     */
     public boolean isVisible(UniqueDFrame frame) {
         List<TabPlace> places = tabPlaces.get(frame);
         if (places == null)
@@ -116,9 +111,6 @@ public class Control {
         return false;
     }
 
-    /**
-     * Показує або ховає вкладку унікального вікна.
-     */
     public void setVisible(UniqueDFrame frame, boolean visible) {
         List<TabPlace> places = tabPlaces.get(frame);
         if (places == null)
@@ -401,9 +393,6 @@ public class Control {
         places.add(new TabPlace(pane, component, frame.getTitleText(), index));
     }
 
-    /**
-     * Місце вкладки унікального вікна, щоб повернути її туди після показу.
-     */
     private static class TabPlace {
 
         private final JTabbedPane pane;

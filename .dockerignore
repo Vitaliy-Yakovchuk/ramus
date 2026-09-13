@@ -1,4 +1,4 @@
-# Усе, що не потрібно build-контексту. Контекст без цього — ~27 МБ замість ~208 МБ.
+# Everything the build context does not need: ~27 MB instead of ~208 MB.
 .git
 .gradle
 build/
