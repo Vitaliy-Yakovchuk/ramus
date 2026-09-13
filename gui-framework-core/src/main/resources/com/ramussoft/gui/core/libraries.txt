@@ -1,17 +1,29 @@
 Ramus uses additional libraries:
 
-jericho-html.jar - Jericho HTML Parser (http://jerichohtml.sourceforge.net/) released under GNU Lesser General Public License (LGPL) (http://www.gnu.org/licenses/lgpl.html)
-dockingFramesCommon.jar, dockingFramesCore.jar - Docking Frames (http://dock.javaforge.com/) released under GNU Lesser General Public License (LGPL) Version 2.1 (http://www.gnu.org/licenses/lgpl-2.1.html)
-swingx-0.9.7.jar - swingx-ws (https://swingx-ws.dev.java.net/) released under GNU Lesser General Public License (LGPL) (http://www.gnu.org/copyleft/lesser.html)
-my-spell-core.jar, my-spell-swing.jar JMySpell (http://javahispano.net/projects/jmyspell) released under GNU Lesser General Public License (LGPL) (http://www.gnu.org/copyleft/lesser.html)
-TableLayout-bin-jdk1.5-2007-04-21.jar - TableLayout (https://tablelayout.dev.java.net/) see TableLayout.license or https://tablelayout.dev.java.net/files/documents/3495/59349/License.txt for details
-h2.jar - H2 Database Engine (http://www.h2database.com/) you can obtain H2 Database Engine license here: http://www.h2database.com/html/license.html
-cajo.jar - The cajo project (https://cajo.dev.java.net/) released under GNU Lesser General Public License (LGPL) Version 3 (http://www.gnu.org/licenses/lgpl.html)
-BrowserLauncher2-1_3.jar - BrowserLauncher2 (http://browserlaunch2.sourceforge.net/) released under GNU Lesser General Public License (LGPL) (http://www.gnu.org/licenses/lgpl.html)
-jsyntaxpane.jar - jsyntaxpane (http://code.google.com/p/jsyntaxpane/)  released under Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
-You can obtain sources of the mentioned project on the web sites.
+SnakeYAML Engine 2.7 (https://bitbucket.org/snakeyaml/snakeyaml-engine) - Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+Jericho HTML Parser 3.3 (http://jericho.htmlparser.net/) - Eclipse Public License 1.0 or GNU Lesser General Public License (LGPL)
+Docking Frames 1.1.1 (https://github.com/Benoker/DockingFrames) - GNU Lesser General Public License (LGPL) Version 2.1 (https://www.gnu.org/licenses/lgpl-2.1.html)
+SwingX 1.6.5-1 (https://github.com/swinglabs-updated/swingx) - GNU Lesser General Public License (LGPL) Version 2.1 (https://www.gnu.org/licenses/lgpl-2.1.html)
+JMySpell (my-spell-core.jar, my-spell-swing.jar) - GNU Lesser General Public License (LGPL) (https://www.gnu.org/copyleft/lesser.html)
+TableLayout 20050920 (https://github.com/clearthought/table-layout) - Clearthought Software License Version 1.0
+H2 Database Engine 1.3.163 (http://www.h2database.com/) - H2 License Version 1.0: Mozilla Public License 1.1 or Eclipse Public License 1.0 (http://www.h2database.com/html/license.html)
+BrowserLauncher2 1.3 (http://browserlaunch2.sourceforge.net/) - GNU Lesser General Public License (LGPL) (https://www.gnu.org/licenses/lgpl.html)
+JSyntaxPane 1.0.0 (https://github.com/Sciss/JSyntaxPane) - Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+JavaHelp 2.0.05 (https://javaee.github.io/javahelp/) - GNU General Public License Version 2 with the Classpath Exception
+JFreeChart 1.0.19 (https://www.jfree.org/jfreechart/) - GNU Lesser General Public License (LGPL) Version 2.1 (https://www.gnu.org/licenses/lgpl-2.1.html)
+Apache POI 3.13 (https://poi.apache.org/) - Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+Apache Batik SVG Generator 1.6-1 (https://xmlgraphics.apache.org/batik/) - Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
+FreeHEP VectorGraphics EMF 2.4 (http://java.freehep.org/vectorgraphics/) - GNU Lesser General Public License (LGPL) Version 2.1 (https://www.gnu.org/licenses/lgpl-2.1.html)
+iText 5.5.7 (https://itextpdf.com/) - GNU Affero General Public License Version 3 (https://www.gnu.org/licenses/agpl-3.0.html)
+
+The macOS and Windows packages also carry a Java runtime, built with jlink from
+Eclipse Temurin (https://adoptium.net/) - GNU General Public License Version 2
+with the Classpath Exception.
+
+You can obtain sources of the mentioned projects on their web sites.
 
 Icons library:
 
-Mark James
-http://www.famfamfam.com/lab/icons/silk/ 
+Silk icon set by Mark James
+http://www.famfamfam.com/lab/icons/silk/
+Creative Commons Attribution 2.5 License (https://creativecommons.org/licenses/by/2.5/)

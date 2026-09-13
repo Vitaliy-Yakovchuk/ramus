@@ -92,6 +92,7 @@ public class AboutDialog extends JDialog {
     private Component createThirdPartsComponnt() {
         JScrollPane pane = new JScrollPane();
         final JTextArea area = new JTextArea();
+        area.setLineWrap(true);
         area.setWrapStyleWord(true);
         area.setFont(new Font("Sans Serif", 0, area.getFont().getSize()));
         pane.setViewportView(area);
@@ -250,10 +251,15 @@ public class AboutDialog extends JDialog {
         sb.append(Metadata.getApplicationVersion());
         sb.append("<br><br>");
 
-        sb.append("MacOS Version modifications by <a href=\"https://github.com/Inv1x/\">Vladislav Pavlik</a><br><br>"
-                + "Original copyright &copy; 2005 - 2025 Vitaliy Yakovchuk, Oleksiy Chizhevskiy. <br><br>"
-                + "License <a href=\"https://www.gnu.org/licenses/gpl-3.0.en.html\">GNU GENERAL PUBLIC LICENSE Version 3</a><br><br>"
-                + "Visit <a href=\"http://ramussoftware.com/\">http://ramussoftware.com/</a><br><br>"
+        sb.append("Copyright &copy; 2005 - 2026 Vitaliy Yakovchuk, Oleksiy Chizhevskiy.<br><br>"
+                + "macOS support by <a href=\"https://github.com/Inv1x/\">Vladislav Pavlik</a>.<br><br>"
+                + "This is a modified version of Ramus, last modified in 2026.<br><br>"
+                + "Ramus is free software: you may redistribute it and modify it under the "
+                + "terms of the <a href=\"https://www.gnu.org/licenses/gpl-3.0.en.html\">GNU General Public License, version 3</a>. "
+                + "It comes with ABSOLUTELY NO WARRANTY, to the extent permitted by law - "
+                + "see sections 15 and 16 of the license.<br><br>"
+                + "Source code: <a href=\"https://github.com/Vitaliy-Yakovchuk/ramus\">https://github.com/Vitaliy-Yakovchuk/ramus</a><br><br>"
+                + "Visit <a href=\"https://ramussoftware.com/\">https://ramussoftware.com/</a><br><br>"
                 + "</font></body></html>");
         return sb.toString();
     }
