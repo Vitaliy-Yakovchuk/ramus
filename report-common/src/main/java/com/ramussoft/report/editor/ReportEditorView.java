@@ -127,7 +127,7 @@ public class ReportEditorView extends AbstractView implements TabView {
 
             synchronized (lock) {
                 if (loading != null)
-                    loading.stop();
+                    loading.currentThread().interrupt();
                 loading = null;
                 setText(view, ReportResourceManager.getString("Report.Loading"));
             }
