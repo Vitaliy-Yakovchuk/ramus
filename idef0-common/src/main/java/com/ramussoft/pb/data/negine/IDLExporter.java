@@ -142,10 +142,15 @@ public class IDLExporter extends IDL {
         writer.p2("AUTHOR {0}", projectOptions.getProjectAutor());
         writer.p2("PROJECT NAME {0}", projectOptions.getProjectName());
 
+        final String letter = projectOptions.getDeligate().getModelLetter();
+        final String contextCode =
+                (letter == null || letter.length() == 0 ? "A" : letter) + "-0";
+
         rec(new FunctionCallback() {
             @Override
             public void call(Function f) throws IOException {
-                String code = MovingFunction.getIDEF0Kod((com.ramussoft.database.common.Row) f);
+                String code = f.equals(base) ? contextCode
+                        : MovingFunction.getIDEF0Kod((com.ramussoft.database.common.Row) f);
                 writer.p1("DIAGRAM GRAPHIC " + code);
                 writer.right();
                 writer.p1("CREATION DATE "
@@ -245,7 +250,7 @@ public class IDLExporter extends IDL {
             if ((s != null) && (s.length() > 0)) {
                 MovingLabel text = ps.getText();
                 if (text != null) {
-                    final PStringBounder nb = new PStringBounder(null);
+                    final PStringBounder nb = new PStringBounder(movingArea);
                     nb.setFont(text.getFont());
                     final PStringBounder.Tokanizer tokanizer = nb.getTokanizer(
                             s, text.getBounds().getWidth(), 0);
