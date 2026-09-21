@@ -937,9 +937,10 @@ public class IDEF0ViewPlugin extends AbstractViewPlugin {
                         plugin.exportToIDL(plugin.getBaseFunction(),
                                 fileOutputStream, "cp1251");
                         fileOutputStream.close();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         JOptionPane.showMessageDialog(framework.getMainFrame(),
-                                e.getLocalizedMessage());
+                                String.valueOf(e.getLocalizedMessage()));
                     }
                     super.approveSelection();
                 }
