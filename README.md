@@ -20,7 +20,6 @@ By Vitaliy Yakovchuk. Free software under the GNU GPL, version 3 — see
 - [Building](#building)
   - [macOS application and DMG](#macos-application-and-dmg)
   - [Windows installer](#windows-installer)
-- [Documentation](#documentation)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -120,8 +119,6 @@ application uses for the model itself:
 So the way to edit a model as text is a round trip: convert it out, edit the
 files, convert it back, open the `.rsf`.
 
-Full reference: **[docs/PROJECT_FORMAT.md](docs/PROJECT_FORMAT.md)**.
-
 ---
 
 ## Building
@@ -143,9 +140,29 @@ docker build --target test .                     # run the test suite
 docker build -t ramus .                          # image that runs the GUI
 ```
 
-Running the GUI from the container needs an X11 socket and an auth cookie —
-the recipe, the CI notes and the reasoning behind the Dockerfile are in
-[docs/DOCKER.md](docs/DOCKER.md).
+Running the GUI from the container needs an X11 socket and an auth cookie.
+Mounting `/tmp/.X11-unix` alone is not enough — the X server rejects the
+connection unless the cookie's family field is relaxed so the container
+hostname matches:
+
+```bash
+XAUTH=$(mktemp)
+xauth nlist "$DISPLAY" | sed -e 's/^..../ffff/' | xauth -f "$XAUTH" nmerge -
+chmod 644 "$XAUTH"
+
+docker run --rm \
+  -e DISPLAY="$DISPLAY" \
+  -e XAUTHORITY=/tmp/.xauth \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+  -v "$XAUTH:/tmp/.xauth:ro" \
+  -v "$PWD:/work" \
+  ramus
+```
+
+Projects are taken from `/work`, so the host's current directory is mounted
+there. The container user has UID 1000, so files created in that mount belong
+to you. Under Wayland this goes through XWayland — `DISPLAY` already points
+at it.
 
 ### macOS application and DMG
 
@@ -244,20 +261,6 @@ a code signing certificate removes that.
 The old NSIS and IzPack path (`./gradlew windowsInstaller`) is still in the
 tree but superseded: it hunts for a system JRE 1.6 and, failing to find one,
 downloads it from a Sun URL that has not existed for over a decade.
-
----
-
-## Documentation
-
-The design documents under `docs/` are written in Ukrainian.
-
-| Document                                                       | What it covers                                                                                                               |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| [docs/PROJECT_FORMAT.md](docs/PROJECT_FORMAT.md)               | Complete project-format reference: syntax, identifiers, attribute types, how IDEF0 maps onto the files, safe-editing recipes |
-| [docs/AGENT_GUIDE.md](docs/AGENT_GUIDE.md)                     | The procedure an agent follows to edit a model in the files, and where it must stop                                          |
-| [docs/FORMAT_MIGRATION_PLAN.md](docs/FORMAT_MIGRATION_PLAN.md) | Why the format changed and how the migration was carried out, stage by stage                                                 |
-| [docs/START_REVIEW.md](docs/START_REVIEW.md)                   | The storage subsystem as it stood before that work — the baseline for comparison                                             |
-| [docs/DOCKER.md](docs/DOCKER.md)                               | Containerised builds, running the GUI from a container, CI notes                                                             |
 
 ---
 

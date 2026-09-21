@@ -10,6 +10,5 @@ dest/ramus-2.0.zip
 gradle-local.properties
 .idea/
 *.iml
-docs/
 *.md
 !README.md

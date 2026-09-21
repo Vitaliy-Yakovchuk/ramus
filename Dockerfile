@@ -6,7 +6,7 @@
 #   docker build --target test .                     # run the tests
 #   docker build -t ramus .                          # image ready to run the GUI
 #
-# Details and running the GUI: docs/DOCKER.md
+# Running the GUI needs X11 forwarded (see README, Building / Docker).
 
 ARG JDK_IMAGE=eclipse-temurin:21-jdk-noble
 ARG JRE_IMAGE=eclipse-temurin:21-jre-noble
@@ -53,7 +53,7 @@ FROM scratch AS artifacts
 COPY --from=build /src/local-client/build/libs/ramus.jar /
 
 # ---------------------------------------------------------------------------
-# runtime - run the GUI (needs X11 forwarded, see docs/DOCKER.md)
+# runtime - run the GUI (needs X11 forwarded)
 # ---------------------------------------------------------------------------
 FROM ${JRE_IMAGE} AS runtime
 
