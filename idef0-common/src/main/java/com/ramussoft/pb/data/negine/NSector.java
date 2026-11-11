@@ -157,9 +157,10 @@ public class NSector extends AbstractSector {
 
     public void setCreateState(final int createState, final double pos) {
         synchronized (dataPlugin) {
-            getSp().setCreateState(createState);
-            getSp().setCreatePos(pos);
-            setAttribute(dataPlugin.sectorAttribute, getSp());
+            SectorPersistent state = getSp();
+            state.setCreateState(createState);
+            state.setCreatePos(pos);
+            setAttribute(dataPlugin.sectorAttribute, state);
         }
     }
 
@@ -203,10 +204,11 @@ public class NSector extends AbstractSector {
 
     public void setVisualAttributes(final byte[] visualData) {
         synchronized (dataPlugin) {
-            if (Arrays.equals(getSp().getVisualAttributes(), visualData))
+            SectorPersistent state = getSp();
+            if (Arrays.equals(state.getVisualAttributes(), visualData))
                 return;
-            getSp().setVisualAttributes(visualData);
-            setAttribute(dataPlugin.sectorAttribute, getSp());
+            state.setVisualAttributes(visualData);
+            setAttribute(dataPlugin.sectorAttribute, state);
         }
     }
 
@@ -229,19 +231,22 @@ public class NSector extends AbstractSector {
     }
 
     public void setAlternativeText(final String alternativeText) {
-        getSp().setAlternativeText(alternativeText);
-        setAttribute(dataPlugin.sectorAttribute, getSp());
+        SectorPersistent state = getSp();
+        state.setAlternativeText(alternativeText);
+        setAttribute(dataPlugin.sectorAttribute, state);
     }
 
     public void setShowText(final boolean showText) {
-        getSp().setShowText((showText) ? 1 : 0);
-        setAttribute(dataPlugin.sectorAttribute, getSp());
+        SectorPersistent state = getSp();
+        state.setShowText(showText ? 1 : 0);
+        setAttribute(dataPlugin.sectorAttribute, state);
     }
 
     @Override
     public void setTextAligment(final int textAligment) {
-        getSp().setTextAligment(textAligment);
-        setAttribute(dataPlugin.sectorAttribute, getSp());
+        SectorPersistent state = getSp();
+        state.setTextAligment(textAligment);
+        setAttribute(dataPlugin.sectorAttribute, state);
     }
 
     @Override

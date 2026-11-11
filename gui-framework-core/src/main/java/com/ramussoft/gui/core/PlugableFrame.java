@@ -177,7 +177,16 @@ public class PlugableFrame extends JFrame {
     private void addTreeItem(String menu, Action action, ViewPlugin plugin) {
         String[] strings = menu.split("/");
         for (int i = 0; i < strings.length; i++) {
-            strings[i] = plugin.getString("Menu." + strings[i]);
+            String key = "Menu." + strings[i];
+            String translated = plugin.getString(key);
+            // Some plugins return the literal "Null" or the resource key for
+            // standard menus. Prefer the shared translation in that case.
+            if (translated == null || translated.isBlank() || "Null".equalsIgnoreCase(translated)
+                    || key.equals(translated)) {
+                String global = GlobalResourcesManager.getString(key);
+                translated = global == null || global.isBlank() ? strings[i] : global;
+            }
+            strings[i] = translated;
         }
 
         TreeList map = mainMenu;

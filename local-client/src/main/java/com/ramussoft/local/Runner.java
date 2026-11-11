@@ -55,6 +55,7 @@ import com.ramussoft.gui.common.event.CloseMainFrameAdapter;
 import com.ramussoft.gui.common.prefrence.Options;
 import com.ramussoft.gui.core.GUIPluginFactory;
 import com.ramussoft.gui.core.simple.SimleGUIPluginFactory;
+import com.ramussoft.local.ai.RamusAiPlugin;
 import com.ramussoft.gui.qualifier.QualifierPluginSuit;
 
 public class Runner implements Commands {
@@ -816,6 +817,7 @@ public class Runner implements Commands {
     protected void initAdditionalGUIPlugins(List<GUIPlugin> list,
                                             Engine engine, AccessRules rules) {
         QualifierPluginSuit.addPlugins(list, engine, rules);
+        list.add(new RamusAiPlugin());
     }
 
     protected void initAdditionalPluginSuits(ArrayList<PluginProvider> ps) {

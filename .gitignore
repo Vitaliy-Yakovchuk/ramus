@@ -51,6 +51,10 @@ crashlytics-build.properties
 
 ### Gradle ###
 .gradle
+.gradle-home/
+.env
+.env.*
+!.env.example
 build/
 dest/ramus-2.0/
 dest/ramus-2.0.zip

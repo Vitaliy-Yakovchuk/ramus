@@ -201,8 +201,9 @@ public class IDEF0Object extends MovingText {
     @Override
     public FRectangle getTextBounds() {
         final FRectangle b = getBounds();
-        return new FRectangle(b.getX(), b.getY(), b.getWidth(),
-                b.getHeight() - 7);
+        // Reserve padding for the title and the bottom strip for the IDEF0 number.
+        return new FRectangle(b.getX() + 5, b.getY() + 4, Math.max(1, b.getWidth() - 10),
+                Math.max(1, b.getHeight() - 18));
     }
 
     /*

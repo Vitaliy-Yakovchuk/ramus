@@ -6,13 +6,23 @@ import com.ramussoft.common.Qualifier;
 
 public class OpenDiagram implements Serializable, PreserveObfuscating {
 
+    // Preserve compatibility with OpenDiagram instances stored in Ramus history.
+    private static final long serialVersionUID = 4086713121048690764L;
+
     private Qualifier qualifier;
 
     private long functionId;
 
+    private boolean fitToPage;
+
     public OpenDiagram(Qualifier qualifier, long functionId) {
+        this(qualifier, functionId, false);
+    }
+
+    public OpenDiagram(Qualifier qualifier, long functionId, boolean fitToPage) {
         this.qualifier = qualifier;
         this.functionId = functionId;
+        this.fitToPage = fitToPage;
     }
 
     public Qualifier getQualifier() {
@@ -21,6 +31,10 @@ public class OpenDiagram implements Serializable, PreserveObfuscating {
 
     public long getFunctionId() {
         return functionId;
+    }
+
+    public boolean isFitToPage() {
+        return fitToPage;
     }
 
     /* (non-Javadoc)

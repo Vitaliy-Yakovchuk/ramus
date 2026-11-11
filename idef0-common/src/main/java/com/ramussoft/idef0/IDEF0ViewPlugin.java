@@ -92,6 +92,7 @@ import com.ramussoft.idef0.attribute.StreamAttributePlugin;
 import com.ramussoft.pb.DataPlugin;
 import com.ramussoft.pb.data.negine.NDataPlugin;
 import com.ramussoft.pb.frames.MainFrame;
+import com.ramussoft.pb.idef.frames.IDEFPanel;
 import com.ramussoft.pb.frames.components.SerialCheker;
 import com.ramussoft.pb.frames.setup.OwnerClasificators;
 import com.ramussoft.pb.frames.setup.ViewIDEF0PropertiosPanel;
@@ -317,8 +318,19 @@ public class IDEF0ViewPlugin extends AbstractViewPlugin {
 
             @Override
             public void onAction(final ActionEvent event) {
-                if (framework.openView(event))
+                OpenDiagram requestedDiagram = (OpenDiagram) event.getValue();
+                if (framework.openView(event)) {
+                    // Reopening the same IDEF0 qualifier normally only focuses
+                    // the existing tab. Explicitly navigate it to the requested
+                    // decomposition, otherwise AI runs leave the user on A-0
+                    // with its single context block.
+                    activateDiagram(requestedDiagram);
+                    if (requestedDiagram.isFitToPage())
+                        frame.setActiveZoom(IDEFPanel.createZoom(IDEFPanel.FIT_ALL));
                     return;
+                }
+                if (requestedDiagram.isFitToPage())
+                    frame.setActiveZoom(IDEFPanel.createZoom(IDEFPanel.FIT_ALL));
 
                 final DiagramData data = new DiagramData();
 
@@ -386,6 +398,17 @@ public class IDEF0ViewPlugin extends AbstractViewPlugin {
             }
 
         });
+    }
+
+    private void activateDiagram(OpenDiagram requestedDiagram) {
+        if (!(frame.getActiveView() instanceof IDEFPanel panel))
+            return;
+        com.ramussoft.pb.DataPlugin data = panel.getMovingArea().getDataPlugin();
+        com.ramussoft.pb.Function function = requestedDiagram.getFunctionId() < 0
+                ? (com.ramussoft.pb.Function) data.getBaseFunction()
+                : (com.ramussoft.pb.Function) data.findRowByGlobalId(requestedDiagram.getFunctionId());
+        if (function != null)
+            panel.getMovingArea().setActiveFunction(function);
     }
 
     @Override
