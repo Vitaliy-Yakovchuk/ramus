@@ -302,11 +302,15 @@ public class Runner implements Commands {
                 file = new File(args[0]);
             open(file);
         } else {
-            if (recoveredCount == 0) {
+            if (recoveredCount == 0 && !openedBySystem) {
                 startupLauncher(false);
             }
         }
     }
+
+    protected FirstSwitchFrame launcher;
+
+    protected volatile boolean openedBySystem;
 
     public void startupLauncher(boolean showAnyway) {
         FirstSwitchFrame frame = new FirstSwitchFrame() {
@@ -332,6 +336,7 @@ public class Runner implements Commands {
                 }
             }
         };
+        launcher = frame;
         if (!showAnyway) {
             if (!frame.isDoNotShow())
                 frame.setVisible(true);

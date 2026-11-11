@@ -482,8 +482,9 @@ public class GUIPluginFactory extends AbstractGUIPluginFactory {
 
         if (workspaces.size() > 0)
             currentWorkspace = workspaces.get(0);
-        currentWorkspace = Options.getString("CurrentWorkspace",
-                currentWorkspace);
+        String savedWorkspace = Options.getString("CurrentWorkspace", "");
+        if (workspaces.contains(savedWorkspace))
+            currentWorkspace = savedWorkspace;
         initContent();
 
         framework.propertyChanged("MainFrameCreated");

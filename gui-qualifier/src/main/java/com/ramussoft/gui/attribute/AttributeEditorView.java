@@ -111,7 +111,8 @@ public class AttributeEditorView extends AbstractUniqueView implements UniqueVie
 
         @Override
         public void cancel() {
-            editor.setValue(savedValue);
+            if (editor != null)
+                editor.setValue(savedValue);
         }
 
         @Override

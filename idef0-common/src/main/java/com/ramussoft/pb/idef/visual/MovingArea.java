@@ -399,9 +399,6 @@ public class MovingArea extends JPanel {
     }
 
     private static boolean getDefaultRenderingHintsDisability() {
-        String vmName = System.getProperty("java.vm.name");
-        if (vmName != null && vmName.contains("OpenJDK"))
-            return true;
         return false;
     }
 
@@ -3491,8 +3488,20 @@ public class MovingArea extends JPanel {
     }
 
     public void copy() {
+        List<Function> functions = getSelectedFunctions();
+        if (functions.isEmpty())
+            return;
         FunctionBeansClipboard.setCopy(activeFunction, dataPlugin,
-                getRefactor(), mouseSelection.getFunctions());
+                getRefactor(), functions);
+    }
+
+    private List<Function> getSelectedFunctions() {
+        if (mouseSelection != null)
+            return mouseSelection.getFunctions();
+        List<Function> functions = new ArrayList<Function>();
+        if (activeObject instanceof IDEF0Object)
+            functions.add(((IDEF0Object) activeObject).getFunction());
+        return functions;
     }
 
     public void paste() {
@@ -3500,8 +3509,11 @@ public class MovingArea extends JPanel {
     }
 
     public void cut() {
+        List<Function> functions = getSelectedFunctions();
+        if (functions.isEmpty())
+            return;
         FunctionBeansClipboard.setCopy(activeFunction, dataPlugin,
-                getRefactor(), mouseSelection.getFunctions());
+                getRefactor(), functions);
         removeActiveObject();
     }
 

@@ -1,9 +1,11 @@
 package com.ramussoft.local;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 
 import com.ramussoft.common.Engine;
 import com.ramussoft.common.Plugin;
@@ -21,7 +23,24 @@ public class Main extends Runner {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Ramus MacOS");
         }
 
-        new Main().load(args);
+        Main main = new Main();
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop()
+                .isSupported(Desktop.Action.APP_OPEN_FILE)) {
+            Desktop.getDesktop().setOpenFileHandler(e -> {
+                for (File file : e.getFiles())
+                    main.openFromSystem(file);
+            });
+        }
+        main.load(args);
+    }
+
+    private void openFromSystem(File file) {
+        openedBySystem = true;
+        SwingUtilities.invokeLater(() -> {
+            if (launcher != null && launcher.isVisible())
+                launcher.dispose();
+        });
+        new Thread(() -> open(file)).start();
     }
 
     @Override
